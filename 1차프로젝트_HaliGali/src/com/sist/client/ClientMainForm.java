@@ -78,7 +78,7 @@ ActionListener, Runnable{
 				connection(id, pass);
 				//card.show(getContentPane(), "WR");			//Layout에 "WR"card를 상단으로 보여지게 하라
 			}
-			else if(e.getSource()==wr.tf)
+			else if(e.getSource()==wr.tf || e.getSource()==wr.b1)
 			{			//채팅창(tf)에 액션이 가해지면
 				String data=wr.tf.getText();								//입력한 값 가져오기
 				//wr.ta.append(data+"\n");
@@ -90,10 +90,6 @@ ActionListener, Runnable{
 					out.write((Function.WAITCHAT+"|"+data+"\n").getBytes());
 				}catch(Exception ex){}
 				wr.tf.setText("");
-			}
-			else if(e.getSource()==wr.b1)
-			{
-				
 			}
 			else if(e.getSource()==wr.b3){					//방만들기버튼->GAME Window창
 				mr.setBounds(500, 300, 260,290);
