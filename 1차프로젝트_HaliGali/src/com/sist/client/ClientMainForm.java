@@ -149,16 +149,13 @@ ActionListener, Runnable{
 					  {
 						  String[] data={
 							st.nextToken(),	 
-							st.nextToken(),
-							st.nextToken(),
 							st.nextToken()
 						  };
-						  wr.model2.addRow(data);
+						  wr.model3.addRow(data);
 					  }
 					  break;
 					  case Function.MYLOG:
 					  {
-						  System.out.println("MYLOG");
 						  String id=st.nextToken();
 						  setTitle(id);
 						  card.show(getContentPane(), "WR");
