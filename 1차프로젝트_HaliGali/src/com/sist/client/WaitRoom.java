@@ -1,3 +1,4 @@
+package com.sist.client;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,7 +17,7 @@ public class WaitRoom extends JPanel{ //
 	JComboBox box;		//채팅 ENTER창
 	JButton b1,b2,b3;	//버튼
 	JTextArea profile;	//사용자정보
-
+	JScrollBar bar;
 	
 	public WaitRoom(){
 		back=Toolkit.getDefaultToolkit().getImage("C:\\image\\monkey_back.jpg");	//뒷배경
@@ -42,6 +43,7 @@ public class WaitRoom extends JPanel{ //
 		
 		ta=new JTextArea();						//채팅창
 		JScrollPane js4=new JScrollPane(ta);	//textarea근처에 스크롤바
+		bar=js3.getVerticalScrollBar();
 		tf=new JTextField();					//채팅입력창
 		b1=new JButton("전송");					//채팅전송버튼
 		

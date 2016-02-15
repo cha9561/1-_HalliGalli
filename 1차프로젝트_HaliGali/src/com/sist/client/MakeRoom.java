@@ -1,3 +1,4 @@
+package com.sist.client;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -110,7 +111,7 @@ public class MakeRoom extends JFrame implements ActionListener{
 
 }
 
-class MyPanel extends JPanel	//방만들기 JPanel창 
+/*class MyPanel extends JPanel	//방만들기 JPanel창 
 {
     Image image;
 
@@ -136,4 +137,4 @@ class MyPanel extends JPanel	//방만들기 JPanel창
         g2d.fill(getBounds());
         g2d.dispose();
     }
-}
+}*/
