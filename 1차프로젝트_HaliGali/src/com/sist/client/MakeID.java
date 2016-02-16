@@ -69,20 +69,20 @@ public class MakeID extends  JFrame /*implements ActionListener*/{	//JDialog,µîµ
 
 		//¹èÄ¡
 		setLayout(null);
-		la1.setBounds(50,65,40,30);
-		tf1.setBounds(95,65,140,30);
+		la1.setBounds(40,65,40,30);
+		tf1.setBounds(100,65,140,30);
 		
-		la2.setBounds(50,100,40,30);
-		tf2.setBounds(95,100,140,30);
-		b3.setBounds(245,100,55,30);
+		la2.setBounds(40,100,40,30);
+		tf2.setBounds(100,100,140,30);
+		b3.setBounds(245,100,60,30);
 		
-		la3.setBounds(50,145,40,30);
-		pf1.setBounds(95,145,140,30);
+		la3.setBounds(40,145,40,30);
+		pf1.setBounds(100,145,140,30);
 		
-		la4.setBounds(50,180,40,30);
-		pf2.setBounds(95,180,140,30);
+		la4.setBounds(40,180,50,30);
+		pf2.setBounds(100,180,140,30);
 		
-		la5.setBounds(50,215,40,30);
+		la5.setBounds(40,215,40,30);
 		
 		rb1.setBounds(90,215,20,20);
 		rb2.setBounds(170,215,20,20);

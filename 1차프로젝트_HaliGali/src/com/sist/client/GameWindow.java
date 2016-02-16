@@ -12,7 +12,7 @@ public class GameWindow extends JPanel{
 	JTextArea profile1,profile2,profile3,profile4;
 	
 	public GameWindow(){
-		back=Toolkit.getDefaultToolkit().getImage("C:\\image\\monkey_back.jpg");	//뒷배경		
+		back=Toolkit.getDefaultToolkit().getImage("img/monkey_back3.jpg");	//뒷배경		
 		
 		ta=new JTextArea();	
 		JScrollPane js4=new JScrollPane(ta);	//스크롤되는 채팅창
