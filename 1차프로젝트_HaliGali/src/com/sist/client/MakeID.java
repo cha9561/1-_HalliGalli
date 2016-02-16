@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.image.ImageObserver;
 
-public class MakeID extends  JFrame implements ActionListener{	//JDialog,등등 다 가능
+public class MakeID extends  JFrame /*implements ActionListener*/{	//JDialog,등등 다 가능
 	JLabel la1,la2,la3,la4,la5;
 	JLabel rl1,rl2,rl3,rl4;		//캐릭터
 	JTextField tf1,tf2;
@@ -20,6 +20,9 @@ public class MakeID extends  JFrame implements ActionListener{	//JDialog,등등 다
 	ImageIcon i4=new ImageIcon("img/44_50.png");
 	ImageIcon joinButton=new ImageIcon("img/JoinButton.png");
 	ImageIcon backButton=new ImageIcon("img/BackButton.png");
+	
+	int num=0;
+	boolean ck=false;
 	
 	public MakeID(){
 		setUndecorated(true); //타이틀 바가 사라진다.
@@ -106,16 +109,16 @@ public class MakeID extends  JFrame implements ActionListener{	//JDialog,등등 다
 		add(rl1);add(rl2);add(rl3);add(rl4);
 		add(p);
 		
-		b1.addActionListener(this);
+	/*	b1.addActionListener(this);
 		b2.addActionListener(this);
-		b3.addActionListener(this);
+		b3.addActionListener(this);*/
 	}
 
 	public static void main(String[] args){
 		new MakeID();
 	}
 
-	@Override
+	/*@Override
 	public void actionPerformed(ActionEvent e) {
 		if(b1==e.getSource()){
 			JOptionPane.showMessageDialog(this, "회원가입완료");
@@ -127,7 +130,7 @@ public class MakeID extends  JFrame implements ActionListener{	//JDialog,등등 다
 			System.out.println("ID중복체크");
 		}
 		
-	}
+	}*/
 }
 
 	

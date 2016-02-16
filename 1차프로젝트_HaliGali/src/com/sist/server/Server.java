@@ -92,12 +92,21 @@ public class Server implements Runnable{
 						 }
 						 // 방정보 전송 
 					  }
-					 break;
+					  break;
 					  case Function.WAITCHAT:
 					  {
 						  String data=st.nextToken();
 						  messageAll(Function.WAITCHAT+"|["
 								  +id+"]"+data);
+					  }
+					  break;
+					  case Function.IDCHECK:
+					  {
+						  System.out.println("ID중복체크");
+						  String id=st.nextToken();
+						  System.out.println(id);
+						  /*ID 중복 체크 구현부*/
+						  messageTo(Function.NOTOVERLAP+"|");
 					  }
 					  break;
 					}

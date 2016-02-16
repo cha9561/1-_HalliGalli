@@ -47,6 +47,9 @@ ActionListener, Runnable{
 			add("GW",gw);						//4.GAME Window창
 			wr.b3.addActionListener(this); 		//방만들기버튼 누르면
 			
+			mID.b1.addActionListener(this);
+			mID.b2.addActionListener(this);
+			mID.b3.addActionListener(this);
 		}
 		
 		@Override
@@ -75,7 +78,12 @@ ActionListener, Runnable{
 					login.pf.requestFocus();
 					return;
 				}
-				connection(id, pass);
+				connection();
+				try
+				{
+					out.write((Function.LOGIN+"|"+id+"|"
+							+pass+"\n").getBytes());
+				}catch(Exception ex){}
 				//card.show(getContentPane(), "WR");			//Layout에 "WR"card를 상단으로 보여지게 하라
 			}
 			else if(e.getSource()==wr.tf || e.getSource()==wr.b1)
@@ -83,8 +91,7 @@ ActionListener, Runnable{
 				String data=wr.tf.getText();								//입력한 값 가져오기
 				//wr.ta.append(data+"\n");
 				if(data.length()<1)
-					return;
-				
+					return;				
 				try
 				{
 					out.write((Function.WAITCHAT+"|"+data+"\n").getBytes());
@@ -97,9 +104,95 @@ ActionListener, Runnable{
 			}else if(e.getSource()==wr.b2){
 				card.show(getContentPane(), "GW"); 		//게임 창으로 전환
 			}
+			else if(e.getSource()==mID.b1)
+			{
+				String name=mID.tf1.getText().trim();
+				String id=mID.tf2.getText().trim();
+				String pass1=new String(mID.pf1.getPassword());
+				String pass2=new String(mID.pf2.getPassword());
+				if(name.length()<1)
+				{
+					JOptionPane.showMessageDialog(this,
+							"이름을 입력하세요");
+					mID.tf1.requestFocus();
+					return;
+				}
+				else if(id.length()<1)
+				{
+					JOptionPane.showMessageDialog(this,
+							"ID를 입력하세요");
+					mID.tf2.requestFocus();
+					return;
+				}
+				else if(mID.ck==false)
+				{
+					JOptionPane.showMessageDialog(this,
+							"ID 중복체크 하시오");
+					mID.tf2.requestFocus();
+					return;
+				}
+				else if(pass1.length()<1)
+				{
+					JOptionPane.showMessageDialog(this,
+							"비밀번호를 입력하세요");
+					mID.pf1.requestFocus();
+					return;
+				}
+				else if(pass2.length()<1)
+				{
+					JOptionPane.showMessageDialog(this,
+							"비밀번호 확인을 입력하세요");
+					mID.pf2.requestFocus();
+					return;
+				}
+				else if(!(pass1.equals(pass2)))
+				{
+					JOptionPane.showMessageDialog(this,
+							"비밀번호가 동일하지 않습니다");
+					mID.pf1.requestFocus();
+					return;
+				}
+				JOptionPane.showMessageDialog(this, "회원가입완료");
+				//dispose();	//메모리 그대로 둔 채로 창닫기
+				mID.dispose();
+			}
+			else if(e.getSource()==mID.b2)
+			{
+				mID.tf1.setText("");
+				mID.tf2.setText("");
+				mID.pf1.setText("");
+				mID.pf2.setText("");
+				mID.dispose();
+				System.out.println("취소");
+			}
+			else if(e.getSource()==mID.b3)
+			{
+				String id=mID.tf2.getText().trim();
+				if(id.length()<1)
+				{
+					JOptionPane.showMessageDialog(this,
+							"ID를 입력하세요");
+					mID.tf2.requestFocus();
+					return;
+				}
+				System.out.println(mID.num);
+				if(mID.num==0)
+				{
+					System.out.println("연결시도");
+					connection();
+					mID.num++;
+				}
+				try
+				{
+					System.out.println(id);
+					//out.write((Function.IDCHECK+"|"+id+"\n").getBytes());
+					out.write((Function.IDCHECK+"|"+id+"\n").getBytes());
+				}catch(Exception ex){}
+				System.out.println("ID중복체크");
+			}
 		}
 		 // 서버와 연결
-	    public void connection(String id,String pass)
+/*	    public void connection(String id,String pass)
 	    {
 	    	try
 	    	{
@@ -114,8 +207,23 @@ ActionListener, Runnable{
 	    	
 	    	// 서버로부터 응답값을 받아서 처리
 	    	new Thread(this).start();// run()
+	    }*/
+		public void connection()
+	    {
+	    	try
+	    	{
+	    		s=new Socket("localhost", 65535);
+	    		// s=>server
+	    		in=new BufferedReader(
+						new InputStreamReader(s.getInputStream()));
+				out=s.getOutputStream();
+				/*out.write((Function.LOGIN+"|"+id+"|"
+						+pass+"\n").getBytes());*/
+	    	}catch(Exception ex){}
+	    	
+	    	// 서버로부터 응답값을 받아서 처리
+	    	new Thread(this).start();// run()
 	    }
-		
 		
 		public static void main(String[] args) {
 			 
@@ -161,6 +269,22 @@ ActionListener, Runnable{
 					  {
 						  wr.ta.append(st.nextToken()+"\n");
 						  wr.bar.setValue(wr.bar.getMaximum());
+					  }
+					  break;
+					  case Function.NOTOVERLAP:
+					  {
+						  JOptionPane.showMessageDialog(this,
+									"ID가 중복되지 않습니다");
+						  mID.ck=true;
+						  mID.pf1.requestFocus();
+					  }
+					  break;
+					  case Function.OVERLAP:
+					  {
+						  JOptionPane.showMessageDialog(this,
+									"ID가 중복됩니다. 다시 입력하세요.");
+						  mID.ck=false;
+						  mID.pf1.requestFocus();
 					  }
 					  break;
 					}
