@@ -42,6 +42,7 @@ ActionListener, Runnable{
 			wr.b1.addActionListener(this);		//로그인 버튼 누르면
 			wr.b2.addActionListener(this);		//도움말 버튼 누르면
 			wr.b3.addActionListener(this);      //방만들기 버튼 누르면
+			mr.b1.addActionListener(this);      //방만들기창에서 확인버튼 누르면
 			wr.tf.addActionListener(this);		//사용자 입력값 받으면 
 			wr.b3.addActionListener(this); 		//방만들기버튼 누르면
 			
@@ -108,11 +109,34 @@ ActionListener, Runnable{
 				}catch(Exception ex){}
 				gw.tf.setText("");
 			}
-			else if(e.getSource()==wr.b3){					//방만들기버튼->GAME Window창
+			else if(e.getSource()==wr.b3) //방만들기버튼->GAME Window창
+			{		
 				mr.setBounds(500, 300, 260,290);
 		        mr.setVisible(true);
-			}else if(e.getSource()==wr.b2){					//게임 창으로 전환
-				card.show(getContentPane(), "GW"); 		
+			}
+			else if(e.getSource()==mr.b1)  //방만들기창에서 확인 눌렀을때 처리
+			{
+				String subject=mr.tf.getText().trim();
+		        if(subject.length()<1)
+		        {
+		        	JOptionPane.showMessageDialog(this,
+							"방이름을 입력하세요");
+		        	mr.tf.requestFocus();
+		        	return;
+		        }
+		        String pw=new String(mr.pf.getPassword());
+		        if(pw.length()<1)
+		        {
+		        	JOptionPane.showMessageDialog(this,
+							"비밀번호를 입력하세요");
+		        	mr.pf.requestFocus();
+		        	return;
+		        }
+		        mr.dispose();
+		        card.show(getContentPane(), "GW");
+			}
+			else if(e.getSource()==wr.b2){		//도움말 버튼처리
+													
 			}
 			else if(e.getSource()==mID.b1)					//가입완료버튼
 			{
