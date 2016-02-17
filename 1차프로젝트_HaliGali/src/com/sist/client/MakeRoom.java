@@ -25,7 +25,7 @@ public class MakeRoom extends JFrame implements ActionListener{
       la3 = new JLabel("비밀번호");
       la4 = new JLabel("인원");
       
-      tf= new JTextField();
+      tf= new JTextField("");
       pf = new JPasswordField();
       rb1=new JRadioButton("공개");
       rb2=new JRadioButton("비공개");
@@ -105,6 +105,11 @@ public class MakeRoom extends JFrame implements ActionListener{
          pf.setText("");
          pf.requestFocus();
       }else if(e.getSource()==b2){
+    	  tf.setText("");			//초기화
+    	  rb1.setSelected(true);
+    	  la3.setVisible(false);
+    	  pf.setVisible(false);
+    	  box.setSelectedItem("2명");
     	  dispose();
       }
    }
