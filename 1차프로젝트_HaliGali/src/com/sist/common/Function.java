@@ -23,7 +23,7 @@ public class Function {
 	//방만들기
 	
 	//채팅관련
-	public static final int WAITCHAT=500;
-		
+	public static final int WAITCHAT1=500;
+	public static final int WAITCHAT2=501;	
 	/*게임*/
 }
