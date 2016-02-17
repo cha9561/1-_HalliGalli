@@ -132,6 +132,7 @@ ActionListener, Runnable{
 		        	mr.pf.requestFocus();
 		        	return;
 		        }
+		        int a=0;
 		        mr.dispose();
 		        card.show(getContentPane(), "GW");
 			}
