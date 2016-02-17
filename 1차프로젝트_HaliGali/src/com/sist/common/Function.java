@@ -13,6 +13,7 @@ public class Function {
 	public static final int IDCHECK=200;
 	public static final int NOTOVERLAP=201;
 	public static final int OVERLAP=202;
+	public static final int SUCCESSJOIN=203;
 	//ID 중복
 	//ID 중복 X
 	//회원가입 완료

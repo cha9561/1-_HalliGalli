@@ -152,6 +152,12 @@ ActionListener, Runnable{
 					mID.pf1.requestFocus();
 					return;
 				}
+				try {
+					out.write((Function.SUCCESSJOIN+"|"+name+"|"+id+"|"+pass1+"\n").getBytes());
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				JOptionPane.showMessageDialog(this, "회원가입완료");
 				//dispose();	//메모리 그대로 둔 채로 창닫기
 				mID.dispose();

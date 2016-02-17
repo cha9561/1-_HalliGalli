@@ -9,6 +9,9 @@ public class Server implements Runnable{
 	Vector<ClientThread> waitVc=
 			new Vector<ClientThread>();
 	ServerSocket ss=null;// 서버에서 접속시 처리 (교환 소켓)
+	/*회원관리*/
+	FileIO cliFile=new FileIO();
+	/*회원관리*/
 	public Server()
 	{
 		try
@@ -100,15 +103,29 @@ public class Server implements Runnable{
 								  +id+"]"+data);
 					  }
 					  break;
+					  /*회원관리*/
 					  case Function.IDCHECK:
 					  {
 						  System.out.println("ID중복체크");
 						  String id=st.nextToken();
 						  System.out.println(id);
+						  boolean ck=cliFile.searchId(id);
 						  /*ID 중복 체크 구현부*/
-						  messageTo(Function.NOTOVERLAP+"|");
+						  if(ck==true) //ID 가 없으면
+							 messageTo(Function.NOTOVERLAP+"|");
+						  else //ID 가 있으면
+							  messageTo(Function.OVERLAP+"|");
 					  }
 					  break;
+					  case Function.SUCCESSJOIN:
+					  {
+						  System.out.println("회원 정보 추가");
+						  String name=st.nextToken();
+						  String id=st.nextToken();
+						  String pass=st.nextToken();
+						  cliFile.insertCli(name+","+id+","+pass+"\n");
+					  }
+					  /*회원관리*/
 					}
 				}catch(Exception ex){}
 			}
@@ -132,7 +149,66 @@ public class Server implements Runnable{
 	}
 
 }
-
+/*회원관리*/
+class FileIO{
+	static File clifile=new File("c:\\image\\client.csv");
+	public FileIO()
+	{
+		try
+		{			
+			if(!clifile.exists())
+			{
+				clifile.createNewFile();
+				BufferedWriter writer = new BufferedWriter(
+						new OutputStreamWriter(new FileOutputStream(clifile),"MS949"));
+				String head="이름,ID,Password,캐릭터,승,패,승률\n";
+				writer.write(head);
+				writer.close();
+			}			
+		}catch(Exception ex){}
+	}
+	boolean searchId(String id)
+	{
+		try
+		{
+			FileReader in=new FileReader(clifile);
+			String data="";
+			int i=0;
+			while((i=in.read())!=-1)
+			{
+				data+=String.valueOf((char)i);
+			}
+			in.close();
+			System.out.println(data);
+			String[] datas=data.split("\n");
+			InfomClient[] infom=new InfomClient[datas.length];
+			for(i=0;i<datas.length;i++)
+			{
+				if(infom[i].getId().equals(id))
+				{
+					System.out.println("ID중복 발생");
+					return false;
+				}
+			}
+			//return true;
+		}catch(Exception ex){}
+		System.out.println("ID중복 없음");
+		return true;
+	}
+	void insertCli(String data)
+	{
+		System.out.println("추가");
+		try
+		{
+			System.out.println(data);
+			BufferedWriter writer = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(clifile),"MS949"));
+			writer.write(data);
+			writer.close();
+		}catch(Exception ex){}
+	}
+}
+/*회원관리*/
 
 
 
