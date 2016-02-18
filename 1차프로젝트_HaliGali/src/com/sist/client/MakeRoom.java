@@ -32,13 +32,12 @@ public class MakeRoom extends JFrame implements ActionListener{
       
       la3.setVisible(false);
       pf.setVisible(false);
-      
       ButtonGroup bg = new ButtonGroup();
       bg.add(rb1); bg.add(rb2);
       rb1.setSelected(true);
       
       box = new JComboBox();
-      for(int i=2;i<=6;i++){
+      for(int i=2;i<=4;i++){
          box.addItem(i+"Έν");
       }
       

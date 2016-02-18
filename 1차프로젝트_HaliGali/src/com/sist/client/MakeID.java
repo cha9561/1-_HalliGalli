@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.image.ImageObserver;
 
-public class MakeID extends  JFrame /*implements ActionListener*/{	//JDialog,등등 다 가능
+public class MakeID extends  JFrame /*implements ActionListener*/{
 	JLabel la1,la2,la3,la4,la5;
 	JLabel rl1,rl2,rl3,rl4;		//캐릭터
 	JTextField tf1,tf2;

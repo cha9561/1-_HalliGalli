@@ -20,6 +20,8 @@ public class Function {
 	/*대기실*/
 	//방관련
 	//방만들기
+	public static final int MAKEROOM=400;		//방만들기 확인버튼
+	
 	
 	//채팅관련
 	public static final int WAITCHAT1=500;

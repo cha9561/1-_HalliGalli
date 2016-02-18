@@ -1,10 +1,16 @@
 package com.sist.client;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.OutputStream;
+import java.net.Socket;
+
 import javax.swing.*;
 import javax.swing.table.*;
 
 
-public class GameWindow extends JPanel{
+public class GameWindow extends JPanel implements ActionListener,Runnable{
 	Image back;	
 	JTextArea ta;
 	JTextField tf;
@@ -65,6 +71,18 @@ public class GameWindow extends JPanel{
 	
 	protected void paintComponent(Graphics g) {			
 		g.drawImage(back, 0, 0, getWidth(), getHeight(), this);	//this->JPanel에 배경이미지 뿌림
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
