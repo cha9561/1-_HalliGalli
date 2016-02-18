@@ -1,9 +1,7 @@
 package com.sist.client;
 import java.awt.*; 		//Layout들어있음
 import javax.swing.*;	//window관련 버튼등등이 들어있음
-
 import com.sist.common.Function;
-
 import java.awt.event.*;
 
 //네트워크 관련
@@ -113,8 +111,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			}
 			else if(e.getSource()==wr.b3) 						//5.방만들기창 
 
-			{		
-				
+			{				
 				mr.setBounds(500, 300, 260,290);
 		        mr.setVisible(true);
 			}
@@ -145,10 +142,11 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 
 		        mr.dispose();
 		        
+		        
 		        try{
 					String roomName=mr.tf.getText();				//방이름
-					String num=mr.box.getSelectedItem().toString();	//선택된 인원수
-					out.write((Function.MAKEROOM+"|"+roomName+"|"+num+"\n").getBytes());		
+					String num=mr.box.getSelectedItem().toString();	//인원수
+					out.write((Function.MAKEROOM+"|"+roomName+"|"+num+"\n").getBytes()); //방이름,인원수
 				}catch(Exception ex){}
 
 			}
@@ -339,6 +337,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  String id=st.nextToken();
 						  setTitle(id);
 						  card.show(getContentPane(), "WR");	//waitingroom으로 창 전환
+						  
 					  }
 					  break;
 					  
@@ -384,15 +383,27 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  break;
 					  
 					  case Function.MAKEROOM:			//5.client가 방만들기 확인 버튼을 눌렀을 때
-					  {
+					  {	
 						  String roomId=st.nextToken();
 						  String roomName=st.nextToken();
 						  String num=st.nextToken();
-						  setTitle(roomId+"님이 만드신 "+roomName);			  
-						  String[] data={roomName, num, "대기중"};
+						  String pos=st.nextToken();
+						  setTitle(roomId+"님이 만드신 "+roomName);			//id,방이름,인원,상태  
+						  String[] data={roomName, num, "게임대기중"};
 						  
-						  card.show(getContentPane(), "GW");
-						  //wr.model1.addRow(data);
+						  card.show(getContentPane(), "GW"); 
+					  }
+					  break;
+					  
+					  case Function.MAKEROOM2:			//5.client가 방만들기 확인 버튼을 눌렀을 때
+					  {	
+						  String roomName=st.nextToken();
+						  String num=st.nextToken();
+						  String pos=st.nextToken();
+						  String[] data={roomName, num, pos};
+
+						  wr.model1.addRow(data);
+						  wr.repaint();
 					  }
 					  break;
 					}

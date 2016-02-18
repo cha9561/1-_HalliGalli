@@ -49,6 +49,8 @@ public class Server implements Runnable{
 		BufferedReader in;	// client요청값을 읽어온다
 		OutputStream out;	//client로 결과값을 응답할때 
 		
+		
+		
 		public ClientThread(Socket s)
 		{
 			try{
@@ -102,6 +104,7 @@ public class Server implements Runnable{
 						{
 							messageTo(Function.LOGIN+"|"+client.id+"|"+client.pos);
 						}
+						//messageTo(Function.MAKEROOM2+"|"+roomName+"|"+num+"|"+"게임대기중");
 						// 방정보 전송 
 					}
 					break;
@@ -137,7 +140,20 @@ public class Server implements Runnable{
 						String id=st.nextToken();
 						String pass=st.nextToken();
 					}
+					break;
 					/*회원관리*/
+					
+					case Function.MAKEROOM:					//방만들기 확인버튼 눌렀을 때
+					{
+						String roomName=st.nextToken();
+						String num=st.nextToken();
+						String pos="게임룸";
+						messageTo(Function.MAKEROOM+"|"+id+"|"+roomName+"|"+num+"|"+pos);	//id,방이름,인원,상태 //prompt창에 출력				
+						messageAll(Function.MAKEROOM2+"|"+roomName+"|"+num+"|"+"게임대기중");
+					}
+					break;
+					
+					
 					}
 				}catch(Exception ex)
 				{
@@ -168,20 +184,14 @@ public class Server implements Runnable{
 			try
 			{
 				out.write((msg+"\n").getBytes());
-			}catch(Exception ex)
-			{
-			}
+			}catch(Exception ex){	}
 		}
 		
 		public synchronized void messageAll(String msg)		// 전체적으로 client에게 메세지 보냄
 		{
-			int i=0;
-			System.out.println("messageAll");
 			for(ClientThread client:waitVc)
 			{
-				System.out.println("messageAll"+i);
-				client.messageTo(msg, i);
-				i++;
+				client.messageTo(msg);
 			}
 		}
 	}

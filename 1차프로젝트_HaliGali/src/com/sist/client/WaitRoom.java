@@ -31,7 +31,7 @@ public class WaitRoom extends JPanel{ //
 		friends=new ImageIcon("img/Friends.png");
 		
 		String[] col1={"방이름","인원","게임상태"};	//방테이블
-		String[][] row1=new String[5][3];	//col1열의 수에 맞게 5줄로 생성
+		String[][] row1=new String[0][3];	//col1열의 수에 맞게 5줄로 생성
 		model1=new DefaultTableModel(row1, col1);
 		table1=new JTable(model1);
 		JScrollPane js1=new JScrollPane(table1);
