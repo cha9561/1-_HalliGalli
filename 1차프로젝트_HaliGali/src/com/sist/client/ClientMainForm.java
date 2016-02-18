@@ -20,6 +20,7 @@ ActionListener, Runnable{
 		GameWindow gw=new GameWindow();				//게임WINDOW창
 		MakeID mID=new MakeID();					//회원가입창
 		MakeRoom mr=new MakeRoom();					//방만들기창
+		Help help=new Help();
 		
 		// id|대화명|성별
 	    Socket s;
@@ -40,8 +41,10 @@ ActionListener, Runnable{
 			login.bt1.addActionListener(this);	//회원가입 버튼 누르면
 			login.bt2.addActionListener(this);	//로그인 버튼 누르면
 			wr.b1.addActionListener(this);		//로그인 버튼 누르면
-			wr.b2.addActionListener(this);		//도움말 버튼 누르면
-			wr.b3.addActionListener(this);      //방만들기 버튼 누르면
+			wr.b2.addActionListener(this);		//방만들기 버튼 누르면
+			wr.b3.addActionListener(this);      //방들어가기 버튼 누르면
+			wr.b8.addActionListener(this);		//도움말 버튼 누르면
+			wr.b9.addActionListener(this);      //게임종료 버튼 누르면
 			mr.b1.addActionListener(this);      //방만들기창에서 확인버튼 누르면
 			wr.tf.addActionListener(this);		//사용자 입력값 받으면 
 			wr.b3.addActionListener(this); 		//방만들기버튼 누르면
@@ -52,6 +55,8 @@ ActionListener, Runnable{
 			mID.b1.addActionListener(this);
 			mID.b2.addActionListener(this);
 			mID.b3.addActionListener(this);
+			
+			
 		}
 		
 		@Override
@@ -109,10 +114,14 @@ ActionListener, Runnable{
 				}catch(Exception ex){}
 				gw.tf.setText("");
 			}
-			else if(e.getSource()==wr.b3) //방만들기버튼->GAME Window창
+			else if(e.getSource()==wr.b2) //방만들기버튼->GAME Window창
 			{		
 				mr.setBounds(500, 300, 260,290);
 		        mr.setVisible(true);
+			}
+			else if(e.getSource()==wr.b3) //방들어가기 버튼처리
+			{
+				
 			}
 			else if(e.getSource()==mr.b1)  //방만들기창에서 확인 눌렀을때 처리
 			{
@@ -136,8 +145,13 @@ ActionListener, Runnable{
 		        mr.dispose();
 		        card.show(getContentPane(), "GW");
 			}
-			else if(e.getSource()==wr.b2){		//도움말 버튼처리
-													
+			else if(e.getSource()==wr.b8) //도움말 버튼처리
+			{		
+				help.setVisible(true);	
+				repaint();
+			}else if(e.getSource()==wr.b9) //게임종료 버튼처리
+			{
+				
 			}
 			else if(e.getSource()==mID.b1)					//가입완료버튼
 			{
@@ -230,9 +244,8 @@ ActionListener, Runnable{
 					System.out.println(id);
 					out.write((Function.IDCHECK+"|"+id+"\n").getBytes());		//ID중복체크를 server에게 요청
 				}catch(Exception ex){}
-				
-				
 			}
+			
 		}
 		 // 서버와 연결
 /*	    public void connection(String id,String pass)
