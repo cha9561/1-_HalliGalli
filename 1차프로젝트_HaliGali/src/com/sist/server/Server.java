@@ -9,7 +9,9 @@ public class Server implements Runnable{
 	Vector<ClientThread> waitVc=
 			new Vector<ClientThread>();
 	ServerSocket ss=null;// 서버에서 접속시 처리 (교환 소켓)
-
+	
+	static int delIndex;
+	
 	public Server()
 	{
 		try
@@ -52,6 +54,7 @@ public class Server implements Runnable{
 		Socket s;
 		BufferedReader in;	// client요청값을 읽어온다
 		OutputStream out;	//client로 결과값을 응답할때 
+		
 		public ClientThread(Socket s)
 		{
 			try
@@ -77,11 +80,15 @@ public class Server implements Runnable{
 					{
 					case Function.CLIENTEXIT:
 					{
-						System.out.println("test1");
-						id=st.nextToken();
+						System.out.println("종료 메시지 받음");
 						String exitMsg="님이 나갔습니다.";
+						s.close();
 						messageAll(Function.CLIENTEXIT+"|"+id+exitMsg);
 						System.out.println("test4");
+						messageAll(Function.DELROW+"|"+delIndex);
+						System.out.println("delIndex->"+delIndex);
+						waitVc.remove(delIndex);
+						
 						interrupt();
 						System.out.println("test2");
 					}
@@ -140,21 +147,24 @@ public class Server implements Runnable{
 				}catch(Exception ex)
 				{
 					/*접속되어있던 Client 접속 종료시*/
-					System.out.println("test");
+					//System.out.println("test");
 					interrupt();
-					System.out.println("test9");
+					//System.out.println("test9");
 				}
 			}
 		}
 		// 개인적으로 client에게 메세지 보냄
 		public synchronized void messageTo(String msg, int num)
 		{
+			System.out.println("messageTo-"+num);
 			try
 			{
 				out.write((msg+"\n").getBytes());
 			}catch(Exception ex)
 			{
-				waitVc.remove(num);
+				System.out.println(num +"삭제1");
+				delIndex=num;
+				System.out.println(num +"삭제2");
 			}
 		}
 		public synchronized void messageTo(String msg)
@@ -170,8 +180,10 @@ public class Server implements Runnable{
 		public synchronized void messageAll(String msg)
 		{
 			int i=0;
+			System.out.println("messageAll");
 			for(ClientThread client:waitVc)
 			{
+				System.out.println("messageAll"+i);
 				client.messageTo(msg, i);
 				i++;
 			}

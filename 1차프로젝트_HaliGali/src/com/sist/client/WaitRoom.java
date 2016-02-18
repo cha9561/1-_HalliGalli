@@ -16,7 +16,7 @@ public class WaitRoom extends JPanel{ //
 	JTextArea ta;		//채팅 창
 	JTextField tf;		//채팅 입력 창
 	JComboBox box;		//채팅 ENTER창
-	JButton b1,b2,b3;	//버튼
+	JButton b1,b2,b3,b8,b9;	//버튼
 	JButton b4,b5,b6,b7;//타이틀이미지  
 	
 	JTextArea profile;	//사용자정보
@@ -56,8 +56,10 @@ public class WaitRoom extends JPanel{ //
 		tf=new JTextField();					//채팅입력창
 		b1=new JButton("전송");					//채팅전송버튼
 		
-		b2=new JButton("도움말");					//도움말버튼
-		b3=new JButton("방만들기");				//방만들기버튼
+		b2=new JButton("방만들기");					//도움말버튼
+		b3=new JButton("방들어가기");				//방만들기버튼
+		b8=new JButton("도움말");
+		b9=new JButton("게임종료");
 		b4=new JButton(roomlist);
 		b5=new JButton(chattingroom);
 		b6=new JButton(ranking);
@@ -67,8 +69,9 @@ public class WaitRoom extends JPanel{ //
 		
 		
 		JPanel p=new JPanel();					//도움말과 방만들기버튼 p로 묶기
-		p.setLayout(new GridLayout(1, 2, 5, 5));
+		p.setLayout(new GridLayout(2, 2, 5, 5));
 		p.add(b2);  p.add(b3);  
+		p.add(b8);  p.add(b9);
 		p.setOpaque(false); 
 		
 		setLayout(null);					//나머지는 사용자 지정 레이아웃으로!
@@ -92,10 +95,10 @@ public class WaitRoom extends JPanel{ //
 		js3.setBounds(265, 370, 245, 190);	//접속자
 		
 		js4.setBounds(515, 50, 270, 240);	//채팅
-		tf.setBounds(515, 300, 220, 30);	//채팅입력창
-		b1.setBounds(740, 300, 50, 30);		//채팅전송버튼
-		profile.setBounds(515, 340, 270, 180);	//사용자 정보
-		p.setBounds(515, 525, 270, 40);		//버튼묶음
+		tf.setBounds(515, 300, 205, 30);	//채팅입력창
+		b1.setBounds(725, 300, 60, 30);		//채팅전송버튼
+		profile.setBounds(515, 335, 270, 140);	//사용자 정보
+		p.setBounds(515, 480, 270, 75);		//버튼묶음
 		
 		
 		add(js1);add(js2);add(js3);add(js4);

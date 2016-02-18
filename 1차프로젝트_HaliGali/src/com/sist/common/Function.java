@@ -29,4 +29,5 @@ public class Function {
 	
 	// Client Á¾·á ½Ã
 	public static final int CLIENTEXIT=900;
+	public static final int DELROW=901;
 }
