@@ -134,12 +134,15 @@ ActionListener, Runnable{
 		        	return;
 		        }
 		        String pw=new String(mr.pf.getPassword());
-		        if(pw.length()<1)
+		        if(mr.rb2.isSelected())
 		        {
-		        	JOptionPane.showMessageDialog(this,
-							"비밀번호를 입력하세요");
-		        	mr.pf.requestFocus();
-		        	return;
+		        	if(pw.length()<1)
+		   	        {
+		   	        	JOptionPane.showMessageDialog(this,
+		   						"비밀번호를 입력하세요");
+		   	        	mr.pf.requestFocus();
+		   	        	return;
+		   	        }
 		        }
 		        int a=0;
 		        mr.dispose();
