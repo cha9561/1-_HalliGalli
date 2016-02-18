@@ -52,6 +52,8 @@ ActionListener, Runnable{
 			mID.b1.addActionListener(this);
 			mID.b2.addActionListener(this);
 			mID.b3.addActionListener(this);
+			
+			this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		}
 		
 		@Override
@@ -287,6 +289,11 @@ ActionListener, Runnable{
 					int protocol=Integer.parseInt(st.nextToken());
 					switch(protocol)
 					{
+					case Function.CLIENTEXIT:
+					{
+						wr.ta.append(st.nextToken()+"\n");
+						wr.bar.setValue(wr.bar.getMaximum());
+					}
 					  case Function.MYLOG:				//1.window타이틀에 사용자이름 업데이트
 					  {
 						  String id=st.nextToken();

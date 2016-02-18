@@ -69,79 +69,111 @@ public class Server implements Runnable{
 				try
 				{
 					String msg=in.readLine();
+					
 					System.out.println("Client=>"+msg);
 					StringTokenizer st=new StringTokenizer(msg, "|");
 					int protocol=Integer.parseInt(st.nextToken());
 					switch(protocol)
 					{
-					  case Function.LOGIN:				//client가 로그인 버튼을 요청했을 때
-					  {
-						 id=st.nextToken();
-						 //name=st.nextToken();
-						 //sex=st.nextToken();
-						 pos="대기실";
-						// messageAll(Function.LOGIN+"|"+id+"|"+name+"|"+sex+"|"+pos);
-						 messageAll(Function.LOGIN+"|"+id+"|"+pos);
-						 waitVc.addElement(this);
-						 messageTo(Function.MYLOG+"|"+id+"|"+pos);
-						 for(ClientThread client:waitVc)
-						 {
-							 messageTo(Function.LOGIN+"|"+client.id+"|"+client.pos);
-						 }
-						 // 방정보 전송 
-					  }
-					  break;
-					  
-					  case Function.WAITCHAT1:			//client가 채팅전송을 요청했을 때(waitroom)
-					  {
-						  String data=st.nextToken();
-						  messageAll(Function.WAITCHAT1+"|["+id+"]"+data);
-					  }
-					  break;
-
-					  
-					  case Function.WAITCHAT2:			//client가 채팅전송을 요청했을 때(gamewindow)
-					  {
-						  String data=st.nextToken();
-						  messageAll(Function.WAITCHAT2+"|["+id+"]"+data);
-					  }
-					  break;
-					  
-					  case Function.IDCHECK:			//client가 ID중복체크를 요청했을 때
-
-					  {
-						  System.out.println("ID중복체크");
-						  String id=st.nextToken();
-						  System.out.println(id);
-						  /*ID 중복 체크 구현부*/
-					  }
-					  break;
-					  case Function.SUCCESSJOIN:
-					  {
-						  System.out.println("회원 정보 추가");
-						  String name=st.nextToken();
-						  String id=st.nextToken();
-						  String pass=st.nextToken();
-					  }
-					  /*회원관리*/
+					case Function.CLIENTEXIT:
+					{
+						System.out.println("test1");
+						id=st.nextToken();
+						String exitMsg="님이 나갔습니다.";
+						messageAll(Function.CLIENTEXIT+"|"+id+exitMsg);
+						System.out.println("test4");
+						interrupt();
+						System.out.println("test2");
 					}
-				}catch(Exception ex){}
+					break;
+					case Function.LOGIN:				//client가 로그인 버튼을 요청했을 때
+					{
+						id=st.nextToken();
+						//name=st.nextToken();
+						//sex=st.nextToken();
+						pos="대기실";
+						// messageAll(Function.LOGIN+"|"+id+"|"+name+"|"+sex+"|"+pos);
+						messageAll(Function.LOGIN+"|"+id+"|"+pos);
+						waitVc.addElement(this);
+						messageTo(Function.MYLOG+"|"+id+"|"+pos);
+						for(ClientThread client:waitVc)
+						{
+							messageTo(Function.LOGIN+"|"+client.id+"|"+client.pos);
+						}
+						// 방정보 전송 
+					}
+					break;
+
+					case Function.WAITCHAT1:			//client가 채팅전송을 요청했을 때(waitroom)
+					{
+						String data=st.nextToken();
+						messageAll(Function.WAITCHAT1+"|["+id+"]"+data);
+					}
+					break;
+
+
+					case Function.WAITCHAT2:			//client가 채팅전송을 요청했을 때(gamewindow)
+					{
+						String data=st.nextToken();
+						messageAll(Function.WAITCHAT2+"|["+id+"]"+data);
+					}
+					break;
+
+					case Function.IDCHECK:			//client가 ID중복체크를 요청했을 때
+
+					{
+						System.out.println("ID중복체크");
+						String id=st.nextToken();
+						System.out.println(id);
+						/*ID 중복 체크 구현부*/
+					}
+					break;
+					case Function.SUCCESSJOIN:
+					{
+						System.out.println("회원 정보 추가");
+						String name=st.nextToken();
+						String id=st.nextToken();
+						String pass=st.nextToken();
+					}
+					/*회원관리*/
+					}
+				}catch(Exception ex)
+				{
+					/*접속되어있던 Client 접속 종료시*/
+					System.out.println("test");
+					interrupt();
+					System.out.println("test9");
+				}
 			}
 		}
 		// 개인적으로 client에게 메세지 보냄
+		public synchronized void messageTo(String msg, int num)
+		{
+			try
+			{
+				out.write((msg+"\n").getBytes());
+			}catch(Exception ex)
+			{
+				waitVc.remove(num);
+			}
+		}
 		public synchronized void messageTo(String msg)
 		{
 			try
 			{
 				out.write((msg+"\n").getBytes());
-			}catch(Exception ex){}
+			}catch(Exception ex)
+			{
+			}
 		}
 		// 전체적으로 client에게 메세지 보냄
 		public synchronized void messageAll(String msg)
 		{
+			int i=0;
 			for(ClientThread client:waitVc)
 			{
-				client.messageTo(msg);
+				client.messageTo(msg, i);
+				i++;
 			}
 		}
 	}

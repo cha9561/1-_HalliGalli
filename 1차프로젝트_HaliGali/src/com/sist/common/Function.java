@@ -26,4 +26,7 @@ public class Function {
 	public static final int WAITCHAT1=500;
 	public static final int WAITCHAT2=501;	
 	/*게임*/
+	
+	// Client 종료 시
+	public static final int CLIENTEXIT=900;
 }
