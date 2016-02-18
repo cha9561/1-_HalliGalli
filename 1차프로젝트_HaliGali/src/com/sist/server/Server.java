@@ -5,9 +5,12 @@ import java.io.*;
 import java.net.*;
 
 public class Server implements Runnable{
-	Vector<ClientThread> waitVc=new Vector<ClientThread>();
+
+	Vector<ClientThread> waitVc=
+			new Vector<ClientThread>();
+	ServerSocket ss=null;// 서버에서 접속시 처리 (교환 소켓)
 	
-	ServerSocket ss=null;	// 서버에서 접속시 처리 (교환 소켓)
+	static int delIndex;
 	
 	public Server()
 	{
@@ -51,6 +54,7 @@ public class Server implements Runnable{
 		Socket s;
 		BufferedReader in;	// client요청값을 읽어온다
 		OutputStream out;	//client로 결과값을 응답할때 
+		
 		public ClientThread(Socket s)
 		{
 			try
@@ -68,76 +72,127 @@ public class Server implements Runnable{
 				try
 				{
 					String msg=in.readLine();
+					
 					System.out.println("Client=>"+msg);
 					StringTokenizer st=new StringTokenizer(msg, "|");
 					int protocol=Integer.parseInt(st.nextToken());
 					switch(protocol)
 					{
-					  case Function.LOGIN:				//client가 로그인 버튼을 요청했을 때
-					  {
-						 id=st.nextToken();
-						 //name=st.nextToken();
-						 //sex=st.nextToken();
-						 pos="대기실";
-						// messageAll(Function.LOGIN+"|"+id+"|"+name+"|"+sex+"|"+pos);
-						 messageAll(Function.LOGIN+"|"+id+"|"+pos);
-						 waitVc.addElement(this);
-						 messageTo(Function.MYLOG+"|"+id+"|"+pos);
-						 for(ClientThread client:waitVc)
-						 {
-							 messageTo(Function.LOGIN+"|"+client.id+"|"+client.pos);
-						 }
-						 // 방정보 전송 
-					  }
-					  break;
-					  
-					  case Function.WAITCHAT1:			//client가 채팅전송을 요청했을 때(waitroom)
-					  {
-						  String data=st.nextToken();
-						  messageAll(Function.WAITCHAT1+"|["+id+"]"+data);
-					  }
-					  break;
-					  
-					  case Function.WAITCHAT2:			//client가 채팅전송을 요청했을 때(gamewindow)
-					  {
-						  String data=st.nextToken();
-						  messageAll(Function.WAITCHAT2+"|["+id+"]"+data);
-					  }
-					  break;
-					  
-					  case Function.IDCHECK:			//client가 ID중복체크를 요청했을 때
-					  {
-						  System.out.println("ID중복체크");
-						  String id=st.nextToken();
-						  System.out.println(id);
-						  /*ID 중복 체크 구현부*/
-						  messageTo(Function.NOTOVERLAP+"|");
-					  }
-					  break;
+					case Function.CLIENTEXIT:
+					{
+						System.out.println("종료 메시지 받음");
+						String exitMsg="님이 나갔습니다.";
+						s.close();
+						messageAll(Function.CLIENTEXIT+"|"+id+exitMsg);
+						System.out.println("test4");
+						messageAll(Function.DELROW+"|"+delIndex);
+						System.out.println("delIndex->"+delIndex);
+						waitVc.remove(delIndex);
+						
+						interrupt();
+						System.out.println("test2");
 					}
-				}catch(Exception ex){}
+					break;
+					case Function.LOGIN:				//client가 로그인 버튼을 요청했을 때
+					{
+						id=st.nextToken();
+						//name=st.nextToken();
+						//sex=st.nextToken();
+						pos="대기실";
+						// messageAll(Function.LOGIN+"|"+id+"|"+name+"|"+sex+"|"+pos);
+						messageAll(Function.LOGIN+"|"+id+"|"+pos);
+						waitVc.addElement(this);
+						messageTo(Function.MYLOG+"|"+id+"|"+pos);
+						for(ClientThread client:waitVc)
+						{
+							messageTo(Function.LOGIN+"|"+client.id+"|"+client.pos);
+						}
+						// 방정보 전송 
+					}
+					break;
+
+					case Function.WAITCHAT1:			//client가 채팅전송을 요청했을 때(waitroom)
+					{
+						String data=st.nextToken();
+						messageAll(Function.WAITCHAT1+"|["+id+"]"+data);
+					}
+					break;
+
+
+					case Function.WAITCHAT2:			//client가 채팅전송을 요청했을 때(gamewindow)
+					{
+						String data=st.nextToken();
+						messageAll(Function.WAITCHAT2+"|["+id+"]"+data);
+					}
+					break;
+
+					case Function.IDCHECK:			//client가 ID중복체크를 요청했을 때
+
+					{
+						System.out.println("ID중복체크");
+						String id=st.nextToken();
+						System.out.println(id);
+						/*ID 중복 체크 구현부*/
+					}
+					break;
+					case Function.SUCCESSJOIN:
+					{
+						System.out.println("회원 정보 추가");
+						String name=st.nextToken();
+						String id=st.nextToken();
+						String pass=st.nextToken();
+					}
+					/*회원관리*/
+					}
+				}catch(Exception ex)
+				{
+					/*접속되어있던 Client 접속 종료시*/
+					//System.out.println("test");
+					interrupt();
+					//System.out.println("test9");
+				}
 			}
 		}
 		// 개인적으로 client에게 메세지 보냄
+		public synchronized void messageTo(String msg, int num)
+		{
+			System.out.println("messageTo-"+num);
+			try
+			{
+				out.write((msg+"\n").getBytes());
+			}catch(Exception ex)
+			{
+				System.out.println(num +"삭제1");
+				delIndex=num;
+				System.out.println(num +"삭제2");
+			}
+		}
 		public synchronized void messageTo(String msg)
 		{
 			try
 			{
 				out.write((msg+"\n").getBytes());
-			}catch(Exception ex){}
+			}catch(Exception ex)
+			{
+			}
 		}
 		// 전체적으로 client에게 메세지 보냄
 		public synchronized void messageAll(String msg)
 		{
+			int i=0;
+			System.out.println("messageAll");
 			for(ClientThread client:waitVc)
 			{
-				client.messageTo(msg);
+				System.out.println("messageAll"+i);
+				client.messageTo(msg, i);
+				i++;
 			}
 		}
 	}
 
 }
-
+/*회원관리*/
+/*회원관리*/
 
 
 

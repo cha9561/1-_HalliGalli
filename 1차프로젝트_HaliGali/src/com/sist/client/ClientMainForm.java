@@ -56,7 +56,8 @@ ActionListener, Runnable{
 			mID.b2.addActionListener(this);
 			mID.b3.addActionListener(this);
 			
-			
+			this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
 		}
 		
 		@Override
@@ -154,7 +155,24 @@ ActionListener, Runnable{
 				repaint();
 			}else if(e.getSource()==wr.b9) //게임종료 버튼처리
 			{
+				/*서버로 종료 메시지 전송후 프로그램 종료*/
+				try 
+				{
+					out.write((Function.CLIENTEXIT+"|\n").getBytes());
+					System.out.println("종료중 2");
+				} catch (Exception e2) 
+				{
+				}
 				
+				System.out.println("종료중 3");
+				try {
+					s.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				System.exit(0);
+				System.out.println("종료중 4");
 			}
 			else if(e.getSource()==mID.b1)					//가입완료버튼
 			{
@@ -203,6 +221,12 @@ ActionListener, Runnable{
 							"비밀번호가 동일하지 않습니다");
 					mID.pf1.requestFocus();
 					return;
+				}
+				try {
+					out.write((Function.SUCCESSJOIN+"|"+name+"|"+id+"|"+pass1+"\n").getBytes());
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
 				JOptionPane.showMessageDialog(this, "회원가입완료");
 				mID.dispose();
@@ -297,6 +321,17 @@ ActionListener, Runnable{
 					int protocol=Integer.parseInt(st.nextToken());
 					switch(protocol)
 					{
+					case Function.DELROW: //게임종료한 client 정보 접속자 List 에서 삭제
+					{
+						int rowIndex=(Integer.parseInt(st.nextToken()));
+						System.out.println("삭제 줄: "+rowIndex);
+						wr.model3.removeRow(rowIndex);
+					}
+					case Function.CLIENTEXIT:
+					{
+						wr.ta.append(st.nextToken()+"\n");
+						wr.bar.setValue(wr.bar.getMaximum());
+					}
 					  case Function.MYLOG:				//1.window타이틀에 사용자이름 업데이트
 					  {
 						  String id=st.nextToken();
