@@ -145,8 +145,8 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 		        
 		        try{
 					String roomName=mr.tf.getText();				//방이름
-					String num=mr.box.getSelectedItem().toString();	//인원수
-					out.write((Function.MAKEROOM+"|"+roomName+"|"+num+"\n").getBytes()); //방이름,인원수
+					String capaNum=mr.box.getSelectedItem().toString();	//인원수
+					out.write((Function.MAKEROOM+"|"+roomName+"|"+capaNum+"\n").getBytes()); //방이름,인원수
 				}catch(Exception ex){}
 
 			}
@@ -395,7 +395,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  }
 					  break;
 					  
-					  case Function.MAKEROOM2:			//5.client가 방만들기 확인 버튼을 눌렀을 때
+					  case Function.ROOMINFORM:			//5.client가 방만들기 확인 버튼을 눌렀을 때
 					  {	
 						  String roomName=st.nextToken();
 						  String num=st.nextToken();

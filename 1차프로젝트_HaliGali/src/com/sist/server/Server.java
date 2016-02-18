@@ -4,10 +4,19 @@ import com.sist.common.Function;
 import java.io.*;
 import java.net.*;
 
+class GameRoom
+{
+	int roomNum;
+	String capaNum;
+	String name;
+	
+}
 public class Server implements Runnable{
 
 	Vector<ClientThread> waitVc=
 			new Vector<ClientThread>();
+	Vector<GameRoom> gameRoom=new Vector<GameRoom>();
+	
 	ServerSocket ss=null;// 서버에서 접속시 처리 (교환 소켓)
 	
 	static int delIndex;
@@ -104,6 +113,10 @@ public class Server implements Runnable{
 						{
 							messageTo(Function.LOGIN+"|"+client.id+"|"+client.pos);
 						}
+						for(GameRoom room:gameRoom)
+						{
+							messageTo(Function.ROOMINFORM+"|"+room.name+"|"+room.capaNum+"|"+"게임대기중");
+						}
 						//messageTo(Function.MAKEROOM2+"|"+roomName+"|"+num+"|"+"게임대기중");
 						// 방정보 전송 
 					}
@@ -145,11 +158,24 @@ public class Server implements Runnable{
 					
 					case Function.MAKEROOM:					//방만들기 확인버튼 눌렀을 때
 					{
+						
 						String roomName=st.nextToken();
-						String num=st.nextToken();
+						String capaNum=st.nextToken();
 						String pos="게임룸";
-						messageTo(Function.MAKEROOM+"|"+id+"|"+roomName+"|"+num+"|"+pos);	//id,방이름,인원,상태 //prompt창에 출력				
-						messageAll(Function.MAKEROOM2+"|"+roomName+"|"+num+"|"+"게임대기중");
+						int i=0;
+						
+						GameRoom gr=new GameRoom();
+						gr.capaNum=capaNum;
+						gr.name=roomName;
+						for(GameRoom room:gameRoom)
+						{
+							i++;
+						}
+						gr.roomNum=i;
+						gameRoom.addElement(gr);
+						
+						messageTo(Function.MAKEROOM+"|"+id+"|"+roomName+"|"+capaNum+"|"+pos);	//id,방이름,인원,상태 //prompt창에 출력				
+						messageAll(Function.ROOMINFORM+"|"+roomName+"|"+capaNum+"|"+"게임대기중");
 					}
 					break;
 					
