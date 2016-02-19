@@ -2,8 +2,8 @@ package com.sist.common;
 
 public class Function {
 	/**/
-	public static final int LOGIN=100;
-	public static final int MYLOG=110;
+	public static final int LOGIN=100;		//WaitRoom의 접속자 리스트에 업데이트
+	public static final int MYLOG=110;		//로그인 후 WaitRoom으로 창 생성
 	//public static final int
 	
 	//게임관련
@@ -20,11 +20,13 @@ public class Function {
 	
 	/*대기실*/
 	//방관련
+	public static final int ROOMREADY=300;		//방에서 준비버튼 눌렀을 때
+	
 	//방만들기
-	public static final int MAKEROOM=400;		//방만들기 확인버튼
-	public static final int ROOMINFORM=401;
-	public static final int JOINROOM=402;
-	public static final int ROOMCHAT=403;
+	public static final int MAKEROOM=400;		//방만들기 확인버튼 눌렀을 때//400|1|1|2명|게임룸
+	public static final int ROOMINFORM=401;		//WaitRoom방목록에 새로 생성된 방 업데이트//401|1|2명|게임대기중
+	public static final int JOINROOM=402;		//방에 들어 갈 때
+	public static final int ROOMCHAT=403;		//게임룸에서 채팅할 때
 	
 	//채팅관련
 	public static final int WAITCHAT1=500;

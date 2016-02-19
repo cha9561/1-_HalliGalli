@@ -51,25 +51,26 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 
 			mr.b1.addActionListener(this);      //방만들기창에서 확인버튼 누르면
 			gw.b1.addActionListener(this); 		//게임창에서 전송버튼 누르면
-
+			gw.b4.addActionListener(this); 		//게임창에서 준비버튼 누르면
 			gw.tf.addActionListener(this);
 			mID.b1.addActionListener(this);
 			mID.b2.addActionListener(this);
 			mID.b3.addActionListener(this);
-			
-			//wr.table1.addAncestorListener(listener);
-			wr.table1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-				
+
+			wr.table1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {			
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
-					// TODO Auto-generated method stub
-					if(wr.table1.getSelectedRow()>-1)
+					if(wr.table1.getSelectedRow()>-1)				//방번호가 0 이상이면
 					{
 						rowNum=wr.table1.getSelectedRow();
 						System.out.println(rowNum);
 					}
 				}
 			});
+			
+			
+			
+			
 			this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
 		}
@@ -127,26 +128,26 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				}catch(Exception ex){}
 				gw.tf.setText("");
 			}
-			else if(e.getSource()==wr.b2) 	//5.방만들기창 
+			
+			else if(e.getSource()==wr.b2) 						//5.방만들기창 
 			{				
 				mr.setBounds(500, 300, 260,290);
 		        mr.setVisible(true);
 			}
-			else if(e.getSource()==wr.b3) //방들어가기 버튼처리
+			else if(e.getSource()==wr.b3) 						//6.방들어가기 버튼처리
 			{
 				if(rowNum>=0)
 				{
 					try {
 						out.write((Function.JOINROOM+"|"+rowNum+"\n").getBytes());
-					} catch (Exception e2) {
-						// TODO: handle exception
+					} catch (Exception e2) {			
 					}
 				}				
 			}
 
 			else if(e.getSource()==mr.b1)  						//6.방만들기창에서 확인 눌렀을때
 			{
-				String subject=mr.tf.getText().trim();			//방이름입력안했을때
+				String subject=mr.tf.getText().trim();			//방이름 입력 안했을때
 		        if(subject.length()<1)
 		        {
 		        	JOptionPane.showMessageDialog(this,
@@ -169,11 +170,10 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 
 		        mr.dispose();
 		        
-		        
 		        try{
-					String roomName=mr.tf.getText();				//방이름
-					String capaNum=mr.box.getSelectedItem().toString();	//인원수
-					out.write((Function.MAKEROOM+"|"+roomName+"|"+capaNum+"\n").getBytes()); //방이름,인원수
+					String roomName=mr.tf.getText();					//방이름
+					String capaNum=mr.box.getSelectedItem().toString();	//최대인원수(2명)
+					out.write((Function.MAKEROOM+"|"+roomName+"|"+capaNum+"\n").getBytes()); //방이름,최대인원수
 				}catch(Exception ex){}
 
 			}
@@ -290,25 +290,17 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					out.write((Function.IDCHECK+"|"+id+"\n").getBytes());		//ID중복체크를 server에게 요청
 				}catch(Exception ex){}
 			}
+			else if(e.getSource()==gw.b4){								//GameWindow에서 준비버튼 눌렀을 때
+				try {
+					out.write((Function.ROOMREADY+"|"+"\n").getBytes());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
 			
 		}
-		 // 서버와 연결
-/*	    public void connection(String id,String pass)
-	    {
-	    	try
-	    	{
-	    		s=new Socket("localhost", 65535);
-	    		// s=>server
-	    		in=new BufferedReader(
-						new InputStreamReader(s.getInputStream()));
-				out=s.getOutputStream();
-				out.write((Function.LOGIN+"|"+id+"|"
-						+pass+"\n").getBytes());
-	    	}catch(Exception ex){}
-	    	
-	    	// 서버로부터 응답값을 받아서 처리
-	    	new Thread(this).start();// run()
-	    }*/
+
+		//서버와 연결
 		public void connection()
 	    {
 	    	try
@@ -407,9 +399,9 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  
 					  case Function.MAKEROOM:			//5.client가 방만들기 확인 버튼을 눌렀을 때(게임창 전환)
 					  {	
-						  String roomId=st.nextToken();		//게임룸 만든 사람 id
-						  String roomName=st.nextToken();	//새로 만든 게임룸의 이름
-						  String num=st.nextToken();		//새로 만든 게임룸의  제한인원수
+						  String roomId=st.nextToken();		//게임룸 만든 사람 	id
+						  String roomName=st.nextToken();	//새로 만든 게임룸의 	이름
+						  String num=st.nextToken();		//새로 만든 게임룸의  	제한인원수
 						  String pos=st.nextToken();		//사용자 위치
 						  setTitle(roomId+"님이 만드신 "+roomName);	
 						  //String[] data={roomName, num, "게임대기중"};	//?
@@ -419,8 +411,8 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 
 					  case Function.ROOMINFORM:			//5.client가 방만들기 확인 버튼을 눌렀을 때(waitRoom의 리스트에 방 추가)
 					  {	
-						  String roomName=st.nextToken();	//새로 만든 게임룸의 이름
-						  String num=st.nextToken();		//새로 만든 게임룸의  제한인원수
+						  String roomName=st.nextToken();	//새로 만든 게임룸의 	이름
+						  String num=st.nextToken();		//새로 만든 게임룸의  	제한인원수
 						  String pos=st.nextToken();		//사용자 위치(게임대기중)
 						  String[] data={roomName, num, pos};	
 						  wr.model1.addRow(data);			//waitRoom의 리스트에 방 추가
@@ -428,17 +420,24 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  }
 					  break;
 					  
-					  case Function.JOINROOM:
+					  case Function.JOINROOM:			//6.방에 들어가기 했을 때(인원 수에따라 입장 가능 여부)
 					  {
 						  String result=st.nextToken();
 						  if(result.equals("TRUE"))
 						  {
+							  //setTitle(roomId+"님이 만드신 "+roomName);	
 							  card.show(getContentPane(), "GW");
 						  }
 						  else
 						  {
 							  JOptionPane.showMessageDialog(this,"방이 꽉찼습니다.");
 						  }
+					  }
+					  break;
+					  
+					  case Function.ROOMREADY:			//6.방에 들어가기 했을 때(인원 수에따라 입장 가능 여부)
+					  {
+						  System.out.println("최종적으로 준비전달받음");
 					  }
 					  break;
 					}
