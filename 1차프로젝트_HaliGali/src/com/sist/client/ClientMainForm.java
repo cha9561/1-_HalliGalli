@@ -382,7 +382,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  }
 					  break;
 					  
-					  case Function.MAKEROOM:			//5.client가 방만들기 확인 버튼을 눌렀을 때
+					  case Function.MAKEROOM:			//5.client가 방만들기 확인 버튼을 눌렀을 때(게임창 전환)
 					  {	
 						  String roomId=st.nextToken();
 						  String roomName=st.nextToken();
@@ -395,7 +395,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  }
 					  break;
 					  
-					  case Function.MAKEROOM2:			//5.client가 방만들기 확인 버튼을 눌렀을 때
+					  case Function.MAKEROOM2:			//5.client가 방만들기 확인 버튼을 눌렀을 때(게임방 리스트추가)
 					  {	
 						  String roomName=st.nextToken();
 						  String num=st.nextToken();

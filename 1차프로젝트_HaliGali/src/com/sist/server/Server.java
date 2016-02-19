@@ -100,7 +100,7 @@ public class Server implements Runnable{
 						messageAll(Function.LOGIN+"|"+id+"|"+pos);
 						waitVc.addElement(this);
 						messageTo(Function.MYLOG+"|"+id+"|"+pos);
-						for(ClientThread client:waitVc)
+						for(ClientThread client:waitVc)			//다른 사용자들에게 나를 접속자 리스트에 올림
 						{
 							messageTo(Function.LOGIN+"|"+client.id+"|"+client.pos);
 						}
