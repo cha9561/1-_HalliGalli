@@ -127,8 +127,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				}catch(Exception ex){}
 				gw.tf.setText("");
 			}
-			else if(e.getSource()==wr.b2) 						//5.방만들기창 
-
+			else if(e.getSource()==wr.b2) 	//5.방만들기창 
 			{				
 				mr.setBounds(500, 300, 260,290);
 		        mr.setVisible(true);
@@ -154,6 +153,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 		        	mr.tf.requestFocus();
 		        	return;
 		        }
+
 		        if(mr.rb2.isSelected()){						//비공개 버튼 눌렀을 때
 		        	String pw=new String(mr.pf.getPassword());		
 			        if(pw.length()<1)
@@ -163,6 +163,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			        	mr.pf.requestFocus();
 			        	return;
 			        }
+
 		        }
 
 		        mr.dispose();

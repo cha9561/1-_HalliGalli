@@ -19,7 +19,7 @@ public class MakeRoom extends JFrame implements ActionListener{
 		setBackground(new Color(0, 0, 0, 0));
 		panel = new MyPanel("img/CreateRoom.png");
         setContentPane(panel);
-       
+        
       la1 = new JLabel("방이름");
       la2 = new JLabel("상태");
       la3 = new JLabel("비밀번호");
