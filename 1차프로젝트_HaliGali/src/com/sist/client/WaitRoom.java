@@ -33,8 +33,8 @@ public class WaitRoom extends JPanel{ //
 		ranking=new ImageIcon("img/Ranking.png");
 		friends=new ImageIcon("img/Friends.png");
 		
-		String[] col1={"방이름","인원","게임상태"};	//방테이블
-		String[][] row1=new String[0][3];	//col1열의 수에 맞게 5줄로 생성
+		String[] col1={"방정보","방이름","인원","최대인원","게임상태"};	//방테이블
+		String[][] row1=new String[0][5];	//col1열의 수에 맞게 5줄로 생성
 		model1=new DefaultTableModel(row1, col1)
 		{//더블클릭시 편집방지
 			public boolean isCellEditable(int r,int c)
@@ -56,14 +56,27 @@ public class WaitRoom extends JPanel{ //
 			column=table1.getColumnModel().getColumn(i);
 			if(i==0)
 			{
-				rnd.setHorizontalAlignment(JLabel.LEFT);
+				column.setPreferredWidth(50);
+				rnd.setHorizontalAlignment(JLabel.CENTER);
 			}
 			else if(i==1)
 			{
-				rnd.setHorizontalAlignment(JLabel.CENTER);
+				column.setPreferredWidth(250);
+				rnd.setHorizontalAlignment(JLabel.LEFT);
 			}
 			else if(i==2)
 			{
+				column.setPreferredWidth(50);
+				rnd.setHorizontalAlignment(JLabel.CENTER);
+			}
+			else if(i==3)
+			{
+				column.setPreferredWidth(50);
+				rnd.setHorizontalAlignment(JLabel.CENTER);
+			}
+			else if(i==4)
+			{
+				column.setPreferredWidth(100);
 				rnd.setHorizontalAlignment(JLabel.CENTER);
 			}
 			column.setCellRenderer(rnd);

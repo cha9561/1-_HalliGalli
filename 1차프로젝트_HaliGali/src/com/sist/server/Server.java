@@ -9,6 +9,8 @@ import java.net.*;
 class GameRoom		//게임룸 정보 클래스 
 {
 	int roomNum;
+	String Type;
+	String nnum;
 	String sCapaNum;
 	int capaNum;
 	int humanNum;
@@ -119,7 +121,7 @@ public class Server implements Runnable{
 						}
 						for(GameRoom room:gameRoom)
 						{
-							messageTo(Function.ROOMINFORM+"|"+room.name+"|"+room.sCapaNum+"|"+"게임대기중");
+							messageTo(Function.ROOMINFORM+"|"+room.Type+"|"+room.name+"|"+room.nnum+"|"+room.sCapaNum+"|"+"게임대기중");
 						}
 						//messageTo(Function.MAKEROOM2+"|"+roomName+"|"+num+"|"+"게임대기중");
 						// 방정보 전송 
@@ -165,9 +167,13 @@ public class Server implements Runnable{
 					case Function.MAKEROOM:					//방만들기 확인버튼 눌렀을 때
 					{
 						pos="게임방";
+						String roomType=st.nextToken();		//새로 만든 게임룸의 공개정보
 						String roomName=st.nextToken();		//새로 만든 게임룸의 이름
+						String nowNum=st.nextToken();		//새로 만든 게임룸의 현재원수
 						String capaNum=st.nextToken();		//새로 만든 게임룸의  제한인원수
 						GameRoom gr=new GameRoom();   	//게임룸 클래스 생성!(임시로 받기)
+						gr.Type=roomType;				//새로 만든 게임룸의 공개정보 대입
+						gr.nnum=nowNum;					//새로 만든 게임룸의 현재인원 대입
 						gr.sCapaNum=capaNum;			//새로 만든 게임룸의 제한인원수 대입
 						if(capaNum.equals("2명"))
 						{
@@ -193,9 +199,9 @@ public class Server implements Runnable{
 						System.out.println("방 번호는 :"+i);
 						
 						gr.cliT[0]=this;
-
-						messageTo(Function.MAKEROOM+"|"+id+"|"+roomName+"|"+capaNum+"|"+pos);	//방을 만든 사람에게만			
-						messageAll(Function.ROOMINFORM+"|"+roomName+"|"+capaNum+"|"+"게임대기중");	//모두에게
+						System.out.println("capa"+capaNum);
+						messageTo(Function.MAKEROOM+"|"+id+"|"+roomType+"|"+roomName+"|"+nowNum+"|"+capaNum+"|"+pos);	//방을 만든 사람에게만			
+						messageAll(Function.ROOMINFORM+"|"+roomType+"|"+roomName+"|"+nowNum+"|"+capaNum+"|"+"게임대기중");	//모두에게
 					}
 					break;
 					case Function.JOINROOM:
