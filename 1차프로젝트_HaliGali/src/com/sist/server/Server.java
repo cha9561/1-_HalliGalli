@@ -8,6 +8,7 @@ import java.net.*;
 
 class GameRoom		//게임룸 정보 클래스 
 {
+
 	int roomNum;		//방번호
 	String sCapaNum;	//
 	int capaNum;		//들어갈 수 있는 최대인원
@@ -15,8 +16,9 @@ class GameRoom		//게임룸 정보 클래스
 	String name;		//방이름
 	ClientThread cliT[] = new ClientThread[4];	//방에있는 플레이어들
 	int readyNum=0;		//준비 누른 인원
+	String Type;
+	String nnum;
 }
-
 public class Server implements Runnable{
 
 	Vector<ClientThread> waitVc=new Vector<ClientThread>();		//사용자 배열
@@ -63,7 +65,7 @@ public class Server implements Runnable{
 		BufferedReader in;	// client요청값을 읽어온다
 		OutputStream out;	//client로 결과값을 응답할때 
 		int clientroomNumber;		//client가 있는 방 번호
-		
+
 		public ClientThread(Socket s)
 		{
 			try{
@@ -117,7 +119,7 @@ public class Server implements Runnable{
 						}
 						for(GameRoom room:gameRoom)
 						{
-							messageTo(Function.ROOMINFORM+"|"+room.name+"|"+room.sCapaNum+"|"+"게임대기중");
+							messageTo(Function.ROOMINFORM+"|"+room.Type+"|"+room.name+"|"+room.nnum+"|"+room.sCapaNum+"|"+"게임대기중");
 						}
 					}
 					break;
@@ -134,7 +136,8 @@ public class Server implements Runnable{
 					{
 						/*게임 방에 있을때 messageAll 재정의 필요*/
 						String data=st.nextToken();
-						messageAll(Function.ROOMCHAT+"|["+id+"]"+data);
+						messageRoom(Function.ROOMCHAT+"|["+id+"]"+data,clientroomNumber);
+						//messageRoom(Function.ROOMCHAT+"|"+id+"님이 입장하였습니다",roomNumber);
 					}
 					break;
 
@@ -159,12 +162,21 @@ public class Server implements Runnable{
 					
 					case Function.MAKEROOM:					//방만들기 확인버튼 눌렀을 때
 					{
+						pos="게임방";
+						String roomType=st.nextToken();		//새로 만든 게임룸의 공개정보
 						String roomName=st.nextToken();		//새로 만든 게임룸의 이름
+						String nowNum=st.nextToken();		//새로 만든 게임룸의 현재원수
 						String capaNumImsi=st.nextToken();	//새로 만든 게임룸의  제한인원수(2명일때->2)
 						
+
 						GameRoom gr=new GameRoom();   	//게임룸 클래스 생성!(임시로 받기)
+
 						//gr.sCapaNum=capaNum;			//새로 만든 게임룸의 제한인원수 대입(String으로)
-						
+	
+						gr.Type=roomType;				//새로 만든 게임룸의 공개정보 대입
+						gr.nnum=nowNum;					//새로 만든 게임룸의 현재인원 대입
+						gr.sCapaNum=capaNumImsi;			//새로 만든 게임룸의 제한인원수 대입
+						System.out.println("-->"+capaNumImsi);
 						if(capaNumImsi.equals("2명"))	//2.방만들자마자 최대인원수 대입
 						{
 							gr.capaNum=2;
@@ -184,11 +196,16 @@ public class Server implements Runnable{
 						{
 							i++;
 						}
+
 						
 						gr.roomNum=i;					//새로 만든 게임룸의 방번호 대입(1개만들었으니까 1개????)
 						clientroomNumber=i;				//client가 있는 방 번호 대입(1번????)
 						gameRoom.addElement(gr);		//게임룸 리스트에 새로 만든 게임룸 추가
 						
+						System.out.println("방 번호는 :"+i);
+
+						
+
 						//
 						gr.humanNum++;			//현재인원수 +1(2명방을 만들었을 때 현재인원수=1)
 						System.out.println("방 번호는 :"+i);		//0개??????????	
@@ -196,25 +213,30 @@ public class Server implements Runnable{
 						System.out.println("만든사람 id출력"+gr.cliT[0].id+",최대인원수:"+gr.capaNum+"현재인원수:"+gr.humanNum);//만든사람id출력
 						//
 						
-						messageTo(Function.MAKEROOM+"|"+id+"|"+roomName+"|"+gr.capaNum+"|"+pos);	//방을 만든 사람에게만			
-						messageAll(Function.ROOMINFORM+"|"+roomName+"|"+gr.capaNum+"|"+"게임대기중");	//모두에게
+						gr.cliT[0]=this;
+						System.out.println("capa"+gr.capaNum);
+						messageTo(Function.MAKEROOM+"|"+id+"|"+roomType+"|"+roomName+"|"+nowNum+"|"+gr.capaNum+"|"+pos);	//방을 만든 사람에게만			
+						messageAll(Function.ROOMINFORM+"|"+roomType+"|"+roomName+"|"+nowNum+"|"+gr.capaNum+"|"+"게임대기중");	//모두에게
+
 					}
 					break;
 					
 					case Function.JOINROOM:								//게임룸에 들어가기
 					{
+
 						String roomNum=st.nextToken();					//게임룸번호(0부터 시작)
 						clientroomNumber=Integer.parseInt(roomNum);		//client가 있는 게임룸번호 부여
-
 						int roomCapa=gameRoom.get(clientroomNumber).capaNum;		//게임룸의 최대인원(2명이 정원일 때  2)
 						int humNum=gameRoom.get(clientroomNumber).humanNum;			//게임룸의 현재인원(2명이 정원일 때 방생성하자마자 현재인원은 1이됨)
-						
+
 						String decision="FALSE";
 						if(humNum<roomCapa)										//방이 꽉 차지 않았을 경우(1<2)
 						{
+
 							gameRoom.get(clientroomNumber).humanNum++;			//해당 방 번호에 현재인원+1(2명일때 2가 됨!!)
 							humNum=gameRoom.get(clientroomNumber).humanNum;		//해당방에 증가된 현재인원 업데이트
-							
+							pos="게임방";
+
 							gameRoom.get(clientroomNumber).cliT[humNum-1]=this;			//(2번째사람-> 1이 됨)
 							decision="TRUE";
 							
@@ -229,6 +251,7 @@ public class Server implements Runnable{
 						}
 						else 				//방 꽉찼을 경우
 						{
+
 							messageTo(Function.JOINROOM+"|"+decision);		//들어가려는 사람에게 false넘겨줌
 							clientroomNumber=-1;
 						}
