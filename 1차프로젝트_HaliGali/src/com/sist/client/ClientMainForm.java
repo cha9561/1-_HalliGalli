@@ -135,10 +135,8 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			}
 			else if(e.getSource()==wr.b3) //방들어가기 버튼처리
 			{
-				System.out.println("SEND LOIN MSG1");
 				if(rowNum>=0)
 				{
-					System.out.println("SEND LOIN MSG");
 					try {
 						out.write((Function.JOINROOM+"|"+rowNum+"\n").getBytes());
 					} catch (Exception e2) {
@@ -187,12 +185,11 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				try 
 				{
 					out.write((Function.CLIENTEXIT+"|\n").getBytes());
-					System.out.println("종료중 2");
+					
 				} catch (Exception e2) 
 				{
 				}
 				
-				System.out.println("종료중 3");
 				try {
 					s.close();
 				} catch (IOException e1) {
@@ -200,7 +197,6 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					e1.printStackTrace();
 				}
 				System.exit(0);
-				System.out.println("종료중 4");
 			}
 			else if(e.getSource()==mID.b1)					//가입완료버튼
 			{
@@ -266,7 +262,6 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				mID.pf1.setText("");
 				mID.pf2.setText("");
 				mID.dispose();
-				System.out.println("취소");
 			}
 			else if(e.getSource()==mID.b3)				//ID중복체크
 			{
@@ -278,7 +273,6 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					mID.tf2.requestFocus();
 					return;
 				}
-				System.out.println(mID.num);
 				
 				if(mID.num==0)						//한번도 소켓을 연결하지 않았다면
 				{
@@ -385,7 +379,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  }
 					  break;
 					  
-					  case Function.WAITCHAT2:			//3.채팅할 때(gameWindow)
+					  case Function.ROOMCHAT:			//3.채팅할 때(gameWindow)
 					  {
 						  gw.ta.append(st.nextToken()+"\n");
 						  gw.bar.setValue(gw.bar.getMaximum());
