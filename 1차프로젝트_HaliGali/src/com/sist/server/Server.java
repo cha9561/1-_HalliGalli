@@ -1,15 +1,20 @@
 package com.sist.server;
 import java.util.*;
 import com.sist.common.Function;
+import com.sist.server.Server.ClientThread;
+
 import java.io.*;
 import java.net.*;
 
 class GameRoom		//게임룸 정보 클래스 
 {
-	int roomNum;	//방번호
-	String capaNum;	//인원수
-	String name;	//방이름
-	
+	int roomNum;
+	String sCapaNum;
+	int capaNum;
+	int humanNum;
+	String name;
+	ClientThread cliT[] = new ClientThread[3];
+
 }
 public class Server implements Runnable{
 
@@ -88,13 +93,13 @@ public class Server implements Runnable{
 						String exitMsg="님이 나갔습니다.";
 						s.close();
 						messageAll(Function.CLIENTEXIT+"|"+id+exitMsg);
-						System.out.println("test4");
+						
 						messageAll(Function.DELROW+"|"+delIndex);
-						System.out.println("delIndex->"+delIndex);
+						
 						waitVc.remove(delIndex);
 						
 						interrupt();
-						System.out.println("test2");
+						
 
 					}
 					break;
@@ -114,7 +119,7 @@ public class Server implements Runnable{
 						}
 						for(GameRoom room:gameRoom)
 						{
-							messageTo(Function.ROOMINFORM+"|"+room.name+"|"+room.capaNum+"|"+"게임대기중");
+							messageTo(Function.ROOMINFORM+"|"+room.name+"|"+room.sCapaNum+"|"+"게임대기중");
 						}
 						//messageTo(Function.MAKEROOM2+"|"+roomName+"|"+num+"|"+"게임대기중");
 						// 방정보 전송 
@@ -129,10 +134,11 @@ public class Server implements Runnable{
 					break;
 
 
-					case Function.WAITCHAT2:			//client가 채팅전송을 요청했을 때(gamewindow)
+					case Function.ROOMCHAT:			//client가 채팅전송을 요청했을 때(gamewindow)
 					{
+						/*게임 방에 있을때 messageAll 재정의 필요*/
 						String data=st.nextToken();
-						messageAll(Function.WAITCHAT2+"|["+id+"]"+data);
+						messageAll(Function.ROOMCHAT+"|["+id+"]"+data);
 					}
 					break;
 
@@ -159,32 +165,67 @@ public class Server implements Runnable{
 					{
 						String roomName=st.nextToken();		//새로 만든 게임룸의 이름
 						String capaNum=st.nextToken();		//새로 만든 게임룸의  제한인원수
-						String pos="게임룸";					//사용자 위치
-						
+						GameRoom gr=new GameRoom();   	//게임룸 클래스 생성!(임시로 받기)
+						gr.sCapaNum=capaNum;			//새로 만든 게임룸의 제한인원수 대입
+						if(capaNum.equals("2명"))
+						{
+							gr.capaNum=1;
+						}
+						else if(capaNum.equals("3명"))
+						{
+							gr.capaNum=2;
+						}else //4명
+						{
+							gr.capaNum=3;
+						}
+						String pos="게임룸";
 						int i=0;
-						GameRoom gr=new GameRoom();			//게임룸 클래스 생성!(임시로 받기)
-						gr.capaNum=capaNum;					//새로 만든 게임룸의 제한인원수 대입
 						gr.name=roomName;					//새로 만든 게임룸의 방이름 대입
 						for(GameRoom room:gameRoom)			//현재 있는 방갯수 세기 
 						{
 							i++;
 						}
-						gr.roomNum=i;						//새로 만든 게임룸의 방번호 대입
-						gameRoom.addElement(gr);			//게임룸 리스트에 새로 만든 게임룸 추가(정보포함)(영구저장)
 						
+						gr.roomNum=i;					//새로 만든 게임룸의 방번호 대입
+						gameRoom.addElement(gr);		//게임룸 리스트에 새로 만든 게임룸 추가(정보포함)(영구저장)
+						System.out.println("방 번호는 :"+i);
+						
+						gr.cliT[0]=this;
+
 						messageTo(Function.MAKEROOM+"|"+id+"|"+roomName+"|"+capaNum+"|"+pos);	//방을 만든 사람에게만			
 						messageAll(Function.ROOMINFORM+"|"+roomName+"|"+capaNum+"|"+"게임대기중");	//모두에게
 					}
 					break;
-					
-					
+					case Function.JOINROOM:
+					{
+						String roomNum=st.nextToken();
+						int roomNumber=Integer.parseInt(roomNum);
+						/*방 사람 찼는지 판별 필요*/
+						int roomCapa=gameRoom.get(roomNumber).capaNum;
+						int humNum=gameRoom.get(roomNumber).humanNum;
+						String decision="FALSE";
+						if(humNum<roomCapa)
+						{
+							gameRoom.get(roomNumber).humanNum++;
+							humNum=gameRoom.get(roomNumber).humanNum;
+							
+							gameRoom.get(roomNumber).cliT[humNum]=this;
+							decision="TRUE";
+							messageTo(Function.JOINROOM+"|"+decision);
+							messageRoom(Function.ROOMCHAT+"|"+id+"님이 입장하였습니다",roomNumber);
+							
+						}
+						else //방 꽉참.
+						{
+							messageTo(Function.JOINROOM+"|"+decision);
+						}
+					}
+					break;
 					}
 				}catch(Exception ex)
 				{
 					/*접속되어있던 Client 접속 종료시*/
-					//System.out.println("test");
 					interrupt();
-					//System.out.println("test9");
 				}
 			}
 		}
@@ -192,15 +233,12 @@ public class Server implements Runnable{
 		// 개인적으로 client에게 메세지 보냄
 		public synchronized void messageTo(String msg, int num)
 		{
-			System.out.println("messageTo-"+num);
 			try
 			{
 				out.write((msg+"\n").getBytes());
 			}catch(Exception ex)
 			{
-				System.out.println(num +"삭제1");
 				delIndex=num;
-				System.out.println(num +"삭제2");
 			}
 		}
 		public synchronized void messageTo(String msg)
@@ -216,6 +254,14 @@ public class Server implements Runnable{
 			for(ClientThread client:waitVc)
 			{
 				client.messageTo(msg);
+			}
+		}
+		
+		public synchronized void messageRoom(String msg, int roomIndex)		// 전체적으로 client에게 메세지 보냄
+		{
+			for(int i=0; i<=gameRoom.get(roomIndex).humanNum;i++)
+			{
+				gameRoom.get(roomIndex).cliT[i].messageTo(msg);
 			}
 		}
 	}

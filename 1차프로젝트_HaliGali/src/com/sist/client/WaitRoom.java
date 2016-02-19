@@ -10,8 +10,11 @@ import javax.swing.table.*;
 public class WaitRoom extends JPanel{ //
 	Image back;
 	ImageIcon roomlist,chattingroom,friends,ranking;
+
 	JTable table1,table2;				//테이블
-	DefaultTableModel model1,model2;		
+	DefaultTableModel model1,model2;			
+	TableColumn column;
+
 	
 	JTextArea ta;		//채팅 창
 	JTextField tf;		//채팅 입력 창
@@ -32,16 +35,75 @@ public class WaitRoom extends JPanel{ //
 		
 		String[] col1={"방이름","인원","게임상태"};	//방테이블
 		String[][] row1=new String[0][3];	//col1열의 수에 맞게 5줄로 생성
-		model1=new DefaultTableModel(row1, col1);
+		model1=new DefaultTableModel(row1, col1)
+		{//더블클릭시 편집방지
+			public boolean isCellEditable(int r,int c)
+			{
+				return false;
+			}
+		};
 		table1=new JTable(model1);
+		table1.setShowVerticalLines(false); //리스트 세로선 삭제
+		table1.getTableHeader().setReorderingAllowed(false);//컬럼위치 고정
+		table1.getTableHeader().setResizingAllowed(false); //컬럼사이즈 고정
 		JScrollPane js1=new JScrollPane(table1);
+		//텍스트 정렬/ 라벨:가운데, 방이름:왼쪽, 인원:가운데, 게임상태:가운데
+		for(int i=0;i<col1.length;i++)
+		{
+			DefaultTableCellRenderer rnd
+			= new DefaultTableCellRenderer();
+			rnd.setHorizontalAlignment(JLabel.CENTER);
+			column=table1.getColumnModel().getColumn(i);
+			if(i==0)
+			{
+				rnd.setHorizontalAlignment(JLabel.LEFT);
+			}
+			else if(i==1)
+			{
+				rnd.setHorizontalAlignment(JLabel.CENTER);
+			}
+			else if(i==2)
+			{
+				rnd.setHorizontalAlignment(JLabel.CENTER);
+			}
+			column.setCellRenderer(rnd);
+		}
 		
 		String[] col2={"ID","상태","승률"};				//접속자테이블
 		String[][] row2=new String[0][3];
-		model2=new DefaultTableModel(row2, col2);
+		model2=new DefaultTableModel(row2, col2)
+		{//더블클릭시 편집방지
+			public boolean isCellEditable(int r,int c)
+			{
+				return false;
+			}
+		};
 		table2=new JTable(model2);
+		table2.setShowVerticalLines(false); //리스트 세로선 삭제
+		table2.getTableHeader().setReorderingAllowed(false);//컬럼위치 고정
+		table2.getTableHeader().setResizingAllowed(false); //컬럼사이즈 고정
 		JScrollPane js2=new JScrollPane(table2);
-		
+		for(int i=0;i<col2.length;i++)
+		{
+			DefaultTableCellRenderer rnd
+			= new DefaultTableCellRenderer();
+			rnd.setHorizontalAlignment(JLabel.CENTER);
+			column=table2.getColumnModel().getColumn(i);
+			if(i==0)
+			{
+				rnd.setHorizontalAlignment(JLabel.LEFT);
+			}
+			else if(i==1)
+			{
+				rnd.setHorizontalAlignment(JLabel.CENTER);
+			}
+			else if(i==2)
+			{
+				rnd.setHorizontalAlignment(JLabel.CENTER);
+			}
+			column.setCellRenderer(rnd);
+		}
+
 		ta=new JTextArea();						//채팅창
 		JScrollPane js3=new JScrollPane(ta);	//textarea근처에 스크롤바
 		bar=js3.getVerticalScrollBar();
