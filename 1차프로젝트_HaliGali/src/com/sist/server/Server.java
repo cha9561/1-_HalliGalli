@@ -221,6 +221,7 @@ public class Server implements Runnable{
 						else //¹æ ²ËÂü.
 						{
 							messageTo(Function.JOINROOM+"|"+decision);
+							roomNumber=-1;
 						}
 					}
 					break;
