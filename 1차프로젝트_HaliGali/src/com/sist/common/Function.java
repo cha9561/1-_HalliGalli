@@ -31,6 +31,7 @@ public class Function {
 	
 	/*[방인원변경] 된것 출력하기 위한 Protocol*/
 	public static final int CHGROOMUSER=404; 	//방에 들어와있는 사람수가 변경됨.
+	public static final int CHGUSERPOS=405; //[유저상태변경] 유저가 방만들거나 입장으로 상태 변경시 접속된 나머지 유저에 메시지 전달
 	
 	//채팅관련
 	public static final int WAITCHAT1=500;

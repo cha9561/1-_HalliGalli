@@ -189,35 +189,39 @@ public class Server implements Runnable{
 							gr.capaNum=4;
 						}
 						
-						String pos="게임룸";
+						String pos="게임방";
 						int i=0;
 						gr.name=roomName;					//1.새로 만든 게임룸의 방이름 대입
 						for(GameRoom room:gameRoom)			//현재 있는 방갯수 세기 (1개만들었으니까 1개????)
 						{
 							i++;
 						}
-
-						
 						gr.roomNum=i;					//새로 만든 게임룸의 방번호 대입(1개만들었으니까 1개????)
 						clientroomNumber=i;				//client가 있는 방 번호 대입(1번????)
 						gameRoom.addElement(gr);		//게임룸 리스트에 새로 만든 게임룸 추가
 						
 						System.out.println("방 번호는 :"+i);
-
-						
-
 						//
 						gr.humanNum++;			//현재인원수 +1(2명방을 만들었을 때 현재인원수=1)
 						System.out.println("방 번호는 :"+i);		//0개??????????	
 						gr.cliT[0]=this;		//게임룸  0번째 클라이언트에 만든이 추가
 						System.out.println("만든사람 id출력"+gr.cliT[0].id+",최대인원수:"+gr.capaNum+"현재인원수:"+gr.humanNum);//만든사람id출력
 						//
-						
 						gr.cliT[0]=this;
 						System.out.println("capa"+gr.capaNum);
 						messageTo(Function.MAKEROOM+"|"+id+"|"+roomType+"|"+roomName+"|"+nowNum+"|"+gr.capaNum+"|"+pos);	//방을 만든 사람에게만			
 						messageAll(Function.ROOMINFORM+"|"+roomType+"|"+roomName+"|"+nowNum+"|"+gr.capaNum+"|"+"게임대기중");	//모두에게
-
+						
+						/*[유저상태변경] ->*/
+						int userRow=0;
+						for(ClientThread client:waitVc)
+						{
+							if((waitVc.get(userRow).id).equals(id))
+								break;
+							userRow++;
+						} //몇번째 유저인지 파악하여 List 의  변경 필요한 Row 값 알아내기 위해
+						messageAll(Function.CHGUSERPOS+"|"+userRow+"|"+pos);
+						/*<- [유저상태변경]*/
 					}
 					break;
 					
@@ -251,6 +255,16 @@ public class Server implements Runnable{
 							/*[방인원변경 -추가시] ->*/
 							messageAll(Function.CHGROOMUSER+"|"+roomNum+"|"+humNum); //방인원이 변경된 방ID(table의 Row)+변경된 User수를 Client로 보냄
 							/*<- [방인원변경 -추가시]*/
+							/*[유저상태변경] ->*/
+							int userRow=0;
+							for(ClientThread client:waitVc)
+							{
+								if((waitVc.get(userRow).id).equals(id))
+									break;
+								userRow++;
+							} //몇번째 유저인지 파악하여 List 의  변경 필요한 Row 값 알아내기 위해
+							messageAll(Function.CHGUSERPOS+"|"+userRow+"|"+pos);
+							/*<- [유저상태변경]*/
 						}
 						else 				//방 꽉찼을 경우
 						{

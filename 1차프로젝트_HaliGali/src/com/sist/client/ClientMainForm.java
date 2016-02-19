@@ -464,6 +464,17 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  }
 					  break;
 					  /*<- [방인원변경]*/
+					  /*[유저상태변경] ->*/
+					  case Function.CHGUSERPOS:
+					  {
+						  int row=Integer.parseInt(st.nextToken());
+						  System.out.println("\\\\\\--->"+row);
+						  String pos=st.nextToken();
+						  wr.model2.setValueAt(pos, row, 1);
+					  }
+					  break;
+					  /*<- [유저상태변경]*/
+					  
 					}
 				}catch(Exception ex){}
 			}
