@@ -1,6 +1,9 @@
 package com.sist.client;
 import java.awt.*; 		//Layout들어있음
 import javax.swing.*;	//window관련 버튼등등이 들어있음
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import com.sist.common.Function;
 import java.awt.event.*;
 
@@ -19,12 +22,14 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 		MakeRoom mr=new MakeRoom();					//방만들기창
 		Help help=new Help();
 		
+		int rowNum=-1;
+		
 	    Socket s;
 	    BufferedReader in;// 서버에서 값을 읽는다
 	    OutputStream out; // 서버로 요청값을 보낸다
 		
 		public ClientMainForm(){
-
+			
 			setLayout(card);		//BorderLayout
 			
 			add("LOG",login);		//2.login창
@@ -52,6 +57,19 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			mID.b2.addActionListener(this);
 			mID.b3.addActionListener(this);
 			
+			//wr.table1.addAncestorListener(listener);
+			wr.table1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+				
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+					// TODO Auto-generated method stub
+					if(wr.table1.getSelectedRow()>-1)
+					{
+						rowNum=wr.table1.getSelectedRow();
+						System.out.println(rowNum);
+					}
+				}
+			});
 			this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
 		}
@@ -109,7 +127,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				}catch(Exception ex){}
 				gw.tf.setText("");
 			}
-			else if(e.getSource()==wr.b3) 						//5.방만들기창 
+			else if(e.getSource()==wr.b2) 						//5.방만들기창 
 
 			{				
 				mr.setBounds(500, 300, 260,290);
@@ -117,7 +135,16 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			}
 			else if(e.getSource()==wr.b3) //방들어가기 버튼처리
 			{
-				
+				System.out.println("SEND LOIN MSG1");
+				if(rowNum>=0)
+				{
+					System.out.println("SEND LOIN MSG");
+					try {
+						out.write((Function.JOINROOM+"|"+rowNum+"\n").getBytes());
+					} catch (Exception e2) {
+						// TODO: handle exception
+					}
+				}				
 			}
 			else if(e.getSource()==mr.b1)  						//6.방만들기창에서 확인 눌렀을때
 			{
@@ -404,6 +431,20 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 
 						  wr.model1.addRow(data);
 						  wr.repaint();
+					  }
+					  break;
+					  
+					  case Function.JOINROOM:
+					  {
+						  String result=st.nextToken();
+						  if(result.equals("TRUE"))
+						  {
+							  card.show(getContentPane(), "GW");
+						  }
+						  else
+						  {
+							  JOptionPane.showMessageDialog(this,"방이 꽉찼습니다.");
+						  }
 					  }
 					  break;
 					}

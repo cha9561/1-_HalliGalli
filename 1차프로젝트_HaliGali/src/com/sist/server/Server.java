@@ -1,14 +1,19 @@
 package com.sist.server;
 import java.util.*;
 import com.sist.common.Function;
+import com.sist.server.Server.ClientThread;
+
 import java.io.*;
 import java.net.*;
 
 class GameRoom
 {
 	int roomNum;
-	String capaNum;
+	String sCapaNum;
+	int capaNum;
+	int humanNum;
 	String name;
+	ClientThread cliT[] = new ClientThread[3];
 	
 }
 public class Server implements Runnable{
@@ -115,7 +120,7 @@ public class Server implements Runnable{
 						}
 						for(GameRoom room:gameRoom)
 						{
-							messageTo(Function.ROOMINFORM+"|"+room.name+"|"+room.capaNum+"|"+"게임대기중");
+							messageTo(Function.ROOMINFORM+"|"+room.name+"|"+room.sCapaNum+"|"+"게임대기중");
 						}
 						//messageTo(Function.MAKEROOM2+"|"+roomName+"|"+num+"|"+"게임대기중");
 						// 방정보 전송 
@@ -161,11 +166,22 @@ public class Server implements Runnable{
 						
 						String roomName=st.nextToken();
 						String capaNum=st.nextToken();
+						GameRoom gr=new GameRoom();
+						gr.sCapaNum=capaNum;
+						if(capaNum.equals("2명"))
+						{
+							gr.capaNum=1;
+						}
+						else if(capaNum.equals("3명"))
+						{
+							gr.capaNum=2;
+						}else //4명
+						{
+							gr.capaNum=3;
+						}
 						String pos="게임룸";
 						int i=0;
 						
-						GameRoom gr=new GameRoom();
-						gr.capaNum=capaNum;
 						gr.name=roomName;
 						for(GameRoom room:gameRoom)
 						{
@@ -173,13 +189,32 @@ public class Server implements Runnable{
 						}
 						gr.roomNum=i;
 						gameRoom.addElement(gr);
+						gr.cliT[0]=this;
 						
 						messageTo(Function.MAKEROOM+"|"+id+"|"+roomName+"|"+capaNum+"|"+pos);	//id,방이름,인원,상태 //prompt창에 출력				
 						messageAll(Function.ROOMINFORM+"|"+roomName+"|"+capaNum+"|"+"게임대기중");
 					}
 					break;
-					
-					
+					case Function.JOINROOM:
+					{
+						String roomNum=st.nextToken();
+						
+						/*방 사람 찼는지 판별 필요*/
+						int roomCapa=gameRoom.get(Integer.parseInt(roomNum)).capaNum;
+						int humNum=gameRoom.get(Integer.parseInt(roomNum)).humanNum;
+						String decision="FALSE";
+						if(humNum<roomCapa)
+						{
+							gameRoom.get(Integer.parseInt(roomNum)).humanNum++;
+							decision="TRUE";
+							messageTo(Function.JOINROOM+"|"+decision);
+						}
+						else //방 꽉참.
+						{
+							messageTo(Function.JOINROOM+"|"+decision);
+						}
+					}
+					break;
 					}
 				}catch(Exception ex)
 				{
