@@ -10,14 +10,14 @@ import javax.swing.table.*;
 public class WaitRoom extends JPanel{ //
 	Image back;
 	ImageIcon roomlist,chattingroom,friends,ranking;
-	JTable table1,table2,table3;				//테이블
-	DefaultTableModel model1,model2,model3;		
+	JTable table1,table2;				//테이블
+	DefaultTableModel model1,model2;		
 	
 	JTextArea ta;		//채팅 창
 	JTextField tf;		//채팅 입력 창
 	JComboBox box;		//채팅 ENTER창
 	JButton b1,b2,b3,b8,b9;	//버튼
-	JButton b4,b5,b6,b7;//타이틀이미지  
+	JButton b4,b5,b6;//타이틀이미지  
 	
 	JTextArea profile;	//사용자정보
 	JScrollBar bar;
@@ -36,23 +36,15 @@ public class WaitRoom extends JPanel{ //
 		table1=new JTable(model1);
 		JScrollPane js1=new JScrollPane(table1);
 		
-		String[] col2={"순위","ID","승률"};		//순위표테이블
+		String[] col2={"ID","상태","승률"};				//접속자테이블
 		String[][] row2=new String[0][3];
 		model2=new DefaultTableModel(row2, col2);
 		table2=new JTable(model2);
 		JScrollPane js2=new JScrollPane(table2);
 		
-		String[] col3={"ID","상태","승률"};				//접속자테이블
-		String[][] row3=new String[0][3];
-		model3=new DefaultTableModel(row3, col3);
-		table3=new JTable(model3);
-		
-		JScrollPane js3=new JScrollPane(table3);
-		
-		
 		ta=new JTextArea();						//채팅창
-		JScrollPane js4=new JScrollPane(ta);	//textarea근처에 스크롤바
-		bar=js4.getVerticalScrollBar();
+		JScrollPane js3=new JScrollPane(ta);	//textarea근처에 스크롤바
+		bar=js3.getVerticalScrollBar();
 		tf=new JTextField();					//채팅입력창
 		b1=new JButton("전송");					//채팅전송버튼
 		
@@ -62,8 +54,7 @@ public class WaitRoom extends JPanel{ //
 		b9=new JButton("게임종료");
 		b4=new JButton(roomlist);
 		b5=new JButton(chattingroom);
-		b6=new JButton(ranking);
-		b7=new JButton(friends);
+		b6=new JButton(friends);
 		
 		profile=new JTextArea();				//사용자정보
 		
@@ -82,28 +73,22 @@ public class WaitRoom extends JPanel{ //
 		b5.setContentAreaFilled(false);
 		b6.setBorderPainted(false);
 		b6.setContentAreaFilled(false);
-		b7.setBorderPainted(false);
-		b7.setContentAreaFilled(false);
 		
 		b4.setBounds(10, 15, 500, 30);
-		b5.setBounds(515, 15, 270, 30);
-		b6.setBounds(10, 335, 245, 30);
-		b7.setBounds(265, 335, 245, 30);
+		b5.setBounds(10, 335, 500, 30);		//////채팅타이틀
+		b6.setBounds(515, 15, 270, 30);
 		js1.setBounds(10, 50, 500, 280);	//방목록
-		
-		js2.setBounds(10, 370, 245, 190);	//순위표
-		js3.setBounds(265, 370, 245, 190);	//접속자
-		
-		js4.setBounds(515, 50, 270, 240);	//채팅
-		tf.setBounds(515, 300, 205, 30);	//채팅입력창
-		b1.setBounds(725, 300, 60, 30);		//채팅전송버튼
+		js2.setBounds(515, 50, 270, 240);	//접속자	
+		js3.setBounds(10, 370, 500, 150);	//채팅///////
+		tf.setBounds(10, 525, 450, 30);		//채팅입력창/////
+		b1.setBounds(465, 525, 45, 30);		//채팅전송버튼/////
 		profile.setBounds(515, 335, 270, 140);	//사용자 정보
 		p.setBounds(515, 480, 270, 75);		//버튼묶음
 		
 		
-		add(js1);add(js2);add(js3);add(js4);
+		add(js1);add(js2);add(js3);
 		add(tf);add(b1);add(profile);
-		add(p);add(b4);add(b5);add(b6);add(b7);
+		add(p);add(b4);add(b5);add(b6);;
 
 	}
 	

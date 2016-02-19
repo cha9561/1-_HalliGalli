@@ -4,10 +4,18 @@ import com.sist.common.Function;
 import java.io.*;
 import java.net.*;
 
+class GameRoom		//게임룸 정보 클래스 
+{
+	int roomNum;	//방번호
+	String capaNum;	//인원수
+	String name;	//방이름
+	
+}
 public class Server implements Runnable{
 
-	Vector<ClientThread> waitVc=
-			new Vector<ClientThread>();
+	Vector<ClientThread> waitVc=new Vector<ClientThread>();		//사용자 배열
+	Vector<GameRoom> gameRoom=new Vector<GameRoom>();			//게임룸 배열
+	
 	ServerSocket ss=null;// 서버에서 접속시 처리 (교환 소켓)
 	
 	static int delIndex;
@@ -104,6 +112,10 @@ public class Server implements Runnable{
 						{
 							messageTo(Function.LOGIN+"|"+client.id+"|"+client.pos);
 						}
+						for(GameRoom room:gameRoom)
+						{
+							messageTo(Function.ROOMINFORM+"|"+room.name+"|"+room.capaNum+"|"+"게임대기중");
+						}
 						//messageTo(Function.MAKEROOM2+"|"+roomName+"|"+num+"|"+"게임대기중");
 						// 방정보 전송 
 					}
@@ -145,11 +157,23 @@ public class Server implements Runnable{
 					
 					case Function.MAKEROOM:					//방만들기 확인버튼 눌렀을 때
 					{
-						String roomName=st.nextToken();
-						String num=st.nextToken();
-						String pos="게임룸";
-						messageTo(Function.MAKEROOM+"|"+id+"|"+roomName+"|"+num+"|"+pos);	//id,방이름,인원,상태 //prompt창에 출력				
-						messageAll(Function.MAKEROOM2+"|"+roomName+"|"+num+"|"+"게임대기중");
+						String roomName=st.nextToken();		//새로 만든 게임룸의 이름
+						String capaNum=st.nextToken();		//새로 만든 게임룸의  제한인원수
+						String pos="게임룸";					//사용자 위치
+						
+						int i=0;
+						GameRoom gr=new GameRoom();			//게임룸 클래스 생성!(임시로 받기)
+						gr.capaNum=capaNum;					//새로 만든 게임룸의 제한인원수 대입
+						gr.name=roomName;					//새로 만든 게임룸의 방이름 대입
+						for(GameRoom room:gameRoom)			//현재 있는 방갯수 세기 
+						{
+							i++;
+						}
+						gr.roomNum=i;						//새로 만든 게임룸의 방번호 대입
+						gameRoom.addElement(gr);			//게임룸 리스트에 새로 만든 게임룸 추가(정보포함)(영구저장)
+						
+						messageTo(Function.MAKEROOM+"|"+id+"|"+roomName+"|"+capaNum+"|"+pos);	//방을 만든 사람에게만			
+						messageAll(Function.ROOMINFORM+"|"+roomName+"|"+capaNum+"|"+"게임대기중");	//모두에게
 					}
 					break;
 					
@@ -198,7 +222,3 @@ public class Server implements Runnable{
 
 }
 /*회원관리*/
-/*회원관리*/
-
-
-

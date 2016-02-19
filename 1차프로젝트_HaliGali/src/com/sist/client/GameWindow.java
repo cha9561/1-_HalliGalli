@@ -40,7 +40,7 @@ public class GameWindow extends JPanel implements ActionListener,Runnable{
 		setLayout(null);
 		
 		JPanel p=new JPanel();					//카드게임 실행 판넬
-		p.setBounds(10, 10, 775, 400); 			
+		p.setBounds(10, 10, 775, 395); 			
 		p.setLayout(null);
 		p.setOpaque(true); 
 		profile1.setBounds(0, 0, 120, 80);	
@@ -64,8 +64,8 @@ public class GameWindow extends JPanel implements ActionListener,Runnable{
 		js4.setBounds(0, 0, 350, 125);	//채팅
 		tf.setBounds(0, 125, 300, 30);	//채팅입력창
 		b1.setBounds(300, 125, 50, 30);	//채팅전송버튼
-		p1.add(js4); p1.add(tf); p1.add(b1);
 		p1.setOpaque(false);
+		p1.add(js4); p1.add(tf); p1.add(b1);
 		add(p1);
 	}
 	

@@ -115,10 +115,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				mr.setBounds(500, 300, 260,290);
 		        mr.setVisible(true);
 			}
-			else if(e.getSource()==wr.b3) //방들어가기 버튼처리
-			{
-				
-			}
+			
 			else if(e.getSource()==mr.b1)  						//6.방만들기창에서 확인 눌렀을때
 			{
 				String subject=mr.tf.getText().trim();			//방이름입력안했을때
@@ -145,8 +142,8 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 		        
 		        try{
 					String roomName=mr.tf.getText();				//방이름
-					String num=mr.box.getSelectedItem().toString();	//인원수
-					out.write((Function.MAKEROOM+"|"+roomName+"|"+num+"\n").getBytes()); //방이름,인원수
+					String capaNum=mr.box.getSelectedItem().toString();	//인원수
+					out.write((Function.MAKEROOM+"|"+roomName+"|"+capaNum+"\n").getBytes()); //방이름,인원수
 				}catch(Exception ex){}
 
 			}
@@ -325,7 +322,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					{
 						int rowIndex=(Integer.parseInt(st.nextToken()));
 						System.out.println("삭제 줄: "+rowIndex);
-						wr.model3.removeRow(rowIndex);
+						wr.model2.removeRow(rowIndex);
 					}
 					case Function.CLIENTEXIT:
 					{
@@ -347,7 +344,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 							st.nextToken(),	 
 							st.nextToken()
 						  };
-						  wr.model3.addRow(data);		
+						  wr.model2.addRow(data);		
 					  }
 					  break;
 					  
@@ -384,25 +381,23 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  
 					  case Function.MAKEROOM:			//5.client가 방만들기 확인 버튼을 눌렀을 때(게임창 전환)
 					  {	
-						  String roomId=st.nextToken();
-						  String roomName=st.nextToken();
-						  String num=st.nextToken();
-						  String pos=st.nextToken();
-						  setTitle(roomId+"님이 만드신 "+roomName);			//id,방이름,인원,상태  
-						  String[] data={roomName, num, "게임대기중"};
-						  
-						  card.show(getContentPane(), "GW"); 
+						  String roomId=st.nextToken();		//게임룸 만든 사람 id
+						  String roomName=st.nextToken();	//새로 만든 게임룸의 이름
+						  String num=st.nextToken();		//새로 만든 게임룸의  제한인원수
+						  String pos=st.nextToken();		//사용자 위치
+						  setTitle(roomId+"님이 만드신 "+roomName);	
+						  //String[] data={roomName, num, "게임대기중"};	//?
+						  card.show(getContentPane(), "GW"); 		//게임창으로 전환
 					  }
 					  break;
-					  
-					  case Function.MAKEROOM2:			//5.client가 방만들기 확인 버튼을 눌렀을 때(게임방 리스트추가)
-					  {	
-						  String roomName=st.nextToken();
-						  String num=st.nextToken();
-						  String pos=st.nextToken();
-						  String[] data={roomName, num, pos};
 
-						  wr.model1.addRow(data);
+					  case Function.ROOMINFORM:			//5.client가 방만들기 확인 버튼을 눌렀을 때(waitRoom의 리스트에 방 추가)
+					  {	
+						  String roomName=st.nextToken();	//새로 만든 게임룸의 이름
+						  String num=st.nextToken();		//새로 만든 게임룸의  제한인원수
+						  String pos=st.nextToken();		//사용자 위치(게임대기중)
+						  String[] data={roomName, num, pos};	
+						  wr.model1.addRow(data);			//waitRoom의 리스트에 방 추가
 						  wr.repaint();
 					  }
 					  break;
