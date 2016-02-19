@@ -1,9 +1,7 @@
 package com.sist.client;
 import java.awt.*; 		//Layout들어있음
 import javax.swing.*;	//window관련 버튼등등이 들어있음
-
 import com.sist.common.Function;
-
 import java.awt.event.*;
 
 //네트워크 관련
@@ -11,8 +9,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class ClientMainForm extends JFrame implements 
-ActionListener, Runnable{
+public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 		CardLayout card=new CardLayout();			//창 전환
 		Loading ld=new Loading();					//LOADING창
 		Login login=new Login();					//LOGIN창
@@ -22,7 +19,6 @@ ActionListener, Runnable{
 		MakeRoom mr=new MakeRoom();					//방만들기창
 		Help help=new Help();
 		
-		// id|대화명|성별
 	    Socket s;
 	    BufferedReader in;// 서버에서 값을 읽는다
 	    OutputStream out; // 서버로 요청값을 보낸다
@@ -32,25 +28,25 @@ ActionListener, Runnable{
 			setLayout(card);		//BorderLayout
 			
 			add("LOG",login);		//2.login창
+			add("WR",wr);			//3.WaitRoom창
+			add("GW",gw);			//4.GAME Window창
 			setSize(800,600);		//window창 크기 설정
 			setLocation(270, 170);	//window창 위치 설정
 			setVisible(true);		//보여지게 함
-			setResizable(false);    //window창 고정(늘어나지 않음)
-					
-			add("WR",wr);						//3.WaitRoom창
+			setResizable(false);    //window창 고정(늘어나지 않음)					
+			
 			login.bt1.addActionListener(this);	//회원가입 버튼 누르면
 			login.bt2.addActionListener(this);	//로그인 버튼 누르면
 			wr.b1.addActionListener(this);		//로그인 버튼 누르면
+
 			wr.b2.addActionListener(this);		//방만들기 버튼 누르면
 			wr.b3.addActionListener(this);      //방들어가기 버튼 누르면
 			wr.b8.addActionListener(this);		//도움말 버튼 누르면
 			wr.b9.addActionListener(this);      //게임종료 버튼 누르면
+
 			mr.b1.addActionListener(this);      //방만들기창에서 확인버튼 누르면
-			wr.tf.addActionListener(this);		//사용자 입력값 받으면 
-			wr.b3.addActionListener(this); 		//방만들기버튼 누르면
-			
-			add("GW",gw);						//4.GAME Window창
 			gw.b1.addActionListener(this); 		//게임창에서 전송버튼 누르면
+
 			gw.tf.addActionListener(this);
 			mID.b1.addActionListener(this);
 			mID.b2.addActionListener(this);
@@ -60,17 +56,15 @@ ActionListener, Runnable{
 
 		}
 		
-		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(e.getSource()==login.bt1)
+			if(e.getSource()==login.bt1)			//1.팝업창으로 회원가입창 띄우기
 			{				    
-				//버튼(bt1)에 액션이 가해지면
 				mID.setBounds(470, 310,340,420);
-				mID.setVisible(true);				//팝업창으로 회원가입창 띄우기
+				mID.setVisible(true);				
 			}
-			else if(e.getSource()==login.bt2)
+			else if(e.getSource()==login.bt2)		//2.로그인버튼 누르기
 			{
-				String id=login.tf.getText().trim();
+				String id=login.tf.getText().trim();		//ID입력안했을때
 				if(id.length()<1)
 				{
 					JOptionPane.showMessageDialog(this,
@@ -78,7 +72,7 @@ ActionListener, Runnable{
 					login.tf.requestFocus();
 					return;
 				}
-				String pass=new String(login.pf.getPassword());
+				String pass=new String(login.pf.getPassword());	//PWD입력안했을때
 				if(pass.length()<1)
 				{
 					JOptionPane.showMessageDialog(this,
@@ -87,14 +81,14 @@ ActionListener, Runnable{
 					return;
 				}
 				
-				connection();		//connection()메소드로 이동!!
+				connection();						//모두 정확히 처리했으면, connection()메소드로 이동!!
 				
 				try{
 					out.write((Function.LOGIN+"|"+id+"|"					//로그인버튼 눌러서 server에게 요청
 							+pass+"\n").getBytes());
 				}catch(Exception ex){}
 			}
-			else if(e.getSource()==wr.tf || e.getSource()==wr.b1)			//1.waitroom에서 채팅입력할 때
+			else if(e.getSource()==wr.tf || e.getSource()==wr.b1)			//3.waitroom에서 채팅입력할 때
 			{			
 				String data=wr.tf.getText();								//입력한 값 가져오기
 				if(data.length()<1)
@@ -105,7 +99,7 @@ ActionListener, Runnable{
 				}catch(Exception ex){}
 				wr.tf.setText("");
 			}
-			else if(e.getSource()==gw.tf || e.getSource()==gw.b1)			//2.gameWindow에서 채팅입력할 때
+			else if(e.getSource()==gw.tf || e.getSource()==gw.b1)			//4.gameWindow에서 채팅입력할 때
 			{	
 				String data=gw.tf.getText();								//입력한 값 가져오기
 				if(data.length()<1)
@@ -115,8 +109,9 @@ ActionListener, Runnable{
 				}catch(Exception ex){}
 				gw.tf.setText("");
 			}
-			else if(e.getSource()==wr.b2) //방만들기버튼->GAME Window창
-			{		
+			else if(e.getSource()==wr.b2) 	//5.방만들기창 
+
+			{				
 				mr.setBounds(500, 300, 260,290);
 		        mr.setVisible(true);
 			}
@@ -124,9 +119,9 @@ ActionListener, Runnable{
 			{
 				
 			}
-			else if(e.getSource()==mr.b1)  //방만들기창에서 확인 눌렀을때 처리
+			else if(e.getSource()==mr.b1)  						//6.방만들기창에서 확인 눌렀을때
 			{
-				String subject=mr.tf.getText().trim();
+				String subject=mr.tf.getText().trim();			//방이름입력안했을때
 		        if(subject.length()<1)
 		        {
 		        	JOptionPane.showMessageDialog(this,
@@ -134,20 +129,28 @@ ActionListener, Runnable{
 		        	mr.tf.requestFocus();
 		        	return;
 		        }
-		        String pw=new String(mr.pf.getPassword());
-		        if(mr.rb2.isSelected())
-		        {
-		        	if(pw.length()<1)
-		   	        {
-		   	        	JOptionPane.showMessageDialog(this,
-		   						"비밀번호를 입력하세요");
-		   	        	mr.pf.requestFocus();
-		   	        	return;
-		   	        }
+
+		        if(mr.rb2.isSelected()){						//비공개 버튼 눌렀을 때
+		        	String pw=new String(mr.pf.getPassword());		
+			        if(pw.length()<1)
+			        {
+			        	JOptionPane.showMessageDialog(this,
+								"비밀번호를 입력하세요");
+			        	mr.pf.requestFocus();
+			        	return;
+			        }
+
 		        }
-		        int a=0;
+
 		        mr.dispose();
-		        card.show(getContentPane(), "GW");
+		        
+		        
+		        try{
+					String roomName=mr.tf.getText();				//방이름
+					String capaNum=mr.box.getSelectedItem().toString();	//인원수
+					out.write((Function.MAKEROOM+"|"+roomName+"|"+capaNum+"\n").getBytes()); //방이름,인원수
+				}catch(Exception ex){}
+
 			}
 			else if(e.getSource()==wr.b8) //도움말 버튼처리
 			{		
@@ -289,8 +292,7 @@ ActionListener, Runnable{
 	    {
 	    	try
 	    	{
-	    		s=new Socket("localhost", 65535);
-	    		// s=>server
+	    		s=new Socket("localhost", 65535);		// s=>server
 	    		in=new BufferedReader(new InputStreamReader(s.getInputStream()));		//서버로 값을 읽어들임
 				out=s.getOutputStream();												//서버로 값을 보냄
 				/*out.write((Function.LOGIN+"|"+id+"|"
@@ -337,6 +339,7 @@ ActionListener, Runnable{
 						  String id=st.nextToken();
 						  setTitle(id);
 						  card.show(getContentPane(), "WR");	//waitingroom으로 창 전환
+						  
 					  }
 					  break;
 					  
@@ -378,6 +381,31 @@ ActionListener, Runnable{
 									"ID가 중복됩니다. 다시 입력하세요.");
 						  mID.ck=false;
 						  mID.pf1.requestFocus();
+					  }
+					  break;
+					  
+					  case Function.MAKEROOM:			//5.client가 방만들기 확인 버튼을 눌렀을 때
+					  {	
+						  String roomId=st.nextToken();
+						  String roomName=st.nextToken();
+						  String num=st.nextToken();
+						  String pos=st.nextToken();
+						  setTitle(roomId+"님이 만드신 "+roomName);			//id,방이름,인원,상태  
+						  String[] data={roomName, num, "게임대기중"};
+						  
+						  card.show(getContentPane(), "GW"); 
+					  }
+					  break;
+					  
+					  case Function.ROOMINFORM:			//5.client가 방만들기 확인 버튼을 눌렀을 때
+					  {	
+						  String roomName=st.nextToken();
+						  String num=st.nextToken();
+						  String pos=st.nextToken();
+						  String[] data={roomName, num, pos};
+
+						  wr.model1.addRow(data);
+						  wr.repaint();
 					  }
 					  break;
 					}

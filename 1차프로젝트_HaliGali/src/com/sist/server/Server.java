@@ -4,10 +4,19 @@ import com.sist.common.Function;
 import java.io.*;
 import java.net.*;
 
+class GameRoom
+{
+	int roomNum;
+	String capaNum;
+	String name;
+	
+}
 public class Server implements Runnable{
 
 	Vector<ClientThread> waitVc=
 			new Vector<ClientThread>();
+	Vector<GameRoom> gameRoom=new Vector<GameRoom>();
+	
 	ServerSocket ss=null;// 서버에서 접속시 처리 (교환 소켓)
 	
 	static int delIndex;
@@ -23,26 +32,20 @@ public class Server implements Runnable{
 			System.out.println(ex.getMessage());
 		}
 	}
+	
     public void run()							// 1. 접속을 처리
     {
-    	while(true)
-    	{
-	    	try
-	    	{
-	    		// 클라이언트의 정보 => ip,port(Socket)
-	    		Socket s=ss.accept();
-	    		// s => client
+    	while(true){
+	    	try{
+	    		Socket s=ss.accept();		//s => client    		
 	    		ClientThread ct=new ClientThread(s);
-	    		ct.start();// 통신 시작 
-	    		
+	    		ct.start();					// 통신 시작 	
 	    	}catch(Exception ex){}
-    	}
-    	
+    	}	
     }
     
 	public static void main(String[] args) {
-        // 서버 가동
-		Server server=new Server();
+		Server server=new Server();		        // 서버 가동
 		new Thread(server).start();
 	}
 	
@@ -55,29 +58,31 @@ public class Server implements Runnable{
 		BufferedReader in;	// client요청값을 읽어온다
 		OutputStream out;	//client로 결과값을 응답할때 
 		
+		
+		
 		public ClientThread(Socket s)
 		{
-			try
-			{
-				this.s=s;
+			try{
+				this.s=s;			//각 클라이언트의 소켓 장착
 				in=new BufferedReader(new InputStreamReader(s.getInputStream()));
 				out=s.getOutputStream();
 			}catch(Exception ex){}
 		}
 		
-		public void run()			//2.client와 server간의 통신을 처리 
+		public void run()			//2.client와 server간의 통신을 처리  //Client의 요청을 받음
 		{
-			while(true)
+			while(true)			
 			{
 				try
 				{
 					String msg=in.readLine();
-					
-					System.out.println("Client=>"+msg);
+					System.out.println("Client=>"+msg);		//Client에서 보낸 메시지를 나타내줌
+
 					StringTokenizer st=new StringTokenizer(msg, "|");
 					int protocol=Integer.parseInt(st.nextToken());
 					switch(protocol)
 					{
+
 					case Function.CLIENTEXIT:
 					{
 						System.out.println("종료 메시지 받음");
@@ -91,6 +96,7 @@ public class Server implements Runnable{
 						
 						interrupt();
 						System.out.println("test2");
+
 					}
 					break;
 					case Function.LOGIN:				//client가 로그인 버튼을 요청했을 때
@@ -107,6 +113,11 @@ public class Server implements Runnable{
 						{
 							messageTo(Function.LOGIN+"|"+client.id+"|"+client.pos);
 						}
+						for(GameRoom room:gameRoom)
+						{
+							messageTo(Function.ROOMINFORM+"|"+room.name+"|"+room.capaNum+"|"+"게임대기중");
+						}
+						//messageTo(Function.MAKEROOM2+"|"+roomName+"|"+num+"|"+"게임대기중");
 						// 방정보 전송 
 					}
 					break;
@@ -142,7 +153,33 @@ public class Server implements Runnable{
 						String id=st.nextToken();
 						String pass=st.nextToken();
 					}
+					break;
 					/*회원관리*/
+					
+					case Function.MAKEROOM:					//방만들기 확인버튼 눌렀을 때
+					{
+						
+						String roomName=st.nextToken();
+						String capaNum=st.nextToken();
+						String pos="게임룸";
+						int i=0;
+						
+						GameRoom gr=new GameRoom();
+						gr.capaNum=capaNum;
+						gr.name=roomName;
+						for(GameRoom room:gameRoom)
+						{
+							i++;
+						}
+						gr.roomNum=i;
+						gameRoom.addElement(gr);
+						
+						messageTo(Function.MAKEROOM+"|"+id+"|"+roomName+"|"+capaNum+"|"+pos);	//id,방이름,인원,상태 //prompt창에 출력				
+						messageAll(Function.ROOMINFORM+"|"+roomName+"|"+capaNum+"|"+"게임대기중");
+					}
+					break;
+					
+					
 					}
 				}catch(Exception ex)
 				{
@@ -153,6 +190,7 @@ public class Server implements Runnable{
 				}
 			}
 		}
+
 		// 개인적으로 client에게 메세지 보냄
 		public synchronized void messageTo(String msg, int num)
 		{
@@ -172,20 +210,14 @@ public class Server implements Runnable{
 			try
 			{
 				out.write((msg+"\n").getBytes());
-			}catch(Exception ex)
-			{
-			}
+			}catch(Exception ex){	}
 		}
-		// 전체적으로 client에게 메세지 보냄
-		public synchronized void messageAll(String msg)
+		
+		public synchronized void messageAll(String msg)		// 전체적으로 client에게 메세지 보냄
 		{
-			int i=0;
-			System.out.println("messageAll");
 			for(ClientThread client:waitVc)
 			{
-				System.out.println("messageAll"+i);
-				client.messageTo(msg, i);
-				i++;
+				client.messageTo(msg);
 			}
 		}
 	}
