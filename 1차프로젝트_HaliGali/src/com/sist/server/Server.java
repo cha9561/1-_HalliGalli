@@ -61,7 +61,7 @@ public class Server implements Runnable{
 		Socket s;
 		BufferedReader in;	// client요청값을 읽어온다
 		OutputStream out;	//client로 결과값을 응답할때 
-		
+		int roomNumber;
 		
 		
 		public ClientThread(Socket s)
@@ -138,7 +138,8 @@ public class Server implements Runnable{
 					{
 						/*게임 방에 있을때 messageAll 재정의 필요*/
 						String data=st.nextToken();
-						messageAll(Function.ROOMCHAT+"|["+id+"]"+data);
+						messageRoom(Function.ROOMCHAT+"|["+id+"]"+data,roomNumber);
+						//messageRoom(Function.ROOMCHAT+"|"+id+"님이 입장하였습니다",roomNumber);
 					}
 					break;
 
@@ -163,6 +164,7 @@ public class Server implements Runnable{
 					
 					case Function.MAKEROOM:					//방만들기 확인버튼 눌렀을 때
 					{
+						pos="게임방";
 						String roomName=st.nextToken();		//새로 만든 게임룸의 이름
 						String capaNum=st.nextToken();		//새로 만든 게임룸의  제한인원수
 						GameRoom gr=new GameRoom();   	//게임룸 클래스 생성!(임시로 받기)
@@ -185,7 +187,7 @@ public class Server implements Runnable{
 						{
 							i++;
 						}
-						
+						roomNumber=i;
 						gr.roomNum=i;					//새로 만든 게임룸의 방번호 대입
 						gameRoom.addElement(gr);		//게임룸 리스트에 새로 만든 게임룸 추가(정보포함)(영구저장)
 						System.out.println("방 번호는 :"+i);
@@ -199,13 +201,14 @@ public class Server implements Runnable{
 					case Function.JOINROOM:
 					{
 						String roomNum=st.nextToken();
-						int roomNumber=Integer.parseInt(roomNum);
+						roomNumber=Integer.parseInt(roomNum);
 						/*방 사람 찼는지 판별 필요*/
 						int roomCapa=gameRoom.get(roomNumber).capaNum;
 						int humNum=gameRoom.get(roomNumber).humanNum;
 						String decision="FALSE";
 						if(humNum<roomCapa)
 						{
+							pos="게임방";
 							gameRoom.get(roomNumber).humanNum++;
 							humNum=gameRoom.get(roomNumber).humanNum;
 							

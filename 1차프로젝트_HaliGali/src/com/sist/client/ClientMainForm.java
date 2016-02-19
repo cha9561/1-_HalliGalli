@@ -123,7 +123,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				if(data.length()<1)
 					return;				
 				try{
-					out.write((Function.WAITCHAT2+"|"+data+"\n").getBytes());	//채팅전송을 server에게 
+					out.write((Function.ROOMCHAT+"|"+data+"\n").getBytes());	//채팅전송을 server에게 
 				}catch(Exception ex){}
 				gw.tf.setText("");
 			}
