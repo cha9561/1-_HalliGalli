@@ -137,6 +137,7 @@ public class Server implements Runnable{
 
 					case Function.WAITCHAT2:			//client가 채팅전송을 요청했을 때(gamewindow)
 					{
+						/*게임 방에 있을때 messageAll 재정의 필요*/
 						String data=st.nextToken();
 						messageAll(Function.WAITCHAT2+"|["+id+"]"+data);
 					}
@@ -189,7 +190,8 @@ public class Server implements Runnable{
 						}
 						gr.roomNum=i;
 						gameRoom.addElement(gr);
-						gr.cliT[0]=this;
+						System.out.println("방 번호는 :"+i);
+						gr.cliT[i]=this;
 						
 						messageTo(Function.MAKEROOM+"|"+id+"|"+roomName+"|"+capaNum+"|"+pos);	//id,방이름,인원,상태 //prompt창에 출력				
 						messageAll(Function.ROOMINFORM+"|"+roomName+"|"+capaNum+"|"+"게임대기중");
