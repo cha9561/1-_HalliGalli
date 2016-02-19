@@ -245,9 +245,12 @@ public class Server implements Runnable{
 							System.out.println("2222->"+gameRoom.get(clientroomNumber).cliT[1].id);
 							System.out.println("최대인원수:"+gameRoom.get(clientroomNumber).capaNum+"현재인원수:"+gameRoom.get(clientroomNumber).humanNum);
 							//	
-							
 							messageTo(Function.JOINROOM+"|"+decision);		//증가된 사람에게 true넘겨줌
 							messageRoom(Function.ROOMCHAT+"|"+id+"님이 입장하였습니다",clientroomNumber);	//모두에게 사람 입장 알리기,방번호 
+							
+							/*[방인원변경 -추가시] ->*/
+							messageAll(Function.CHGROOMUSER+"|"+roomNum+"|"+humNum); //방인원이 변경된 방ID(table의 Row)+변경된 User수를 Client로 보냄
+							/*<- [방인원변경 -추가시]*/
 						}
 						else 				//방 꽉찼을 경우
 						{
@@ -312,7 +315,7 @@ public class Server implements Runnable{
 		
 		public synchronized void messageRoom(String msg, int roomIndex)		//해당 방의 사람들에게 메세지 보냄(메세지,방번호)
 		{
-			for(int i=0; i<=gameRoom.get(roomIndex).humanNum;i++)			//해당 방의 사람들에게 메세지 보냄
+			for(int i=0; i<gameRoom.get(roomIndex).humanNum;i++)			//해당 방의 사람들에게 메세지 보냄 /*bugfix '<=gameRoom.get(roomIndex)'면 안됨*/
 			{
 				gameRoom.get(roomIndex).cliT[i].messageTo(msg);
 			}

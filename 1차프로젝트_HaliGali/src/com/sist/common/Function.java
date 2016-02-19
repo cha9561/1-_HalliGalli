@@ -28,7 +28,9 @@ public class Function {
 	public static final int ROOMINFORM=401;		//WaitRoom방목록에 새로 생성된 방 업데이트//401|1|2명|게임대기중
 	public static final int JOINROOM=402;		//방에 들어 갈 때
 	public static final int ROOMCHAT=403;		//게임룸에서 채팅할 때
-
+	
+	/*[방인원변경] 된것 출력하기 위한 Protocol*/
+	public static final int CHGROOMUSER=404; 	//방에 들어와있는 사람수가 변경됨.
 	
 	//채팅관련
 	public static final int WAITCHAT1=500;

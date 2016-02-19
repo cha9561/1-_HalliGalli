@@ -428,6 +428,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  String pos=st.nextToken();		//사용자 위치(게임대기중)
 						  String[] data={roomType, roomName, nnum, num, pos};	
 						  wr.model1.addRow(data);			//waitRoom의 리스트에 방 추가
+						  
 						  wr.repaint();
 					  }
 					  break;
@@ -452,6 +453,17 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  System.out.println("최종적으로 준비전달받음");
 					  }
 					  break;
+					  /*[방인원변경 ] ->*/
+					  case Function.CHGROOMUSER:
+					  {
+						  //대기실 방 List table 의 특정 Row 의 방인원이 변경됨
+						  int row=Integer.parseInt(st.nextToken());
+						  String userNum=st.nextToken();
+						  wr.model1.setValueAt(userNum, row, 2);
+						  wr.repaint();
+					  }
+					  break;
+					  /*<- [방인원변경]*/
 					}
 				}catch(Exception ex){}
 			}
