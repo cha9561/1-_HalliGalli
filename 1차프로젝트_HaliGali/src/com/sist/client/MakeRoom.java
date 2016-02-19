@@ -21,7 +21,7 @@ public class MakeRoom extends JFrame implements ActionListener{
         setContentPane(panel);
         
       la1 = new JLabel("방이름");
-      la2 = new JLabel("상태");
+      la2 = new JLabel("방정보");
       la3 = new JLabel("비밀번호");
       la4 = new JLabel("인원");
       
@@ -54,11 +54,11 @@ public class MakeRoom extends JFrame implements ActionListener{
       rb2.setBounds(160,100,70,30);
       rb1.setOpaque(false);
       rb2.setOpaque(false);
-      la3.setBounds(55,145,60,30);
-      pf.setBounds(120,135, 100, 30);
+      la3.setBounds(40,145,60,30);
+      pf.setBounds(85,135, 150, 30);
       
       la4.setBounds(40,190,40,30);
-      box.setBounds(120,190,100,30);
+      box.setBounds(85,190,100,30);
       
       
       JPanel p = new JPanel();

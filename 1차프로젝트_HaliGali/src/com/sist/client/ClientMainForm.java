@@ -171,9 +171,15 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 		        
 		        
 		        try{
-					String roomName=mr.tf.getText();				//방이름
-					String capaNum=mr.box.getSelectedItem().toString();	//인원수
-					out.write((Function.MAKEROOM+"|"+roomName+"|"+capaNum+"\n").getBytes()); //방이름,인원수
+		        	String roomType="";
+		        	if(mr.rb1.isSelected()){
+		        		roomType=mr.rb1.getText();} //공개
+		        	else if(mr.rb2.isSelected()){
+		        		roomType=mr.rb2.getText();} //비공개
+					String roomName=mr.tf.getText();//방이름
+					String nowNum="1";				//방현재인원
+					String capaNum=mr.box.getSelectedItem().toString();	//최대인원수
+					out.write((Function.MAKEROOM+"|"+roomType+"|"+roomName+"|"+nowNum+"|"+capaNum+"\n").getBytes()); //방정보,방이름,인원,최대인원
 				}catch(Exception ex){}
 
 			}
@@ -419,10 +425,12 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 
 					  case Function.ROOMINFORM:			//5.client가 방만들기 확인 버튼을 눌렀을 때(waitRoom의 리스트에 방 추가)
 					  {	
+						  String roomType=st.nextToken();
 						  String roomName=st.nextToken();	//새로 만든 게임룸의 이름
+						  String nnum=st.nextToken();
 						  String num=st.nextToken();		//새로 만든 게임룸의  제한인원수
 						  String pos=st.nextToken();		//사용자 위치(게임대기중)
-						  String[] data={roomName, num, pos};	
+						  String[] data={roomType, roomName, nnum, num, pos};	
 						  wr.model1.addRow(data);			//waitRoom의 리스트에 방 추가
 						  wr.repaint();
 					  }

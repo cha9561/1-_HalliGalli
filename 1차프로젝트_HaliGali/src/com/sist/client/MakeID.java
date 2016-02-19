@@ -76,7 +76,7 @@ public class MakeID extends  JFrame /*implements ActionListener*/{
 		tf2.setBounds(100,100,140,30);
 		b3.setBounds(245,100,60,30);
 		
-		la3.setBounds(40,145,40,30);
+		la3.setBounds(30,145,40,30);
 		pf1.setBounds(100,145,140,30);
 		
 		la4.setBounds(40,180,50,30);
