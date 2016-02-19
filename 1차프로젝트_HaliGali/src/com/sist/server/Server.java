@@ -134,7 +134,6 @@ public class Server implements Runnable{
 
 					case Function.ROOMCHAT:			//client가 채팅전송을 요청했을 때(gamewindow)
 					{
-						/*게임 방에 있을때 messageAll 재정의 필요*/
 						String data=st.nextToken();
 						messageRoom(Function.ROOMCHAT+"|["+id+"]"+data,clientroomNumber);
 						//messageRoom(Function.ROOMCHAT+"|"+id+"님이 입장하였습니다",roomNumber);
@@ -274,8 +273,6 @@ public class Server implements Runnable{
 						}
 					}
 					break;
-					
-					
 					case Function.ROOMREADY:			//준비버튼 눌렀을 때
 					{
 						System.out.println("현재방에있는사람수"+gameRoom.get(clientroomNumber).humanNum);		//1명일 때 humanNum=1
@@ -291,6 +288,68 @@ public class Server implements Runnable{
 						}
 					}
 					break;
+					/*[방나가기] ->*/
+					case Function.EXITROOM:
+					{
+						pos="대기실";
+						System.out.println("humanNum=> "+gameRoom.get(clientroomNumber).humanNum);
+						
+						gameRoom.get(clientroomNumber).humanNum--; //사람 감소 시킴
+						int humNum=gameRoom.get(clientroomNumber).humanNum;
+								
+						System.out.println("humanNum=> "+gameRoom.get(clientroomNumber).humanNum);
+						
+						messageTo(Function.MYLOG+"|"+id+"|"+pos); 			//대기실 화면으로 바꾸기 위해
+						messageAll(Function.CHGROOMUSER+"|"+clientroomNumber+"|"+humNum);
+						
+						int userRow=0;
+						for(ClientThread client:waitVc)
+						{
+							if((waitVc.get(userRow).id).equals(id))
+								break;
+							userRow++;
+						} //몇번째 유저인지 파악하여 List 의  변경 필요한 Row 값 알아내기 위해
+						messageAll(Function.CHGUSERPOS+"|"+userRow+"|"+pos); //타 유저에 내상태 변경하도록
+						messageRoom(Function.ROOMCHAT+"|"+id+"님이 퇴장하였습니다",clientroomNumber);	//방사람에게 퇴장메시지 보내기
+						
+						if(gameRoom.get(clientroomNumber).humanNum<=0) //방에 남은 사람이 없으면
+						{
+							messageAll(Function.DELROOM+"|"+clientroomNumber+"|");
+							//벡터에서 삭제
+							gameRoom.removeElementAt(clientroomNumber);
+						}
+						else
+						{
+							//방나간 클라이언트를 배열에서 삭제하고 뒷 클라이언트를 앞으로 땡김
+							int userCount= gameRoom.get(clientroomNumber).humanNum;
+
+							for(int i=0; i<=userCount; i++) //방에서 나간 Thread 를 Room Vector의 배열에서 삭제하기 위해
+							{
+								System.out.println("I는------>"+i);
+								if((gameRoom.get(clientroomNumber).cliT[i].id).equals(id))
+								{
+									System.out.println("삭제할 I는------>"+i);
+									if(i==userCount)
+									{
+										gameRoom.get(clientroomNumber).cliT[i]=null;
+										break;
+									}
+									else
+									{
+										for(int j=userCount;j>i;j--)
+										{
+											System.out.println("J는------>"+j);
+											gameRoom.get(clientroomNumber).cliT[j-1]
+													=gameRoom.get(clientroomNumber).cliT[j];
+										}
+										break;
+									}
+								}
+							}
+						}
+					}
+					break;
+					/*<- [방나가기]*/
 					}
 				}catch(Exception ex)
 				{

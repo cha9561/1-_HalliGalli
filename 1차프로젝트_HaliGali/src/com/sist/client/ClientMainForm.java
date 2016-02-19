@@ -52,6 +52,9 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			mr.b1.addActionListener(this);      //방만들기창에서 확인버튼 누르면
 			gw.b1.addActionListener(this); 		//게임창에서 전송버튼 누르면
 			gw.b4.addActionListener(this); 		//게임창에서 준비버튼 누르면
+			/*[방나가기] ->*/
+			gw.b6.addActionListener(this); 		//게임창에서 나가기버튼 누르면
+			/*<- [방나가기]*/
 			gw.tf.addActionListener(this);
 			mID.b1.addActionListener(this);
 			mID.b2.addActionListener(this);
@@ -126,9 +129,18 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				try{
 					out.write((Function.ROOMCHAT+"|"+data+"\n").getBytes());	//채팅전송을 server에게 
 				}catch(Exception ex){}
-				gw.tf.setText("");
+				
 			}
-			
+			/*[방나가기] ->*/
+			else if(e.getSource()==gw.b6)
+			{
+				System.out.println("방나가기 버튼 Click");
+				gw.ta.setText("");
+				try{
+					out.write((Function.EXITROOM+"|"+"\n").getBytes());
+				}catch(Exception ex){}
+			}
+			/*<- [방나가기]*/
 			else if(e.getSource()==wr.b2) 						//5.방만들기창 
 			{				
 				mr.setBounds(500, 300, 260,290);
@@ -438,6 +450,8 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  String result=st.nextToken();
 						  if(result.equals("TRUE"))
 						  {
+							  gw.tf.setText("");
+							  gw.tf.setText("");
 							  //setTitle(roomId+"님이 만드신 "+roomName);	
 							  card.show(getContentPane(), "GW");
 						  }
@@ -471,10 +485,20 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  System.out.println("\\\\\\--->"+row);
 						  String pos=st.nextToken();
 						  wr.model2.setValueAt(pos, row, 1);
+						  wr.repaint();
 					  }
 					  break;
 					  /*<- [유저상태변경]*/
-					  
+					  /*[방나가기] ->*/
+					  case Function.DELROOM: //방에 사용자가 없에 방삭제 메시지 받음
+					  {
+						  int roomRow=Integer.parseInt(st.nextToken());
+						  System.out.println(roomRow+"방 삭제");
+						  wr.model1.removeRow(roomRow);
+						  wr.repaint();
+					  }
+					  break;
+					  /*<- [방나가기]*/
 					}
 				}catch(Exception ex){}
 			}
