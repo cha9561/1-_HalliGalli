@@ -23,16 +23,19 @@ public class Function {
 	public static final int ROOMREADY=300;			//방에서 준비버튼 눌렀을 때
 	public static final int ROOMREADYBUTTON=301;	//모두가 준비눌렀을 때
 	public static final int ROOMSTART=302;			//시작버튼 눌렀을 때
-	public static final int ROOMBACK=303;			//나가기
 	
 	//방만들기
 	public static final int MAKEROOM=400;		//방만들기 확인버튼 눌렀을 때//400|1|1|2명|게임룸
 	public static final int ROOMINFORM=401;		//WaitRoom방목록에 새로 생성된 방 업데이트//401|1|2명|게임대기중
 	public static final int JOINROOM=402;		//방에 들어 갈 때
 	public static final int ROOMCHAT=403;		//게임룸에서 채팅할 때
-	public static final int ROOMINFORMDELETE=404; //게임룸 폭파
 
-	
+	/*[방인원변경] 된것 출력하기 위한 Protocol*/
+	public static final int CHGROOMUSER=404; 	//방에 들어와있는 사람수가 변경됨.
+	public static final int CHGUSERPOS=405; 	//[유저상태변경] 유저가 방만들거나 입장으로 상태 변경시 접속된 나머지 유저에 메시지 전달
+	public static final int EXITROOM=406;		//[방나가기] 게임룸에 있던 유저가 게임룸을 나갈때
+	public static final int DELROOM=407;		//[방나가기] 방에 있는 사람이 없을때 방 삭제위해
+	public static final int CHGROOMSTATE=408;	//방상태 변경
 	//채팅관련
 	public static final int WAITCHAT1=500;
 	public static final int WAITCHAT2=501;	

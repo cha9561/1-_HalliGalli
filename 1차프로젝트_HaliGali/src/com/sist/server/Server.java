@@ -16,8 +16,8 @@ class GameRoom		//게임룸 정보 클래스
 	String name;		//방이름
 	ClientThread cliT[] = new ClientThread[4];	//방에있는 플레이어들
 	int readyNum=0;		//준비 누른 인원
-	String Type;
-	String nnum;
+	String Type;		//공개비공개
+	String pos;			//상태
 }
 public class Server implements Runnable{
 
@@ -60,7 +60,7 @@ public class Server implements Runnable{
 	
 	class ClientThread extends Thread
 	{
-		String id,name,sex,pos;		//id,이름,성별,상태
+		String id,name,sex,posUser;		//id,이름,성별,상태
 		Socket s;
 		BufferedReader in;	// client요청값을 읽어온다
 		OutputStream out;	//client로 결과값을 응답할때 
@@ -107,18 +107,18 @@ public class Server implements Runnable{
 						id=st.nextToken();
 						//name=st.nextToken();
 						//sex=st.nextToken();
-						pos="대기실";
+						posUser="대기실";
 						// messageAll(Function.LOGIN+"|"+id+"|"+name+"|"+sex+"|"+pos);
-						messageAll(Function.LOGIN+"|"+id+"|"+pos);
+						messageAll(Function.LOGIN+"|"+id+"|"+posUser);
 						waitVc.addElement(this);
-						messageTo(Function.MYLOG+"|"+id+"|"+pos);
+						messageTo(Function.MYLOG+"|"+id+"|"+posUser);
 						for(ClientThread client:waitVc)			//다른 사용자들에게 나를 접속자 리스트에 올림
 						{
-							messageTo(Function.LOGIN+"|"+client.id+"|"+client.pos);
+							messageTo(Function.LOGIN+"|"+client.id+"|"+client.posUser);
 						}
 						for(GameRoom room:gameRoom)
 						{
-							messageTo(Function.ROOMINFORM+"|"+room.Type+"|"+room.name+"|"+room.nnum+"|"+room.sCapaNum+"|"+"게임대기중");
+							messageTo(Function.ROOMINFORM+"|"+room.Type+"|"+room.name+"|"+room.humanNum+"|"+room.sCapaNum+"|"+room.pos);
 						}
 					}
 					break;
@@ -133,7 +133,6 @@ public class Server implements Runnable{
 
 					case Function.ROOMCHAT:			//client가 채팅전송을 요청했을 때(gamewindow)
 					{
-						/*게임 방에 있을때 messageAll 재정의 필요*/
 						String data=st.nextToken();
 						messageRoom(Function.ROOMCHAT+"|["+id+"]"+data,clientroomNumber);
 					}
@@ -158,19 +157,18 @@ public class Server implements Runnable{
 					break;
 					/*회원관리*/
 					
-					case Function.MAKEROOM:					//방만들기 확인버튼 눌렀을 때////////////////////////////
+					case Function.MAKEROOM:					//방만들기 확인버튼 눌렀을 때////////////////////////////합친것1
 					{
-						pos="게임대기중";					//게임룸 만든 사람의 상태정보
+						
 						String roomType=st.nextToken();		//새로 만든 게임룸의 공개정보
 						String roomName=st.nextToken();		//새로 만든 게임룸의 방이름
 						//String nowNum=st.nextToken();		//새로 만든 게임룸의 현재인원
 						String capaNumImsi=st.nextToken();	//새로 만든 게임룸의 최대인원(2명일때->2)
 
 						GameRoom gr=new GameRoom();   	//게임룸 클래스 생성!(임시로 받기)
-	
+						gr.pos="게임대기중";				//게임룸의 상태정보
 						gr.Type=roomType;				//새로 만든 게임룸의 공개정보 대입
 						gr.name=roomName;				//새로 만든 게임룸의 방이름 대입
-						//gr.nnum=nowNum;					//새로 만든 게임룸의 현재인원 대입(1명)
 						gr.sCapaNum=capaNumImsi;		//새로 만든 게임룸의 최대인원 대입
 
 						if(capaNumImsi.equals("2명"))	//2.방만들자마자 최대인원수 대입
@@ -184,8 +182,9 @@ public class Server implements Runnable{
 						{
 							gr.capaNum=4;
 						}
+						int i=0;		
+						posUser="게임룸";
 
-						int i=0;	
 						for(GameRoom room:gameRoom)			//현재 있는 방갯수 세기 (1개만들었으니까 1개????)
 						{
 							i++;
@@ -195,16 +194,24 @@ public class Server implements Runnable{
 						gameRoom.addElement(gr);		//게임룸 리스트에 새로 만든 게임룸 추가
 						gr.humanNum=1;			//현재인원수=1 dafault값 주기
 						gr.cliT[0]=this;		//client에 만든이 추가==방장
-						System.out.println("방 번호:"+gr.roomNum+",만든사람 id:"+gr.cliT[0]+",최대인원수:"+gr.capaNum
+						System.out.println("방 번호:"+gr.roomNum+",만든사람 id:"+gr.cliT[0].id+",최대인원수:"+gr.capaNum
 								+"현재인원수:"+gr.humanNum+",공개여부:"+gr.Type);
 						
-						//game창으로 전환
-						//messageTo(Function.MAKEROOM+"|"+id+"|"+roomType+"|"+roomName+"|"+gr.humanNum+"|"+gr.capaNum+"|"+pos);	
-						messageTo(Function.MAKEROOM+"|"+id+"|"+roomName+"|"+gr.humanNum+"|"+gr.capaNum);
-						//방목록에 띄움
-						messageAll(Function.ROOMINFORM+"|"+roomType+"|"+roomName+"|"+gr.humanNum+"|"+gr.capaNum+"|"+"게임룸");
+						messageTo(Function.MAKEROOM+"|"+id+"|"+roomName+"|"+gr.humanNum+"|"+gr.capaNum);//1.game창으로 전환
+						messageAll(Function.ROOMINFORM+"|"+roomType+"|"+roomName+"|"+gr.humanNum+"|"+gr.capaNum+"|"+gr.pos);//2.방목록에 띄움
+		
+						/*3.[유저상태변경] ->*/
+						int userRow=0;
+						for(ClientThread client:waitVc)
+						{
+							if((waitVc.get(userRow).id).equals(id))
+								break;
+							userRow++;
+						} //몇번째 유저인지 파악하여 List 의  변경 필요한 Row 값 알아내기 위해
+						messageAll(Function.CHGUSERPOS+"|"+userRow+"|"+posUser);
 					}
 					break;
+
 					
 					case Function.JOINROOM:								//게임룸에 들어가기
 					{
@@ -218,7 +225,7 @@ public class Server implements Runnable{
 						{
 							gameRoom.get(clientroomNumber).humanNum++;			//해당 방 번호에 현재인원+1(2명일때 2가 됨!!)
 							humNum=gameRoom.get(clientroomNumber).humanNum;		//해당방에 증가된 현재인원 업데이트
-							pos="게임룸";
+							posUser="게임룸";
 							gameRoom.get(clientroomNumber).cliT[humNum-1]=this;			//(2번째사람-> 1이 됨)
 							decision="TRUE";				
 							//
@@ -226,9 +233,22 @@ public class Server implements Runnable{
 							System.out.println("cliT[1].id->"+gameRoom.get(clientroomNumber).cliT[1].id);
 							System.out.println("최대인원수:"+roomCapa+"현재인원수:"+humNum);
 							//	
-							
+					
 							messageTo(Function.JOINROOM+"|"+decision+"|"+gameRoom.get(clientroomNumber).cliT[0].id+"|"+gameRoom.get(clientroomNumber).name);		//증가된 사람에게 true넘겨줌
+							//messageTo(Function.JOINROOM+"|"+decision);		//증가된 사람에게 true넘겨줌
 							messageRoom(Function.ROOMCHAT+"|"+id+"님이 입장하였습니다",clientroomNumber);	//모두에게 사람 입장 알리기,방번호 
+							
+							/*[방인원변경 -추가시] ->*/
+							messageAll(Function.CHGROOMUSER+"|"+roomNum+"|"+humNum); //방인원이 변경된 방ID(table의 Row)+변경된 User수를 Client로 보냄
+							/*[유저상태변경] ->*/
+							int userRow=0;
+							for(ClientThread client:waitVc)
+							{
+								if((waitVc.get(userRow).id).equals(id))
+									break;
+								userRow++;
+							} //몇번째 유저인지 파악하여 List 의  변경 필요한 Row 값 알아내기 위해
+							messageAll(Function.CHGUSERPOS+"|"+userRow+"|"+posUser);
 						}
 						else 				//방 꽉찼을 경우
 						{
@@ -259,50 +279,77 @@ public class Server implements Runnable{
 						messageRoom(Function.ROOMCHAT+"|"+"["+id+"]"+"님 준비완료",roomNum);	//게임룸채팅방에 뿌리기
 					}
 					break;
+
 					
 					case Function.ROOMSTART:			//시작버튼 눌렀을 때
 					{
 						int roomNum=gameRoom.get(clientroomNumber).roomNum;		//방번호
 						System.out.println("게임을 시작합니다!!!");
+						posUser="게임중";
+						messageAll(Function.CHGROOMSTATE+"|"+roomNum+"|"+posUser); //게임중이라고 표시
 						messageRoom(Function.ROOMCHAT+"|"+"게임 START",roomNum);	//게임룸채팅방에 뿌리기
 					}
-					break;
-					
-					case Function.ROOMBACK:				//나가기버튼 눌렀을 때
+					break;					
+
+					/*[방나가기] ->*/
+					case Function.EXITROOM:
 					{
-						int roomNum=gameRoom.get(clientroomNumber).roomNum;		//방번호		
-						int lastIdx=gameRoom.get(clientroomNumber).humanNum-1;	//마지막 index
-						messageTo(Function.ROOMBACK+"|"+id);					//WaitRoom으로 이동
+						posUser="대기실";
+						System.out.println("humanNum=> "+gameRoom.get(clientroomNumber).humanNum);	//현재인원						
+						gameRoom.get(clientroomNumber).humanNum--; 					//사람 감소 시킴
+						int humNum=gameRoom.get(clientroomNumber).humanNum;			//변화된 현재인원
+						System.out.println("humanNum=> "+gameRoom.get(clientroomNumber).humanNum);	
 						
-						for(int i=0; i<gameRoom.get(clientroomNumber).humanNum; i++){		
-							if((gameRoom.get(clientroomNumber).cliT[i].id).equals(id)){		//나가려는 사람이 방에 있으면
-								gameRoom.get(clientroomNumber).humanNum--;					//현재인원--1;		
-								System.out.println(gameRoom.get(clientroomNumber).humanNum+"<-이만큼 인원이 남았습니다!"+
-										gameRoom.get(clientroomNumber).cliT[i].id+"<-나간사람");			//테스트용
-								
-								if(gameRoom.get(clientroomNumber).humanNum==0){				//방에사람이 아무도 없으면
-									System.out.println("방폭발");
-									messageAll(Function.ROOMINFORMDELETE+"|"+gameRoom.get(clientroomNumber).name);
-									return;
+						messageTo(Function.MYLOG+"|"+id+"|"+posUser); 							//대기실 화면으로 바꾸기 위해
+						messageAll(Function.CHGROOMUSER+"|"+clientroomNumber+"|"+humNum);	//방상태변화시키기 위해
+						
+						int userRow=0;
+						for(ClientThread client:waitVc)
+						{
+							if((waitVc.get(userRow).id).equals(id))
+								break;
+							userRow++;
+						} //몇번째 유저인지 파악하여 List 의  변경 필요한 Row 값 알아내기 위해
+						messageAll(Function.CHGUSERPOS+"|"+userRow+"|"+posUser); 						//타 유저에 내상태 변경하도록
+						messageRoom(Function.ROOMCHAT+"|"+id+"님이 퇴장하였습니다",clientroomNumber);	//방사람에게 퇴장메시지 보내기
+						
+						if(gameRoom.get(clientroomNumber).humanNum<=0) //방에 남은 사람이 없으면
+						{
+							messageAll(Function.DELROOM+"|"+clientroomNumber);	
+							//벡터에서 삭제
+							gameRoom.removeElementAt(clientroomNumber);
+						}
+						else
+						{
+							//방나간 클라이언트를 배열에서 삭제하고 뒷 클라이언트를 앞으로 땡김
+							int userCount= gameRoom.get(clientroomNumber).humanNum;
+							for(int i=0; i<=userCount; i++) //방에서 나간 Thread 를 Room Vector의 배열에서 삭제하기 위해
+							{
+								System.out.println("I는------>"+i);
+								if((gameRoom.get(clientroomNumber).cliT[i].id).equals(id))
+								{
+									System.out.println("삭제할 I는------>"+i);
+									if(i==userCount)
+									{
+										gameRoom.get(clientroomNumber).cliT[i]=null;
+										break;
+									}
+									else
+									{
+										for(int j=userCount;j>i;j--)
+										{
+											System.out.println("J는------>"+j);
+											gameRoom.get(clientroomNumber).cliT[j-1]
+													=gameRoom.get(clientroomNumber).cliT[j];
+										}
+										break;
+									}
 								}
-								
-								for(int j=i; j<gameRoom.get(clientroomNumber).humanNum; j++){	//나간사람 인덱스를 뒤에사람이 대신함
-									gameRoom.get(clientroomNumber).cliT[j]=gameRoom.get(clientroomNumber).cliT[j+1];
-								}
-								gameRoom.get(clientroomNumber).cliT[lastIdx]=null;		//마지막인덱스에 null값 부여	
 							}
 						}
-						System.out.println(gameRoom.get(clientroomNumber).humanNum+"명이 현재 남음");		//테스트용
-						System.out.println("0번"+gameRoom.get(clientroomNumber).cliT[0].id);
-						System.out.println("1번"+gameRoom.get(clientroomNumber).cliT[1].id);
-						System.out.println("2번"+gameRoom.get(clientroomNumber).cliT[2].id);
-						System.out.println("3번"+gameRoom.get(clientroomNumber).cliT[3].id);
-						
-						
-						messageRoom(Function.ROOMCHAT+"|"+"["+id+"]"+"님 퇴장",roomNum);		//게임룸의 채팅방
 					}
 					break;
-					
+
 					}
 				}catch(Exception ex)
 				{
@@ -341,7 +388,7 @@ public class Server implements Runnable{
 		
 		public synchronized void messageRoom(String msg, int roomIndex)		//해당 방의 사람들에게 메세지 보냄(메세지,방번호)
 		{
-			for(int i=0; i<=gameRoom.get(roomIndex).humanNum;i++)			//해당 방의 사람들에게 메세지 보냄
+			for(int i=0; i<gameRoom.get(roomIndex).humanNum;i++)			//해당 방의 사람들에게 메세지 보냄 /*bugfix '<=gameRoom.get(roomIndex)'면 안됨*/
 			{
 				gameRoom.get(roomIndex).cliT[i].messageTo(msg);
 			}

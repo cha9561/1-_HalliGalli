@@ -55,6 +55,8 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			gw.b5.addActionListener(this); 		//게임창에서 시작버튼 누르면
 			gw.b6.addActionListener(this); 		//게임창에서 나가기 누르면
 			gw.tf.addActionListener(this);		//게임창에서 채팅하면
+
+
 			mID.b1.addActionListener(this);
 			mID.b2.addActionListener(this);
 			mID.b3.addActionListener(this);
@@ -125,11 +127,14 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				try{
 					out.write((Function.ROOMCHAT+"|"+data+"\n").getBytes());	//채팅전송을 server에게 
 				}catch(Exception ex){}
-				gw.tf.setText("");
+				
 			}
-			
-			else if(e.getSource()==wr.b2) 						//5.방만들기창
+
+			else if(e.getSource()==wr.b2) 						//5.방만들기창 
 			{				
+				mr.tf.setText("");	//방만들기 초기화
+		        mr.pf.setText("");
+		        mr.rb1.setSelected(true);
 				mr.setBounds(500, 300, 260,290);
 		        mr.setVisible(true);
 			}
@@ -138,6 +143,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				if(rowNum>=0)
 				{
 					try {
+						gw.tf.setText("");
 						out.write((Function.JOINROOM+"|"+rowNum+"\n").getBytes());
 					} catch (Exception e2) {			
 					}
@@ -165,8 +171,8 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			        	return;
 			        }
 
-		        }
-
+		        }	
+		        
 		        mr.dispose();
 		        
 		        try{
@@ -176,10 +182,9 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 		        	else if(mr.rb2.isSelected()){		
 		        		roomType=mr.rb2.getText(); } 	//비공개
 					String roomName=mr.tf.getText();	//2.방이름
-					//String nowNum="1";					//3.방현재인원
 					String capaNum=mr.box.getSelectedItem().toString();	//3.최대인원수
 					out.write((Function.MAKEROOM+"|"+roomType+"|"+roomName+"|"+capaNum+"\n").getBytes()); 
-					//공개여부,방이름,..인원..,최대인원 넘겨줌
+					//공개여부,방이름,최대인원 넘겨줌
 
 				}catch(Exception ex){}
 
@@ -309,13 +314,14 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					e1.printStackTrace();
 				}
 			}
-			
-			else if(e.getSource()==gw.b6){								//GameWindow에서 나가기 눌렀을 때
-				try {
-					out.write((Function.ROOMBACK+"|"+"\n").getBytes());
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+
+			else if(e.getSource()==gw.b6)			//GameWindow에서 나가기 눌렀을 때
+			{
+				System.out.println("방나가기 버튼 Click");
+				gw.ta.setText("");
+				try{
+					out.write((Function.EXITROOM+"|"+"\n").getBytes());
+				}catch(Exception ex){}
 			}
 			
 		}
@@ -437,38 +443,26 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  String num=st.nextToken();		//최대인원
 						  String pos=st.nextToken();		//방상태(게임대기중)
 						  String[] data={roomType, roomName, nnum, num, pos};	
-						  wr.model1.addRow(data);			//waitRoom의 리스트에 방 추가
+						  wr.model1.addRow(data);			//waitRoom의 리스트에 방 추가						  
 						  wr.repaint();
 					  }
 					  break;
 					  
-					  case Function.ROOMINFORMDELETE:			//5.client가 방만들기 확인 버튼을 눌렀을 때(waitRoom의 리스트에 방 추가)
-					  {	 
-						  String roomName=st.nextToken();		//방이름이 같으면
-						  for(int i=0; i<wr.model1.getRowCount(); i++){
-							  if(roomName.equals(wr.model1.getValueAt(i,1))){
-								  wr.model1.removeRow(i);			//waitRoom의 리스트에 방 제거
-								  wr.repaint();
-							  }
-						  }
-					  }
-					  break;
 					  
 					  case Function.JOINROOM:			//6.방에 들어가기 했을 때(인원 수에따라 입장 가능 여부)
 					  {
 						  String result=st.nextToken();
-						  System.out.println("1111111===");
 						  if(result.equals("TRUE"))
 						  {
 							  String roomMaker=st.nextToken();
 							  String roomName=st.nextToken();
 							  setTitle("방장_"+roomMaker+"    "+"방제_"+roomName);	
 							  gw.b5.setEnabled(false); 	//시작버튼 비활성화
+							  gw.tf.setText("");
 							  card.show(getContentPane(), "GW");
 						  }
 						  else
 						  {
-							  System.out.println("방이 꽉 찼습니다ㅁ");
 							  JOptionPane.showMessageDialog(this,"방이 꽉찼습니다.");
 						  }
 					  }
@@ -489,11 +483,47 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  }
 					  break;
 					  
-					  case Function.ROOMBACK:			//나가기
+					  /*[방인원변경 ] ->*/
+					  case Function.CHGROOMUSER:
 					  {
-						  System.out.println("나가기");
-						  setTitle(st.nextToken());		//title변경
-						  card.show(getContentPane(),"WR");					  
+						  //대기실 방 List table 의 특정 Row 의 방인원이 변경됨
+						  int row=Integer.parseInt(st.nextToken());
+						  String userNum=st.nextToken();
+						  wr.model1.setValueAt(userNum, row, 2);
+						  wr.repaint();
+					  }
+					  break;
+
+					  /*[유저상태변경] ->*/
+					  case Function.CHGUSERPOS:
+					  {
+						  int row=Integer.parseInt(st.nextToken());	//방번호
+						  System.out.println("\\\\\\--->"+row);
+						  String pos=st.nextToken();		//현재인원수
+						  wr.model2.setValueAt(pos, row, 1);
+						  wr.repaint();
+					  }
+					  break;
+					  
+					  /*[방상태변경 ] ->*/
+					  case Function.CHGROOMSTATE:
+					  {
+						  //대기실 방 List table 의 특정 Row 의 방인원이 변경됨
+						  int row=Integer.parseInt(st.nextToken());		//방번호
+						  String roomState=st.nextToken();				//방상태
+						  wr.model1.setValueAt(roomState, row, 4);
+						  wr.repaint();
+					  }
+					  break;
+					  
+					  /*[방나가기] ->*/
+					  case Function.DELROOM: //방에 사용자가 없에 방삭제 메시지 받음
+					  {
+						  gw.tf.setText("");
+						  int roomRow=Integer.parseInt(st.nextToken());
+						  System.out.println(roomRow+"방 삭제");
+						  wr.model1.removeRow(roomRow);
+						  wr.repaint();
 					  }
 					  break;
 					}
