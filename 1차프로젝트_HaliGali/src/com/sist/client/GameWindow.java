@@ -29,9 +29,9 @@ public class GameWindow extends JPanel implements ActionListener,Runnable{
 		b1=new JButton("전송");					//채팅전송버튼
 		b2=new JButton("뒤집기");					//카드뒤집기
 		b3=new JButton("Bell");					//bell누르기
-		b4=new JButton("준비");					//bell누르기
-		b5=new JButton("시작");					//bell누르기
-		b6=new JButton("나가기");					//bell누르기
+		b4=new JButton("준비");					
+		b5=new JButton("시작");					
+		b6=new JButton("나가기");				
 		profile1=new JTextArea();				//사용자 정보창
 		profile2=new JTextArea();
 		profile3=new JTextArea();

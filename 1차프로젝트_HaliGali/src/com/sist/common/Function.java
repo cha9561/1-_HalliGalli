@@ -20,14 +20,17 @@ public class Function {
 	
 	/*대기실*/
 	//방관련
-	public static final int ROOMREADY=300;		//방에서 준비버튼 눌렀을 때
+	public static final int ROOMREADY=300;			//방에서 준비버튼 눌렀을 때
+	public static final int ROOMREADYBUTTON=301;	//모두가 준비눌렀을 때
+	public static final int ROOMSTART=302;			//시작버튼 눌렀을 때
+	public static final int ROOMBACK=303;			//나가기
 	
 	//방만들기
-
 	public static final int MAKEROOM=400;		//방만들기 확인버튼 눌렀을 때//400|1|1|2명|게임룸
 	public static final int ROOMINFORM=401;		//WaitRoom방목록에 새로 생성된 방 업데이트//401|1|2명|게임대기중
 	public static final int JOINROOM=402;		//방에 들어 갈 때
 	public static final int ROOMCHAT=403;		//게임룸에서 채팅할 때
+	public static final int ROOMINFORMDELETE=404; //게임룸 폭파
 
 	
 	//채팅관련
