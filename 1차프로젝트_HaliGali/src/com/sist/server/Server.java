@@ -261,8 +261,8 @@ public class Server implements Runnable{
 					
 					case Function.ROOMREADY:			//준비버튼 눌렀을 때
 					{
-						System.out.println("현재방에있는사람수"+gameRoom.get(clientroomNumber).humanNum);		//1명일 때 humanNum=1
-						for(int j=0; j<gameRoom.get(clientroomNumber).humanNum; j++){			//각 게임방의 현재 인원수 만큼 돌려라
+						System.out.println("현재방에있는사람수:"+gameRoom.get(clientroomNumber).humanNum);		//1명일 때 humanNum=1
+						for(int j=0; j<gameRoom.get(clientroomNumber).humanNum; j++){						//각 게임방의 현재 인원수 만큼 돌려라
 								if((gameRoom.get(clientroomNumber).cliT[j].id).equals(id)){
 									System.out.println(id+"준비");
 									messageRoom(Function.ROOMCHAT+"|"+"["+id+"]"+"님 준비완료",gameRoom.get(clientroomNumber).roomNum);	//게임룸채팅방에 뿌리기
