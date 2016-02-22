@@ -27,6 +27,7 @@ public class WaitRoom extends JPanel{ //
 	
 	@SuppressWarnings("deprecation")
 	public WaitRoom(){
+		
 		back=Toolkit.getDefaultToolkit().getImage("img/monkey_back.jpg");	//뒷배경
 		roomlist=new ImageIcon("img/RoomList.png");			//타이틀이미지
 		chattingroom=new ImageIcon("img/ChattingRoom.png");
@@ -47,6 +48,7 @@ public class WaitRoom extends JPanel{ //
 		table1.getTableHeader().setReorderingAllowed(false);//컬럼위치 고정
 		table1.getTableHeader().setResizingAllowed(false); //컬럼사이즈 고정
 		JScrollPane js1=new JScrollPane(table1);
+		
 		//텍스트 정렬/ 라벨:가운데, 방이름:왼쪽, 인원:가운데, 게임상태:가운데
 		for(int i=0;i<col1.length;i++)
 		{

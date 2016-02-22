@@ -32,12 +32,13 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			
 			setLayout(card);		//BorderLayout
 			
-			add("LOG",login);		//2.login창
+			add("LOG",login);		//2.login창11
 			add("WR",wr);			//3.WaitRoom창
-			add("GW",gw);			//4.GAME Window창
-			setSize(800,600);		//window창 크기 설정
+			add("GW",gw);			//4.GAME W11indow창
+			setSize(800,600);		//window창 크기 설정1111
 			setLocation(270, 170);	//window창 위치 설정
-			setVisible(true);		//보여지게 함
+			setVisible(true);		//보여지게 함11
+			setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			setResizable(false);    //window창 고정(늘어나지 않음)					
 			
 			login.bt1.addActionListener(this);	//회원가입 버튼 누르면
@@ -72,7 +73,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				}
 			});
 
-			this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		
 
 		}
 		
