@@ -324,6 +324,8 @@ public class Server implements Runnable{
 						messageTo(Function.MYLOG+"|"+id+"|"+posUser); 							//대기실 화면으로 바꾸기 위해
 						messageAll(Function.CHGROOMUSER+"|"+clientroomNumber+"|"+humNum);	//방상태변화시키기 위해
 						
+						
+						/*test*/
 						int userRow=0;
 						for(ClientThread client:waitVc)
 						{
