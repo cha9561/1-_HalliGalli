@@ -99,6 +99,16 @@ public class Server implements Runnable{
 						messageAll(Function.CLIENTEXIT+"|"+id+exitMsg);		//채팅창에 00님이 나가셨습니다 뿌리기 
 						messageAll(Function.DELROW+"|"+userIndex);			//
 						
+						int i=-1;
+						for(ClientThread client:waitVc)
+						{
+							i++;
+						}
+						for(int j=userIndex;j<i;j++)
+						{
+							waitVc.get(j+1).userIndex--;
+						}
+						
 						waitVc.remove(userIndex);
 						
 						interrupt();				
