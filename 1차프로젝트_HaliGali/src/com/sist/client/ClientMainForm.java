@@ -42,15 +42,16 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			
 			login.bt1.addActionListener(this);	//회원가입 버튼 누르면
 			login.bt2.addActionListener(this);	//로그인 버튼 누르면
-			wr.b1.addActionListener(this);		//로그인 버튼 누르면
+			//wr.b1.addActionListener(this);	//대기실에서 전송버튼
 
 			wr.b2.addActionListener(this);		//방만들기 버튼 누르면
 			wr.b3.addActionListener(this);      //방들어가기 버튼 누르면
 			wr.b8.addActionListener(this);		//도움말 버튼 누르면
 			wr.b9.addActionListener(this);      //게임종료 버튼 누르면
+			wr.tf.addActionListener(this);		//대기실에서 채팅하면
 
 			mr.b1.addActionListener(this);      //방만들기창에서 확인버튼 누르면
-			gw.b1.addActionListener(this); 		//게임창에서 전송버튼 누르면
+			//gw.b1.addActionListener(this); 	//게임창에서 전송버튼 누르면
 			gw.b4.addActionListener(this); 		//게임창에서 준비버튼 누르면
 			gw.b5.addActionListener(this); 		//게임창에서 시작버튼 누르면
 			gw.b6.addActionListener(this); 		//게임창에서 나가기 누르면
@@ -108,7 +109,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 							+pass+"\n").getBytes());
 				}catch(Exception ex){}
 			}
-			else if(e.getSource()==wr.tf || e.getSource()==wr.b1)			//3.waitroom에서 채팅입력할 때
+			else if(e.getSource()==wr.tf)			//3.waitroom에서 채팅입력할 때
 			{			
 				String data=wr.tf.getText();								//입력한 값 가져오기
 				if(data.length()<1)
@@ -119,7 +120,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				}catch(Exception ex){}
 				wr.tf.setText("");
 			}
-			else if(e.getSource()==gw.tf || e.getSource()==gw.b1)			//4.gameWindow에서 채팅입력할 때
+			else if(e.getSource()==gw.tf)			//4.gameWindow에서 채팅입력할 때
 			{	
 				String data=gw.tf.getText();								//입력한 값 가져오기
 				if(data.length()<1)
@@ -127,7 +128,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				try{
 					out.write((Function.ROOMCHAT+"|"+data+"\n").getBytes());	//채팅전송을 server에게 
 				}catch(Exception ex){}
-				
+				gw.tf.setText("");
 			}
 
 			else if(e.getSource()==wr.b2) 						//5.방만들기창 
