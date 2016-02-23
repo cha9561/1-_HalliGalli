@@ -122,6 +122,7 @@ public class WaitRoom extends JPanel{ //
 		ta=new JTextArea();						//채팅창
 		JScrollPane js3=new JScrollPane(ta);	//textarea근처에 스크롤바
 		bar=js3.getVerticalScrollBar();
+		
 		tf=new JTextField();					//채팅입력창
 		b1=new JButton("전송");					//채팅전송버튼
 		
@@ -151,21 +152,23 @@ public class WaitRoom extends JPanel{ //
 		b6.setBorderPainted(false);
 		b6.setContentAreaFilled(false);
 		
+		
 		b4.setBounds(10, 15, 500, 30);
-		b5.setBounds(10, 335, 500, 30);		//////채팅타이틀
-		b6.setBounds(515, 15, 270, 30);
-		js1.setBounds(10, 50, 500, 280);	//방목록
-		js2.setBounds(515, 50, 270, 240);	//접속자	
-		js3.setBounds(10, 370, 500, 150);	//채팅///////
-		tf.setBounds(10, 525, 450, 30);		//채팅입력창/////
-		b1.setBounds(465, 525, 45, 30);		//채팅전송버튼/////
-		profile.setBounds(515, 335, 270, 140);	//사용자 정보
-		p.setBounds(515, 480, 270, 75);		//버튼묶음
-		
-		
-		add(js1);add(js2);add(js3);
-		add(tf);add(b1);add(profile);
-		add(p);add(b4);add(b5);add(b6);;
+	    b5.setBounds(10, 335, 500, 30);      //////채팅타이틀
+	    b6.setBounds(515, 15, 270, 30);
+	    js1.setBounds(10, 50, 500, 280);   //방목록
+	    js2.setBounds(515, 50, 270, 280);   //접속자   
+	    js3.setBounds(10, 370, 500, 150);   //채팅///////
+	    tf.setBounds(10, 525, 430, 30);      //채팅입력창/////
+	    b1.setBounds(445, 525, 65, 30);      //채팅전송버튼/////
+	    profile.setBounds(515, 335, 270, 140);   //사용자 정보
+	    p.setBounds(515, 480, 270, 75);      //버튼묶음
+	      
+	      
+	    add(js1);add(js2);add(js3);
+	    add(tf);add(b1);add(profile);
+	    add(p);add(b4);add(b5);add(b6);;
+
 
 	}
 	
