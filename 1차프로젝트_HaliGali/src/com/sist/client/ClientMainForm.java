@@ -470,6 +470,8 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 							  gw.b5.setEnabled(false); 	//시작버튼 비활성화
 							  gw.tf.setText("");
 							  card.show(getContentPane(), "GW");
+							  //준비버튼 활성화
+							  gw.b4.setEnabled(true); 
 						  }
 						  else
 						  {

@@ -11,7 +11,7 @@ import java.net.*;
 
 class GameRoom		//게임룸 정보 클래스 
 {
-
+	Vector<ClientThread> roomVc=new Vector<ClientThread>();
 	int roomNum;		//방번호
 	String sCapaNum;	//
 	int capaNum;		//들어갈 수 있는 최대인원
@@ -645,7 +645,7 @@ public class Server implements Runnable{
 						else
 						{
 							//방나간 클라이언트를 배열에서 삭제하고 뒷 클라이언트를 앞으로 땡김
-							int userCount= (gameRoom.get(clientroomNumber).humanNum)-1; /*bugfix -> 0223 4시*/
+							int userCount= gameRoom.get(clientroomNumber).humanNum; /*bugfix -> 0223 4시*/
 							for(int i=0; i<=userCount; i++) //방에서 나간 Thread 를 Room Vector의 배열에서 삭제하기 위해
 							{
 								System.out.println("I는------>"+i);
