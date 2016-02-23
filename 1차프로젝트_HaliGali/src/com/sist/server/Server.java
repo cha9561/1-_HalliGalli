@@ -1,5 +1,8 @@
 package com.sist.server;
 import java.util.*;
+
+import javax.annotation.processing.Messager;
+
 import com.sist.common.Function;
 import com.sist.server.Server.ClientThread;
 
@@ -18,6 +21,112 @@ class GameRoom		//게임룸 정보 클래스
 	int readyNum=0;		//준비 누른 인원
 	String Type;		//공개비공개
 	String pos;			//상태
+	
+	/*게임 카드 관련*/
+	Random rnd = new Random();
+	int card[] = new int[56]; // 카드 섞기위한 변수
+	int turnCard[][] = new int[humanNum][]; // 뒤집어진 카드를 저장하는 변수
+	int turnCardCount[] = new int[humanNum]; // 뒤집어진 카드의 개수 (유저수변경필요)
+	int cardType[] = new int[4]; // 카드의 종류를 알기위한 변수
+	int cardNum[] = new int[4]; // 카드속 과일 개수 알기위한 변수 
+	int clientCard[][] = new int[humanNum][]; // 클라이언트 카드 변수 (유저수변경필요)
+	int clientCardCount[] = new int[humanNum]; // 클라이언트 카드 개수 변수 (유저수변경필요)
+	int nowPlayer; // 현재 차례가 누구인지 저장
+	boolean isSuccess = false; // 종치기에 성공했는지 확인
+	boolean dead[] = new boolean[humanNum]; // 죽었는지 살았는지 확인 (유저수변경필요)
+	int deadCount=0;
+	boolean EndGame = false; // 게임이 끝인지 확인.
+	boolean isBell = false; // 상대방이 종을 쳤는지 확인
+	String Player[] = new String[humanNum]; // 플레이어이름 접속순서대로 저장 (유저수변경필요)
+	
+	
+	public void GameInit() // 게임 초기화
+	{
+		for (int i = 0; i < humanNum; i++) {
+			dead[i] = false;
+			turnCard[i] = new int[56];
+			turnCardCount[i] = 0;
+			clientCard[i] = new int[56];
+			clientCardCount[i] = 0;
+		}
+
+		for (int i = 0; i < 56; i++) // 카드번호 삽입
+		{
+			card[i] = i;
+		}
+
+		for (int i = 55; i > 0; i--) // 카드 섞기
+		{
+			int temp;
+			int j = rnd.nextInt(56);
+			temp = card[i];
+			card[i] = card[j];
+			card[j] = temp;
+		}
+	}
+	public void DivideCard() // 카드를 클라이언트에게 나눠줌
+	{
+		for (int i = 0; i < humanNum; i++) {
+			for (int j = 0; j < 14; j++) {
+				clientCard[i][j] = card[i * 14 + j];
+				clientCardCount[i]++;
+			}
+		}
+	}
+	public void UpdateCardNum() // 클라이언트들에게 카드정보가 업데이트됨을 알림.
+	{
+		for (int i = 0; i < humanNum; i++) {
+			if (!dead[i]) {
+				this.cliT[i].messageTo(Function.CARDNUM+"|"+this.cliT[i].id+"|"+this.clientCardCount[i]);	
+			}
+		}
+	}
+	public void NextPlayer() {
+		nowPlayer++;
+		if (nowPlayer == humanNum) {
+			nowPlayer = 0;
+		}
+
+		while (dead[nowPlayer]) {
+			nowPlayer++;
+			if (nowPlayer == humanNum) {
+				nowPlayer = 0;
+			}
+		}
+	}
+	public void SuccessBell() {
+		for (int i = 0; i < humanNum; i++) {
+			if (!dead[i]) {
+				//bMan.sendTo(i, "[SUCCESS]" + Player[i]);
+			}
+		}
+	}
+
+	public void FailBell() {
+		for (int i = 0; i < humanNum; i++) {
+			if (!dead[i]) {
+				//bMan.sendTo(i, "[FAIL]" + Player[i]);
+			}
+		}
+	}
+
+	public int isEndGame() // 게임이 끝인지를 검사
+	{
+		int count = 0;
+		for (int i = 0; i < humanNum; i++) {
+			if (dead[i]) {
+				count++;
+			}
+		}
+		if (count == 3) {
+			for (int i = 0; i < humanNum; i++) {
+				if (!dead[i]) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
 }
 public class Server implements Runnable{
 
@@ -308,9 +417,177 @@ public class Server implements Runnable{
 						posUser="게임중";
 						messageAll(Function.CHGROOMSTATE+"|"+roomNum+"|"+posUser); //게임중이라고 표시
 						messageRoom(Function.ROOMCHAT+"|"+"게임 START",roomNum);	//게임룸채팅방에 뿌리기
+						
+						/*차례 지정해서 뿌려주기*/
+						int userCount= gameRoom.get(clientroomNumber).humanNum;
+						for(int i=0; i<userCount; i++) //
+						{
+							System.out.println("I는------>"+i);
+							gameRoom.get(clientroomNumber).cliT[i].messageTo(Function.TURNINFO+"|"+"당신은 "+(i+1)+"번째 입니다");
+							gameRoom.get(clientroomNumber).Player[i]=gameRoom.get(clientroomNumber).cliT[i].id; //순서대로 id저장				
+						}
+						gameRoom.get(clientroomNumber).GameInit();
+						
+						gameRoom.get(clientroomNumber).nowPlayer = 0; // 게임시작은 0번부터
+						String id=gameRoom.get(clientroomNumber).cliT[0].id;
+						messageRoom(Function.ROOMCHAT+"|"+id+"|"+"님 차례입니다", clientroomNumber);
+						gameRoom.get(clientroomNumber).DivideCard();
+						gameRoom.get(clientroomNumber).UpdateCardNum();
 					}
-					break;					
-
+					break;		
+					case Function.CARDOPEN: 	//카드 뒤집히 하였을때
+					{
+						GameRoom gr=gameRoom.get(clientroomNumber);
+						System.out.println("카드오픈 하였음 id: "+id);
+						int nowPlayerIndex=gameRoom.get(clientroomNumber).nowPlayer;
+						
+						gr.turnCard[nowPlayerIndex][gr.turnCardCount[nowPlayerIndex]]=
+								gr.clientCard[nowPlayerIndex][--(gr.clientCardCount[nowPlayerIndex])];
+						if (gr.clientCardCount[nowPlayerIndex] == 0) 	//클라이언트가 카드가 한장도 안남았을때
+						{
+							gr.dead[nowPlayerIndex] = true; //죽음
+							gr.deadCount++;
+							messageRoom(Function.ROOMCHAT+"|"+id+"|"+"님 죽었습니다", clientroomNumber);
+							messageRoom(Function.UPDATEDEAD+"|"+id, clientroomNumber);
+							if (gr.isEndGame()!=0) 
+							{
+								String winId=gr.Player[gr.isEndGame()];
+								messageRoom(Function.GAMEEXIT+"|"+winId+"|"+"님이 이겼습니다", clientroomNumber);
+							}
+							gr.NextPlayer();
+						}else // 그외는 클라이언트에게 카드 다시그림 요청
+						{
+							messageRoom(Function.REPAINT+gr.Player[nowPlayerIndex]+"|"+
+							gr.turnCard[nowPlayerIndex][gr.turnCardCount[nowPlayerIndex]-1],clientroomNumber);
+							gr.UpdateCardNum();
+							gr.NextPlayer();
+							messageRoom(Function.ROOMCHAT+"|"+id+"|"+"님 차례입니다", clientroomNumber);
+						}
+					}
+					break;
+					case Function.BELL:
+					{
+						GameRoom gr=gameRoom.get(clientroomNumber);
+						if (gr.isBell == true) {
+							messageTo(Function.ROOMCHAT+"|"+"당신이 늦었습니다");
+						}
+						else
+						{
+							gr.isBell = true;
+							messageTo(Function.ROOMCHAT+"|"+id+"님이 종을 쳤습니다");
+							messageRoom(Function.BELL+"|",clientroomNumber);
+							Thread.sleep(1000);
+							gr.isSuccess=false;
+							int CardSum=0;
+							for(int i=0;i<gr.humanNum;i++)
+							{
+								if(gr.turnCardCount[i]!=0)
+								{
+									int temp=gr.turnCard[i][gr.turnCardCount[i] - 1];
+									gr.cardType[i]=temp/14;
+									gr.cardNum[i]=temp%14;
+								}
+								else
+								{
+									// 4장이 다 깔리지 않은경우를 대비해 0으로 초기화.
+									gr.cardType[i] = -1;
+									gr.cardNum[i] = -1;
+								}
+							}
+							for (int i = 0; i < gr.humanNum; i++) 
+							{
+								CardSum = 0;
+								for (int j = 0; j < 4; j++) 
+								{
+									if (gr.cardType[i] == gr.cardType[j]) { // 과일종류가
+																		// 같은 것만
+																		// 더한다.
+										if (gr.cardNum[j] >= 0 && gr.cardNum[j] <= 4) {
+											CardSum += 1;
+										} else if (gr.cardNum[j] >= 5 && gr.cardNum[j] <= 7) {
+											CardSum += 2;
+										} else if (gr.cardNum[j] >= 8 && gr.cardNum[j] <= 10) {
+											CardSum += 3;
+										} else if (gr.cardNum[j] >= 11 && gr.cardNum[j] <= 12) {
+											CardSum += 4;
+										} else if (gr.cardNum[j] == 13) {
+											CardSum += 5;
+										}
+									}
+								}
+								if(CardSum==5)
+								{
+									gr.SuccessBell();
+									gr.isBell = false;
+									//bMan.sendToAll(userName + "님이 종치기에 성공했습니다.");
+									messageRoom(Function.ROOMCHAT+"|"+id+"님이 종치기에 성공",clientroomNumber);
+									int tmpNum=0;
+									for(tmpNum=0;tmpNum<gr.humanNum;tmpNum++)
+									{
+										if((gr.cliT[tmpNum].id).equals(id))
+											break;												
+									}
+									for(i=0;i<gr.humanNum;i++)
+									{
+										for(int j=0;j<gr.turnCardCount[i];j++)
+										{
+											gr.clientCard[tmpNum][gr.clientCardCount[tmpNum]++]=
+													gr.turnCard[i][j];
+										}
+										gr.turnCardCount[i]=0;
+									}
+									for (int m=gr.clientCardCount[tmpNum]; m > 0; m--) //카드 섞기
+									{
+										int temp;
+										int n = gr.rnd.nextInt(gr.clientCardCount[tmpNum]);
+										temp = gr.clientCard[tmpNum][m];
+										gr.clientCard[tmpNum][m] = gr.clientCard[tmpNum][n];
+										gr.clientCard[tmpNum][n] = temp;
+									}
+									gr.isSuccess = true;
+									gr.UpdateCardNum();
+									break;
+								}
+							}
+							if(!gr.isSuccess)// 종치기 실패시 다른플레이어에게 카드를 한장씩 돌린다.
+							{
+								gr.FailBell();
+								gr.isBell=false;
+								messageRoom(Function.ROOMCHAT+"|"+id+"님이 종치기에 실패했습니다.", clientroomNumber);
+								for (int i = 0; i < gr.humanNum; i++)
+								{
+									if(!id.equals(gr.Player[i])&&!gr.dead[i])
+									{
+										int tmpNum=0;
+										for(tmpNum=0;tmpNum<gr.humanNum;tmpNum++)
+										{
+											if((gr.cliT[tmpNum].id).equals(id))
+												break;												
+										}
+										gr.clientCard[i][gr.clientCardCount[i]++] = gr.clientCard[tmpNum][--gr.clientCardCount[tmpNum]];
+										if(gr.clientCardCount[tmpNum]==0)
+										{
+											gr.dead[tmpNum]=true;
+											messageRoom(Function.UPDATEDEAD+"|"+id, clientroomNumber);
+											messageTo(Function.DEAD+"|");
+											if (id.equals(gr.Player[gr.nowPlayer])) 
+											{
+												gr.NextPlayer();
+											}
+											if (gr.isEndGame() != -1) 
+											{
+												String winId=gr.Player[gr.isEndGame()];
+												messageRoom(Function.GAMEEXIT+"|"+winId+"|"+"님이 이겼습니다", clientroomNumber);
+											}
+											break;
+										}
+									}
+								}
+								gr.UpdateCardNum();
+							}
+						}
+					}
+					break;
 					/*[방나가기] ->*/
 					case Function.EXITROOM:
 					{
@@ -368,7 +645,7 @@ public class Server implements Runnable{
 						else
 						{
 							//방나간 클라이언트를 배열에서 삭제하고 뒷 클라이언트를 앞으로 땡김
-							int userCount= gameRoom.get(clientroomNumber).humanNum;
+							int userCount= (gameRoom.get(clientroomNumber).humanNum)-1; /*bugfix -> 0223 4시*/
 							for(int i=0; i<=userCount; i++) //방에서 나간 Thread 를 Room Vector의 배열에서 삭제하기 위해
 							{
 								System.out.println("I는------>"+i);

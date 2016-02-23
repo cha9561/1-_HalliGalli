@@ -45,7 +45,12 @@ public class Function {
 	public static final int BELLFAIL=602; 	//클라이언트 벨누름 실패
 	public static final int BELLSUCCESS=603;	//클라이언트 벨누름 성공
 	public static final int YOURTURN=604; 	//차례 알려줌 (클라이언트에서 받았을때 뒤집기 활성)
-	
+	public static final int CARDNUM=605;
+	public static final int TURNINFO=606;
+	public static final int UPDATEDEAD=607;
+	public static final int GAMEEXIT=608;
+	public static final int REPAINT=609;
+	public static final int DEAD=610;
 	// Client 종료 시
 	public static final int CLIENTEXIT=900;
 	public static final int DELROW=901;
