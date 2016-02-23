@@ -12,6 +12,33 @@ public class MakeRoom extends JFrame implements ActionListener{
    JButton b1,b2;
    MyPanel panel;
 
+   class MyPanel extends JPanel	//방만들기 JPanel창 
+   {
+       Image image;
+
+       MyPanel(String img)
+       {
+           image = Toolkit.getDefaultToolkit().createImage(img);
+           setOpaque(false);
+       }
+
+       public void paintComponent(Graphics g)
+       {
+           super.paintComponent(g);
+           if (image != null)
+           {
+               g.drawImage(image, 0, 0, getWidth(),getHeight(),this);
+           }
+           
+           Graphics2D g2d = (Graphics2D) g.create();
+
+           g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.0f));
+           
+           g2d.setColor(getBackground());
+           g2d.fill(getBounds());
+           g2d.dispose();
+       }
+   }
    public MakeRoom(){
 	    setUndecorated(true); //타이틀 바가 사라진다.
 
@@ -115,30 +142,3 @@ public class MakeRoom extends JFrame implements ActionListener{
 
 }
 
-/*class MyPanel extends JPanel	//방만들기 JPanel창 
-{
-    Image image;
-
-    MyPanel(String img)
-    {
-        image = Toolkit.getDefaultToolkit().createImage(img);
-        setOpaque(false);
-    }
-
-    public void paintComponent(Graphics g)
-    {
-        super.paintComponent(g);
-        if (image != null)
-        {
-            g.drawImage(image, 0, 0, getWidth(),getHeight(),this);
-        }
-        
-        Graphics2D g2d = (Graphics2D) g.create();
-
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.0f));
-        
-        g2d.setColor(getBackground());
-        g2d.fill(getBounds());
-        g2d.dispose();
-    }
-}*/

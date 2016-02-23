@@ -364,6 +364,11 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					int protocol=Integer.parseInt(st.nextToken());
 					switch(protocol)
 					{
+					case Function.YOURTURN:
+					{
+						gw.cardOpen.setBorderPainted(true);      
+						gw.cardOpen.setContentAreaFilled(true);
+					}
 					case Function.DELROW: 		//1.게임종료한 client 정보 접속자 List 에서 삭제
 					{
 						int rowIndex=(Integer.parseInt(st.nextToken()));		//rowIndex=delIndex
