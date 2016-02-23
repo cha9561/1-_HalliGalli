@@ -21,6 +21,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 		MakeID mID=new MakeID();					//회원가입창
 		MakeRoom mr=new MakeRoom();					//방만들기창
 		Help help=new Help();
+		 
 		
 		int rowNum=-1;
 		
@@ -35,6 +36,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			add("LOG",login);		//2.login창11
 			add("WR",wr);			//3.WaitRoom창
 			add("GW",gw);			//4.GAME W11indow창
+			
 			setSize(800,600);		//window창 크기 설정1111
 			setLocation(270, 170);	//window창 위치 설정
 			setVisible(true);		//보여지게 함11
@@ -153,6 +155,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 
 			else if(e.getSource()==mr.b1)  						//6.방만들기창에서 확인 눌렀을때//////////////////////////////
 			{
+				
 				String subject=mr.tf.getText().trim();			//방이름 입력 안했을때
 		        if(subject.length()<1)
 		        {
