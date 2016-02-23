@@ -140,7 +140,7 @@ public class GameWindow extends JPanel {   //큰틀
       iiPlayerCard[3].paintIcon(this, g, 440, 240);
       iiCardBack.paintIcon(this, g, 540, 240);
    }
-   11
+   
    public void setLabel(DefaultListModel model) {   //라벨에 이름 쓰기
       for (int i = 0; i < 2; i++) {
          userName[i] = (String) model.get(i);

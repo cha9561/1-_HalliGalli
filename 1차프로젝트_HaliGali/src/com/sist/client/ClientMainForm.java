@@ -369,17 +369,20 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						gw.cardOpen.setBorderPainted(true);      
 						gw.cardOpen.setContentAreaFilled(true);
 					}
+					break;
 					case Function.DELROW: 		//1.게임종료한 client 정보 접속자 List 에서 삭제
 					{
 						int rowIndex=(Integer.parseInt(st.nextToken()));		//rowIndex=delIndex
 						System.out.println("삭제 줄: "+rowIndex);
 						wr.model2.removeRow(rowIndex);							//접속자리스트에서 삭제
 					}
+					break;
 					case Function.CLIENTEXIT:	//2.waitRoom 채팅방에 00님이 나가셨습니다 전송
 					{
 						wr.ta.append(st.nextToken()+"\n");
 						wr.bar.setValue(wr.bar.getMaximum());
 					}
+					 break;
 					  case Function.MYLOG:				//1.window타이틀에 사용자이름 업데이트
 					  {
 						  String id=st.nextToken();
