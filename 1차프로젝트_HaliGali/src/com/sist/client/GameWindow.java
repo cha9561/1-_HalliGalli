@@ -19,7 +19,7 @@ public class GameWindow extends JPanel {	//큰틀
 	JButton b1,b2,b3,b4,b5,b6;
 	JTextArea profile1,profile2,profile3,profile4;
 	JScrollBar bar;
-	MyPanel p;
+	JPanel p;
 	
 	DefaultListModel model = new DefaultListModel(); // 리스트모델(리스트 내용 DB)
 	JList li_Player = new JList(model); 			// 사용자 접속 리스트
@@ -49,8 +49,10 @@ public class GameWindow extends JPanel {	//큰틀
 		
 		setLayout(null);
 		
-		p = new MyPanel("img/gameBoard.png");					//카드게임 실행 판넬
-		p.setBounds(10, 10, 775, 395); 			
+		p = new JPanel();					//카드게임 실행 판넬
+		p.setBounds(10, 10, 775, 395); 	
+		 p.add("Center",new JLabel(
+				 new ImageIcon(setImage("img/gameBoard.png",p.getWidth(),p.getHeight()))));
 		p.setLayout(null);
 		p.setOpaque(true); 
 		profile1.setBounds(0, 0, 120, 80);	
@@ -68,6 +70,7 @@ public class GameWindow extends JPanel {	//큰틀
 		b5.setBounds(700,465,80,40);
 
 		b6.setBounds(700,515,80,40);
+		
 		p.add(profile1);p.add(profile2);p.add(profile3);p.add(profile4);
 		p.add(b2);p.add(b3);
 		
@@ -90,10 +93,15 @@ public class GameWindow extends JPanel {	//큰틀
 		
 	}
 
-}
+	 public Image setImage(String filename,int width,int height) //버튼에 맞게 이미지 크기 맞춤
+	   {
+	      ImageIcon ii=new ImageIcon(filename);
+	      Image image=ii.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+	      return image;
+	   }
 
 
-class MyPanel extends JPanel	//게임panel창 !!!!
+/*class MyPanel extends JPanel	//게임panel창 !!!!
 {
     Image image;				//게임panel배경이미지
     PrintWriter writer;
@@ -195,5 +203,5 @@ class MyPanel extends JPanel	//게임panel창 !!!!
 			userName[i] = (String) model.get(i);
 			laPlayer[i].setText(userName[i]);
 		}
-	}
+	}*/
 }

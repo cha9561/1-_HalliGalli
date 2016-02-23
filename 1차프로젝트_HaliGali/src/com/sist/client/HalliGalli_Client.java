@@ -45,8 +45,9 @@ class HalliGalli_Board extends JPanel {
    public HalliGalli_Board() {
       setLayout(null);
       iiPlayerCard = new ImageIcon[4];
-      iiCard = new ImageIcon[56];
       laPlayer = new JLabel[4];
+      iiCard = new ImageIcon[56];
+      
       laCardNum = new JLabel[4];
       userName = new String[4];
 
