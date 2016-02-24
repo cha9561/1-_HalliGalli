@@ -389,19 +389,23 @@ public class NewServer implements Runnable{
 							messageAll(Function.CHGROOMSTATE+"|"+myRoomIndex+"|"+tmpRoomPos); //게임중이라고 표시
 							//방내 게임스타트 메시지 보내기
 							messageRoom(Function.ROOMCHAT+"|"+"게임 START", myRoomIndex);
+							messageRoom(Function.EXITFALSE+"|",myRoomIndex);		//방나가기 비활성화
 							int tmpInRoomUser=roomVc.get(myRoomIndex).preNum;
+							messageRoom(Function.TURNINFO+"|"+roomVc.get(myRoomIndex).inRoomVc.get(0).id
+									+"|"+roomVc.get(myRoomIndex).inRoomVc.get(1).id
+									+"|"+roomVc.get(myRoomIndex).inRoomVc.get(2).id
+									+"|"+roomVc.get(myRoomIndex).inRoomVc.get(3).id, myRoomIndex);
 							for(int i=0; i<tmpInRoomUser; i++) //방사람에게 차례 지정해서 보내주기
 							{
 								roomVc.get(myRoomIndex).inRoomVc.get(i).messageTo(Function.ROOMCHAT+"|"+"당신은 "+(i+1)+"번째 입니다");
+								//ID라벨에 입력
+								messageRoom(Function.IDLABEL+"|"+roomVc.get(myRoomIndex).inRoomVc.get(i).id,myRoomIndex);
 								/*게임 관련*/
 								//게임방 클래스의 id 저장 장소의 각 스레드가 갖고있는 id를 저장
 								roomVc.get(myRoomIndex).Player[i]=
 										roomVc.get(myRoomIndex).inRoomVc.get(i).id;
 							}
-							messageRoom(Function.TURNINFO+"|"+roomVc.get(myRoomIndex).inRoomVc.get(0).id
-									+"|"+roomVc.get(myRoomIndex).inRoomVc.get(1).id
-									+"|"+roomVc.get(myRoomIndex).inRoomVc.get(2).id
-									+"|"+roomVc.get(myRoomIndex).inRoomVc.get(3).id, myRoomIndex);
+							
 							//게임 시작후 게임관련 처리 추가할 자리
 							/*게임 관련*/
 							roomVc.get(myRoomIndex).GameInit(); // 게임초기화
@@ -409,8 +413,8 @@ public class NewServer implements Runnable{
 							messageRoom(Function.ROOMCHAT+"|"+
 									roomVc.get(myRoomIndex).Player[roomVc.get(myRoomIndex).NowPlayer]+"님 차례입니다.", 
 									myRoomIndex);
-							messageRoom(Function.GAMESTART+"|",myRoomIndex);
-							messageTo(Function.YOURTURN+"|");
+							//messageRoom(Function.GAMESTART+"|",myRoomIndex);	
+							messageTo(Function.YOURTURN+"|");		//카드뒤집기버튼활성화
 							roomVc.get(myRoomIndex).DivideCard();
 							//roomVc.get(myRoomIndex).UpdateCardNum();
 							for(int k=0;k<4;k++)
@@ -484,9 +488,12 @@ public class NewServer implements Runnable{
 						/*게임 관련*/
 						case Function.CARDOPEN: //클라이언트에서 카드 뒤집기
 						{
-							Room tmpRoomClass=roomVc.get(myRoomIndex);
+							Room tmpRoomClass=roomVc.get(myRoomIndex);	//방번호
+							//0번자리에 오픈안된 13번 클라이언트 카드번호를 줘라
 							tmpRoomClass.TurnCard[tmpRoomClass.NowPlayer][tmpRoomClass.TurnCardCount[tmpRoomClass.NowPlayer]++] = 
 									tmpRoomClass.ClientCard[tmpRoomClass.NowPlayer][--tmpRoomClass.ClientCardCount[tmpRoomClass.NowPlayer]];
+//							System.out.println("오픈된 전달받은 카드번호: "+
+//									tmpRoomClass.TurnCard[tmpRoomClass.NowPlayer][--tmpRoomClass.TurnCardCount[tmpRoomClass.NowPlayer]]);
 							if(tmpRoomClass.ClientCardCount[tmpRoomClass.NowPlayer]==0)
 							{
 								//현재 플레이어의 카드가 뒤집은 이후 하나도 남지 않으면
@@ -502,7 +509,7 @@ public class NewServer implements Runnable{
 								}
 								tmpRoomClass.NextPlayer();
 							}
-							else //그외 클라이언트에게 카드 다시 그림 요청
+							else //더 뒤집을 카드가 남아있을 때
 							{
 								messageRoom(Function.REPAINT+"|"
 										+tmpRoomClass.Player[tmpRoomClass.NowPlayer]+"|"
@@ -518,7 +525,7 @@ public class NewServer implements Runnable{
 									}
 								}
 								tmpRoomClass.NextPlayer();
-								messageRoom(Function.ROOMCHAT+"|"+tmpRoomClass.Player[tmpRoomClass.NowPlayer]+"|"
+								messageRoom(Function.ROOMCHAT+"|"+tmpRoomClass.Player[tmpRoomClass.NowPlayer]		//다음차례알려줌
 											+"님 차례 입니다.", myRoomIndex);
 								tmpRoomClass.inRoomVc.get(tmpRoomClass.NowPlayer).messageTo(Function.YOURTURN+"|");
 							}

@@ -16,7 +16,6 @@ public class GameWindow extends JPanel {   //큰틀
    JTextArea ta;
    JTextField tf;
    JButton b1,b4,b5,b6;
-   JTextArea profile1,profile2,profile3,profile4;
    JScrollBar bar;
    JButton bell,cardOpen;      //bell,카드뒤집기
    ImageIcon iiBell,hand;      //종,카드뒤집기 버튼이미지   
@@ -51,23 +50,30 @@ public class GameWindow extends JPanel {   //큰틀
       b1=new JButton("전송");               //채팅전송버튼      
       b4=new JButton("준비");               
       b5=new JButton("시작");               
-      b6=new JButton("나가기");            
-      profile1=new JTextArea();            //사용자 정보창
-      profile2=new JTextArea();
-      profile3=new JTextArea();
-      profile4=new JTextArea();
+      b6=new JButton("나가기");   
+      laPlayer[0]=new JLabel("");		//초기정보 안보이게
+      laPlayer[1]=new JLabel("");
+      laPlayer[2]=new JLabel("");
+      laPlayer[3]=new JLabel("");
+      laCardNum[0]=new JLabel("");
+      laCardNum[1]=new JLabel("");
+      laCardNum[2]=new JLabel("");
+      laCardNum[3]=new JLabel("");
       bell=new JButton(iiBell);            //종버튼
       cardOpen=new JButton(hand);            //카드뒤집기버튼
    
       setLayout(null);      
 
-      profile1.setBounds(0, 0, 120, 80);   
-      profile2.setBounds(655, 0, 120, 80);
-      profile3.setBounds(0, 320, 120, 80);
-      profile4.setBounds(655, 320, 120, 80);   
-                  
+      laPlayer[0].setBounds(20, 20, 100, 30);   
+      laPlayer[1].setBounds(675, 20, 100, 30);
+      laPlayer[2].setBounds(20, 330, 100, 30);
+      laPlayer[3].setBounds(675, 330, 100, 30); 
+      laCardNum[0].setBounds(20, 50, 100, 30);
+      laCardNum[1].setBounds(675, 50, 100, 30);
+      laCardNum[2].setBounds(20, 360, 100, 30);
+      laCardNum[3].setBounds(675, 360, 100, 30);         
       bell.setBounds(330,150,110,100);
-      cardOpen.setBounds(380,220,60,50);   
+      cardOpen.setBounds(360,265,60,50);   
       b4.setBounds(700,410,80,40);
       b5.setBounds(700,465,80,40);
       b6.setBounds(700,515,80,40);
@@ -76,6 +82,7 @@ public class GameWindow extends JPanel {   //큰틀
       bell.setContentAreaFilled(false);
       cardOpen.setBorderPainted(false);      
       cardOpen.setContentAreaFilled(false);
+      cardOpen.setEnabled(false);	//방들어가자마자 비활성화////////////////////
       
       JPanel p1=new JPanel();            //채팅창+채팅입력창 묶음
       p1.setBounds(10, 410, 350, 200);
@@ -87,7 +94,6 @@ public class GameWindow extends JPanel {   //큰틀
       p1.add(js4); p1.add(tf); p1.add(b1);         
       
       add(b4);add(b5);add(b6);//add(p);
-      add(profile1);add(profile2);add(profile3);add(profile4);
       add(bell);add(cardOpen);
       add(p1);
 
@@ -128,29 +134,14 @@ public class GameWindow extends JPanel {   //큰틀
          iiPlayerCard[i] = iiCardBack;      //사용자 각 카드->카드뒷면으로 지정
       }
       /*게임관련*/
-      laPlayer[0] = new JLabel("Player1");
-      laPlayer[0].setBounds(1, 1, 50, 15);
+      
       add(laPlayer[0]);
-      laCardNum[0] = new JLabel("0장");
-      laCardNum[0].setBounds(50, 1, 70, 15);
       add(laCardNum[0]);
-      laPlayer[1] = new JLabel("Player2");
-      laPlayer[1].setBounds(250, 1, 50, 15);
       add(laPlayer[1]);
-      laCardNum[1] = new JLabel("0장");
-      laCardNum[1].setBounds(300, 1, 70, 15);
       add(laCardNum[1]);
-      laPlayer[2] = new JLabel("Player3");
-      laPlayer[2].setBounds(1, 300, 50, 15);
       add(laPlayer[2]);
-      laCardNum[2] = new JLabel("0장");
-      laCardNum[2].setBounds(50, 300, 70, 15);
       add(laCardNum[2]);
-      laPlayer[3] = new JLabel("Player4");
-      laPlayer[3].setBounds(250, 300, 50, 15);
       add(laPlayer[3]);
-      laCardNum[3] = new JLabel("0장");
-      laCardNum[3].setBounds(300, 300, 70, 15);
       add(laCardNum[3]);
    }
    public void UpdateDraw(String name, int CardNum) // 그리기
@@ -167,7 +158,7 @@ public class GameWindow extends JPanel {   //큰틀
    {
       for (int i = 0; i < 4; i++) {
          if (name.equals(userName[i])) {
-            laCardNum[i].setText(Count + "장");
+            laCardNum[i].setText("현재 카드: "+Count + "장");
          }
       }
    }

@@ -130,7 +130,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				try{
 					out.write((Function.ROOMCHAT+"|"+data+"\n").getBytes());	//채팅전송을 server에게 
 				}catch(Exception ex){}
-				
+				gw.tf.setText("");
 			}
 
 			else if(e.getSource()==wr.b2) 						//5.방만들기창 
@@ -327,9 +327,8 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					out.write((Function.EXITROOM+"|"+"\n").getBytes());
 				}catch(Exception ex){}
 			}
-			else if(e.getSource()==gw.cardOpen)
+			else if(e.getSource()==gw.cardOpen)					//카드뒤집기 눌렀을 때!!!
 			{
-				gw.ta.append("당신이 카드를 뒤집습니다.");
 				gw.cardOpen.setBorderPainted(false);      
 				gw.cardOpen.setContentAreaFilled(false);
 				gw.cardOpen.setEnabled(false);
@@ -386,10 +385,10 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					int protocol=Integer.parseInt(st.nextToken());
 					switch(protocol)
 					{
-					case Function.YOURTURN:
+					case Function.YOURTURN:				//0.자기차례일 때 카드뒤집기 버튼활성화
 					{
-						gw.cardOpen.setBorderPainted(true);      
-						gw.cardOpen.setContentAreaFilled(true);
+						gw.cardOpen.setBorderPainted(false);     	
+						gw.cardOpen.setContentAreaFilled(false);
 						gw.cardOpen.setEnabled(true);
 					}
 					break;
@@ -517,15 +516,15 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  
 					  }
 					  break;
-					  case Function.GAMESTART:			//7.모두준비했을 때 방장만 시작 활성화
-					  {
-						  System.out.println("방장의 권한으로 시작버튼 활성화");
-						  gw.cardOpen.setBorderPainted(false);      
-							gw.cardOpen.setContentAreaFilled(false);
-							gw.cardOpen.setEnabled(false);
-						  
-					  }
-					  break;
+//					  case Function.GAMESTART:			//7.모두준비했을 때 방장만 시작 활성화
+//					  {
+//						  System.out.println("방장의 권한으로 시작버튼 활성화");
+//						  gw.cardOpen.setBorderPainted(false);      
+//							gw.cardOpen.setContentAreaFilled(false);
+//							gw.cardOpen.setEnabled(false);
+//						  
+//					  }
+//					  break;
 					  /*[방인원변경 ] ->*/
 					  case Function.CHGROOMUSER:
 					  {
@@ -578,8 +577,8 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  break;
 					  case Function.CARDNUM:
 					  {
-						  String tmpName=st.nextToken();
-						  int b=Integer.parseInt(st.nextToken());
+						  String tmpName=st.nextToken();			//id
+						  int b=Integer.parseInt(st.nextToken());	//카드수
 						  gw.UpdateCardNum(tmpName, b);
 					  }
 					  break;
@@ -624,6 +623,23 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  gw.userName[2]=st.nextToken();
 						  gw.userName[3]=st.nextToken();
 					  }
+					  break;
+					  case Function.EXITFALSE:			//게임시작시 나가기비활성화
+					  {
+						  gw.b6.setEnabled(false);
+					  }
+					  break;
+					  
+					  case Function.IDLABEL:			//게임시작시 id라벨 입력
+					  {
+						  String ID=st.nextToken();	//id
+						  for(int i=0; i<4; i++){
+							  if(ID.equals(gw.userName[i])){
+								  gw.laPlayer[i].setText("Player"+(i+1)+": "+ID);
+							  }
+						  }
+					  }
+					  break;
 					}
 				}catch(Exception ex){}
 			}
