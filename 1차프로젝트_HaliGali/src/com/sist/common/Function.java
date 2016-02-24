@@ -51,6 +51,7 @@ public class Function {
 	public static final int GAMEEXIT=608;
 	public static final int REPAINT=609;
 	public static final int DEAD=610;
+	public static final int GAMESTART=611;
 	// Client Á¾·á ½Ã
 	public static final int CLIENTEXIT=900;
 	public static final int DELROW=901;

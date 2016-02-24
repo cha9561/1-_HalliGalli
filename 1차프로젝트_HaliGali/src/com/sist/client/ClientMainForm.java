@@ -329,6 +329,9 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			else if(e.getSource()==gw.cardOpen)
 			{
 				gw.ta.append("당신이 카드를 뒤집습니다.");
+				gw.cardOpen.setBorderPainted(false);      
+				gw.cardOpen.setContentAreaFilled(false);
+				gw.cardOpen.setEnabled(false);
 				try {
 					out.write((Function.CARDOPEN+"|"+id+"\n").getBytes());
 				} catch (IOException e1) {
@@ -386,6 +389,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					{
 						gw.cardOpen.setBorderPainted(true);      
 						gw.cardOpen.setContentAreaFilled(true);
+						gw.cardOpen.setEnabled(true);
 					}
 					break;
 					case Function.DELROW: 		//1.게임종료한 client 정보 접속자 List 에서 삭제
@@ -512,7 +516,15 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  
 					  }
 					  break;
-					  
+					  case Function.GAMESTART:			//7.모두준비했을 때 방장만 시작 활성화
+					  {
+						  System.out.println("방장의 권한으로 시작버튼 활성화");
+						  gw.cardOpen.setBorderPainted(false);      
+							gw.cardOpen.setContentAreaFilled(false);
+							gw.cardOpen.setEnabled(false);
+						  
+					  }
+					  break;
 					  /*[방인원변경 ] ->*/
 					  case Function.CHGROOMUSER:
 					  {

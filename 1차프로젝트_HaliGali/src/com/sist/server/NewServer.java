@@ -405,17 +405,22 @@ public class NewServer implements Runnable{
 							messageRoom(Function.ROOMCHAT+"|"+
 									roomVc.get(myRoomIndex).Player[roomVc.get(myRoomIndex).NowPlayer]+"´Ô Â÷·ÊÀÔ´Ï´Ù.", 
 									myRoomIndex);
+							messageRoom(Function.GAMESTART+"|",myRoomIndex);
+							messageTo(Function.YOURTURN+"|");
 							roomVc.get(myRoomIndex).DivideCard();
-							//roomVc.get(myRoomIndex).UpdateCardNum(myRoomIndex);
+							//roomVc.get(myRoomIndex).UpdateCardNum();
 							for(int k=0;k<4;k++)
 							{
+								System.out.println("ZZZZZZZ-2");
 								if(!(roomVc.get(myRoomIndex).dead[k]))
 								{
+									System.out.println("ZZZZZZZ-1");
 									messageRoom(Function.CARDNUM+"|"+
 											roomVc.get(myRoomIndex).Player[k]
 											+"|"+roomVc.get(myRoomIndex).ClientCardCount[k], myRoomIndex);
 								}
 							}
+							System.out.println("ZZZZZZZ");
 						}
 						break;
 						case Function.EXITROOM:
@@ -514,6 +519,7 @@ public class NewServer implements Runnable{
 								tmpRoomClass.NextPlayer();
 								messageRoom(Function.ROOMCHAT+"|"+tmpRoomClass.Player[tmpRoomClass.NowPlayer]+"|"
 											+"´Ô Â÷·Ê ÀÔ´Ï´Ù.", myRoomIndex);
+								tmpRoomClass.inRoomVc.get(tmpRoomClass.NowPlayer).messageTo(Function.YOURTURN+"|");
 							}
 						}
 						break;
