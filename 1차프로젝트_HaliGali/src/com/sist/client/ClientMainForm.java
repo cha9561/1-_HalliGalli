@@ -24,7 +24,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 		
 		
 		int rowNum=-1;
-		
+		String id;
 	    Socket s;
 	    BufferedReader in;// 서버에서 값을 읽는다
 	    OutputStream out; // 서버로 요청값을 보낸다
@@ -86,7 +86,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			}
 			else if(e.getSource()==login.bt2)				//2.로그인버튼 누르기
 			{
-				String id=login.tf.getText().trim();		//ID입력안했을때
+				id=login.tf.getText().trim();		//ID입력안했을때
 				if(id.length()<1)
 				{
 					JOptionPane.showMessageDialog(this,
@@ -325,6 +325,23 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					out.write((Function.EXITROOM+"|"+"\n").getBytes());
 				}catch(Exception ex){}
 			}
+			else if(e.getSource()==gw.cardOpen)
+			{
+				gw.ta.append("당신이 카드를 뒤집습니다.");
+				try {
+					out.write((Function.CARDOPEN+"|"+id+"\n").getBytes());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+			else if(e.getSource()==gw.bell) //종치기 버튼
+			{
+				try {
+					out.write((Function.BELL+"|"+id+"\n").getBytes());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
 			
 		}
 
@@ -538,6 +555,52 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  wr.repaint();
 					  }
 					  break;
+					  case Function.REPAINT:
+					  {
+						  String tmpName=st.nextToken();
+						  int b=Integer.parseInt(st.nextToken());
+						  gw.UpdateDraw(tmpName, b);						  
+					  }
+					  break;
+					  case Function.CARDNUM:
+					  {
+						  String tmpName=st.nextToken();
+						  int b=Integer.parseInt(st.nextToken());
+						  gw.UpdateCardNum(tmpName, b);
+					  }
+					  break;
+					  case Function.DEAD:
+					  {
+						  gw.ta.append("당신은 죽었습니다");
+						  gw.bell.setEnabled(false);
+						  gw.cardOpen.setEnabled(false);
+					  }
+					  break;
+					  case Function.UPDATEDEAD:
+					  {
+						  String tmpName=st.nextToken();
+						  gw.ta.append(tmpName+" 님이 죽었습니다");
+						  gw.UpdateDead(tmpName);
+					  }
+					  break;
+					  case Function.BELLSUCCESS:
+					  {
+						  String tmpName=st.nextToken();
+						  gw.ta.append(tmpName+" 님이 종치기 성공했습니다.");
+						  gw.bell.setEnabled(true);
+						  gw.CardInit();
+					  }
+					  break;
+					  case Function.BELLFAIL:
+					  {
+						  String tmpName=st.nextToken();
+						  gw.ta.append(tmpName+" 님이 종치기 실패했습니다.");
+						  gw.bell.setEnabled(true);
+					  }
+					  case Function.BELL:
+					  {
+						  gw.bell.setEnabled(false);
+					  }
 					}
 				}catch(Exception ex){}
 			}

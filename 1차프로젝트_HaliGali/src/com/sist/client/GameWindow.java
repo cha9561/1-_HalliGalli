@@ -39,9 +39,9 @@ public class GameWindow extends JPanel {   //큰틀
       
       iiPlayerCard = new ImageIcon[4]; //  사용자 내기직전모양? 카드뒷면
       iiCard = new ImageIcon[56];     // 총카드 이미지
-      laPlayer = new JLabel[2];   //사용자 라벨
-      laCardNum = new JLabel[2];  // 카드 라벨
-      userName = new String[2];  // 사용자이름
+      laPlayer = new JLabel[4];   //사용자 라벨
+      laCardNum = new JLabel[4];  // 카드 라벨
+      userName = new String[4];  // 사용자이름
       
       ta=new JTextArea();   
       JScrollPane js4=new JScrollPane(ta);   //스크롤되는 채팅창
@@ -127,8 +127,68 @@ public class GameWindow extends JPanel {   //큰틀
       for (int i = 0; i < 4; i++) {
          iiPlayerCard[i] = iiCardBack;      //사용자 각 카드->카드뒷면으로 지정
       }
+      /*게임관련*/
+      laPlayer[0] = new JLabel("Player1");
+      laPlayer[0].setBounds(1, 1, 50, 15);
+      add(laPlayer[0]);
+      laCardNum[0] = new JLabel("0장");
+      laCardNum[0].setBounds(50, 1, 70, 15);
+      add(laCardNum[0]);
+      laPlayer[1] = new JLabel("Player2");
+      laPlayer[1].setBounds(250, 1, 50, 15);
+      add(laPlayer[1]);
+      laCardNum[1] = new JLabel("0장");
+      laCardNum[1].setBounds(300, 1, 70, 15);
+      add(laCardNum[1]);
+      laPlayer[2] = new JLabel("Player3");
+      laPlayer[2].setBounds(1, 300, 50, 15);
+      add(laPlayer[2]);
+      laCardNum[2] = new JLabel("0장");
+      laCardNum[2].setBounds(50, 300, 70, 15);
+      add(laCardNum[2]);
+      laPlayer[3] = new JLabel("Player4");
+      laPlayer[3].setBounds(250, 300, 50, 15);
+      add(laPlayer[3]);
+      laCardNum[3] = new JLabel("0장");
+      laCardNum[3].setBounds(300, 300, 70, 15);
+      add(laCardNum[3]);
    }
-   
+   public void UpdateDraw(String name, int CardNum) // 그리기
+   {
+      for (int i = 0; i < 4; i++) {
+         if (name.equals(userName[i])) {
+            iiPlayerCard[i] = iiCard[CardNum];
+            repaint();
+         }
+      }
+   }
+
+   public void UpdateCardNum(String name, int Count) // 카드를 냈을경우 업데이트
+   {
+      for (int i = 0; i < 4; i++) {
+         if (name.equals(userName[i])) {
+            laCardNum[i].setText(Count + "장");
+         }
+      }
+   }
+
+   public void UpdateDead(String name) // 죽은 플레이어정보 업데이트
+   {
+      for (int i = 0; i < 4; i++) {
+         if (name.equals(userName[i])) {
+            iiPlayerCard[i] = iiCardBack;
+            laCardNum[i].setText("GameOver");
+            repaint();
+         }
+      }
+   }
+   public void CardInit() // 카드를 초기화
+   {
+      for (int i = 0; i < 4; i++) {
+         iiPlayerCard[i] = iiCardBack;
+      }
+      repaint();
+   }
    protected void paintComponent(Graphics g) {         
       g.drawImage(back, 0, 0, getWidth(), getHeight(), this);   //this->JPanel에 배경이미지 뿌림         
       iiPlayerCard[0].paintIcon(this, g, 140, 20);   //왼쪽카드(이곳에, ,시작x좌표,시작y좌표)
