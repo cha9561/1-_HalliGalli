@@ -57,8 +57,9 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			gw.b5.addActionListener(this); 		//게임창에서 시작버튼 누르면
 			gw.b6.addActionListener(this); 		//게임창에서 나가기 누르면
 			gw.tf.addActionListener(this);		//게임창에서 채팅하면
-
-
+			gw.cardOpen.addActionListener(this);
+			gw.bell.addActionListener(this);
+			
 			mID.b1.addActionListener(this);
 			mID.b2.addActionListener(this);
 			mID.b3.addActionListener(this);
@@ -610,9 +611,18 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  gw.ta.append(tmpName+" 님이 종치기 실패했습니다.");
 						  gw.bell.setEnabled(true);
 					  }
+					  break;
 					  case Function.BELL:
 					  {
 						  gw.bell.setEnabled(false);
+					  }
+					  break;
+					  case Function.TURNINFO:
+					  {
+						  gw.userName[0]=st.nextToken();
+						  gw.userName[1]=st.nextToken();
+						  gw.userName[2]=st.nextToken();
+						  gw.userName[3]=st.nextToken();
 					  }
 					}
 				}catch(Exception ex){}

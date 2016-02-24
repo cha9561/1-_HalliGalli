@@ -392,12 +392,16 @@ public class NewServer implements Runnable{
 							int tmpInRoomUser=roomVc.get(myRoomIndex).preNum;
 							for(int i=0; i<tmpInRoomUser; i++) //방사람에게 차례 지정해서 보내주기
 							{
-								roomVc.get(myRoomIndex).inRoomVc.get(i).messageTo(Function.TURNINFO+"|"+"당신은 "+(i+1)+"번째 입니다");
+								roomVc.get(myRoomIndex).inRoomVc.get(i).messageTo(Function.ROOMCHAT+"|"+"당신은 "+(i+1)+"번째 입니다");
 								/*게임 관련*/
 								//게임방 클래스의 id 저장 장소의 각 스레드가 갖고있는 id를 저장
 								roomVc.get(myRoomIndex).Player[i]=
 										roomVc.get(myRoomIndex).inRoomVc.get(i).id;
 							}
+							messageRoom(Function.TURNINFO+"|"+roomVc.get(myRoomIndex).inRoomVc.get(0).id
+									+"|"+roomVc.get(myRoomIndex).inRoomVc.get(1).id
+									+"|"+roomVc.get(myRoomIndex).inRoomVc.get(2).id
+									+"|"+roomVc.get(myRoomIndex).inRoomVc.get(3).id, myRoomIndex);
 							//게임 시작후 게임관련 처리 추가할 자리
 							/*게임 관련*/
 							roomVc.get(myRoomIndex).GameInit(); // 게임초기화
@@ -411,16 +415,13 @@ public class NewServer implements Runnable{
 							//roomVc.get(myRoomIndex).UpdateCardNum();
 							for(int k=0;k<4;k++)
 							{
-								System.out.println("ZZZZZZZ-2");
 								if(!(roomVc.get(myRoomIndex).dead[k]))
 								{
-									System.out.println("ZZZZZZZ-1");
 									messageRoom(Function.CARDNUM+"|"+
 											roomVc.get(myRoomIndex).Player[k]
 											+"|"+roomVc.get(myRoomIndex).ClientCardCount[k], myRoomIndex);
 								}
 							}
-							System.out.println("ZZZZZZZ");
 						}
 						break;
 						case Function.EXITROOM:
@@ -592,9 +593,11 @@ public class NewServer implements Runnable{
 										{
 											if(!(roomVc.get(myRoomIndex).dead[k]))
 											{
-												messageRoom(Function.BELLSUCCESS+"|"+
+												/*messageTo(Function.BELLSUCCESS+"|"+
 														roomVc.get(myRoomIndex).Player[k]
-														+"|"+roomVc.get(myRoomIndex).ClientCardCount[k], myRoomIndex);
+														+"|"+roomVc.get(myRoomIndex).ClientCardCount[k]);*/
+												roomVc.get(myRoomIndex).inRoomVc.get(k)
+												.messageTo(Function.BELLSUCCESS+"|"+id);
 											}
 										}
 			                        	tmpRoomClass.isBell = false;
