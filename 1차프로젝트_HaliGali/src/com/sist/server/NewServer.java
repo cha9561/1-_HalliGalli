@@ -61,7 +61,7 @@ public class NewServer implements Runnable{
 		Socket s;
 		BufferedReader in;	// client요청값을 읽어온다
 		OutputStream out;	//client로 결과값을 응답할때 
-		int myRoomIndex;		//client가 있는 방 번호, 0부터 시작
+		int myRoomIndex=-1;		//client가 있는 방 번호, 0부터 시작
 		
 		public ClientThread(Socket s)
 		{
@@ -101,6 +101,12 @@ public class NewServer implements Runnable{
 								messageTo(Function.LOGIN+"|"+client.id+"|"+client.posUser);
 							}
 							myIndex=i-1;  //myIndex는 0부터 시작하므로
+							
+							for(Room room:roomVc)			//현재 있는 방갯수 세기 (1개만들었으니까 1개????)
+							{
+								messageTo(Function.ROOMINFORM+"|"+room.Type+"|"+room.name+
+										"|"+room.preNum+"|"+room.capaNum+"|"+room.pos);
+							}
 						} 
 						break;
 						case Function.CLIENTEXIT:
@@ -232,6 +238,7 @@ public class NewServer implements Runnable{
 						case Function.ROOMCHAT:
 						{
 							/*클라이언트 게임룸 채팅*/
+							System.out.println("IN-ROOMCHAT");
 							String data=st.nextToken();
 							messageRoom(Function.ROOMCHAT+"|["+id+"]"+data,myRoomIndex);
 						}
@@ -239,6 +246,7 @@ public class NewServer implements Runnable{
 						case Function.ROOMREADY:
 						{
 							/*준비 관리*/
+							System.out.println("IN-ROOMREADY");
 							int tmpUserNum=roomVc.get(myRoomIndex).preNum;
 							int maxUsetNum=roomVc.get(myRoomIndex).capaNum;
 							roomVc.get(myRoomIndex).readyNum++;
@@ -259,12 +267,76 @@ public class NewServer implements Runnable{
 						case Function.ROOMSTART:
 						{
 							/*게임 시작*/
+							System.out.println("IN-ROOMSTART");
+							//방상태 바꾸기
+							roomVc.get(myRoomIndex).pos="게임중";
+							String tmpRoomPos=roomVc.get(myRoomIndex).pos;
+							//대기실 게임상태를 게임중으로 바꾸기
+							messageAll(Function.CHGROOMSTATE+"|"+myRoomIndex+"|"+tmpRoomPos); //게임중이라고 표시
+							//방내 게임스타트 메시지 보내기
+							messageRoom(Function.ROOMCHAT+"|"+"게임 START", myRoomIndex);
+							int tmpInRoomUser=roomVc.get(myRoomIndex).preNum;
+							for(int i=0; i<tmpInRoomUser; i++) //방사람에게 차례 지정해서 보내주기
+							{
+								roomVc.get(myRoomIndex).inRoomVc.get(i).messageTo(Function.TURNINFO+"|"+"당신은 "+(i+1)+"번째 입니다");
+								
+							}
+							//게임 시작후 게임관련 처리 추가할 자리
+							
 						}
 						break;
 						case Function.EXITROOM:
 						{
 							/*방삭제 관리*/
+							System.out.println("IN->EXITROOM");
+							posUser="대기실";
+							System.out.println("EXITROOM Number:"+myRoomIndex);
+							//방에 현재인원 감소시컴
+							System.out.println(myRoomIndex+"1.방의 현재 인원은:"+roomVc.get(myRoomIndex).preNum);
+							(roomVc.get(myRoomIndex).capaNum)--;
+							int tmpUserCount=roomVc.get(myRoomIndex).preNum; //감소 후 인원 임시 저장
+							System.out.println(myRoomIndex+"2.방의 현재 인원은:"+roomVc.get(myRoomIndex).preNum);
+							//대기실로 바꿔줌
+							messageTo(Function.MYLOG+"|"+id+"|"+posUser); 	
+							messageAll(Function.CHGROOMUSER+"|"+myRoomIndex+"|"+tmpUserCount);
+							
+							int myRow=0;
+							for(ClientThread client:waitVc)
+							{
+								if((waitVc.get(myRow).id).equals(id)) //i번째 id와 내 id 가 같으면.
+									break;
+								myRow++;
+							}
+							//나의 row(몇번째 유저)를 보내 해당 row의 상태를 변경하도록 클라이언트에 보냄
+							messageAll(Function.CHGUSERPOS+"|"+myRow+"|"+posUser);
+							messageRoom(Function.ROOMCHAT+"|"+id+"님이 퇴장하였습니다.",myRoomIndex);
+							//현재 방 갯수 파악
+							int tmpRoomCount=preRoomCount();
+							
+							if(tmpUserCount<=0) //방에 남은 사람이 없으면
+							{
+								messageAll(Function.DELROOM+"|"+myRoomIndex);
+								System.out.println("삭제 방 Index :"+myRoomIndex);
+								
+								/*내방 뒤에있던 클라이언트 쓰레드의 myRoomIndex를 감소시켜줘야함*/
+								for(int i=(myRoomIndex+1);i<tmpRoomCount;i++)
+								{
+									int tmpInUser=roomVc.get(i).preNum;
+									for(int j=0; j<tmpInUser; j++)
+									{
+										(roomVc.get(i).inRoomVc.get(j).myIndex)--;
+									}
+								}
+								System.out.println("roomVc 에서 해당 방 삭제");
+								roomVc.remove(myRoomIndex);
+							}
+							else //방에 남은 사람이 있으면
+							{
+								roomVc.get(myIndex).inRoomVc.remove(this);
+							}
+							myRoomIndex=-1; //아무방에도 들어가있지 않은 것으로
 						}
+						break;
 					}
 				}catch(Exception ex)
 				{
