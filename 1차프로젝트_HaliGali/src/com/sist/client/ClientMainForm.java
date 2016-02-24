@@ -321,6 +321,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			{
 				System.out.println("방나가기 버튼 Click");
 				gw.ta.setText("");
+				gw.b4.setEnabled(true);
 				try{
 					out.write((Function.EXITROOM+"|"+"\n").getBytes());
 				}catch(Exception ex){}
