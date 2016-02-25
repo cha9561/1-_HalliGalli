@@ -50,6 +50,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			wr.b3.addActionListener(this);      //방들어가기 버튼 누르면
 			wr.b8.addActionListener(this);		//도움말 버튼 누르면
 			wr.b9.addActionListener(this);      //게임종료 버튼 누르면
+			wr.tf.addActionListener(this);
 
 			mr.b1.addActionListener(this);      //방만들기창에서 확인버튼 누르면
 			gw.b1.addActionListener(this); 		//게임창에서 전송버튼 누르면
@@ -418,6 +419,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  {
 						  String[] data={
 							st.nextToken(),	 
+							st.nextToken(),
 							st.nextToken()
 						  };
 						  wr.model2.addRow(data);	
@@ -574,13 +576,16 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  {
 						  String tmpName=st.nextToken();
 						  int b=Integer.parseInt(st.nextToken());
-						  gw.UpdateDraw(tmpName, b);						  
+						  System.out.println("InREPAIT-ID:"+tmpName+"Number:"+b);
+						  gw.UpdateDraw(tmpName, b);
+						  
 					  }
 					  break;
 					  case Function.CARDNUM:
 					  {
 						  String tmpName=st.nextToken();			//id
 						  int b=Integer.parseInt(st.nextToken());	//카드수
+						  System.out.println("InCARDNUM-ID:"+tmpName+"Number:"+b);
 						  gw.UpdateCardNum(tmpName, b);
 					  }
 					  break;

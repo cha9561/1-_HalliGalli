@@ -174,6 +174,9 @@ public class NewServer implements Runnable{
 		BufferedReader in;	// client요청값을 읽어온다
 		OutputStream out;	//client로 결과값을 응답할때 
 		int myRoomIndex=-1;		//client가 있는 방 번호, 0부터 시작
+		int win=0;
+		int lose=0;
+		double winning=0.0;
 		
 		public ClientThread(Socket s)
 		{
@@ -202,15 +205,15 @@ public class NewServer implements Runnable{
 							System.out.println("IN-LOGIN");
 							id=st.nextToken();
 							posUser="대기실";
-							messageAll(Function.LOGIN+"|"+id+"|"+posUser);
+							messageAll(Function.LOGIN+"|"+id+"|"+posUser+"|"+winning);
 							waitVc.addElement(this);
-							messageTo(Function.MYLOG+"|"+id+"|"+posUser);
+							messageTo(Function.MYLOG+"|"+id+"|"+posUser+"|"+winning);
 							
 							int i=0;
 							for(ClientThread client:waitVc)			//다른 사용자들에게 나를 접속자 리스트에 올림
 							{
 								i++;
-								messageTo(Function.LOGIN+"|"+client.id+"|"+client.posUser);
+								messageTo(Function.LOGIN+"|"+client.id+"|"+client.posUser+"|"+winning);
 							}
 							myIndex=i-1;  //myIndex는 0부터 시작하므로
 							
