@@ -721,43 +721,39 @@ public class NewServer implements Runnable{
 														+"|"+roomVc.get(myRoomIndex).ClientCardCount[k], myRoomIndex);
 											}
 										}
-			                            break;
 			                        }
 								}
 								System.out.println("In->BELL19");
 								if (!(tmpRoomClass.isSuccess)) 
 								{ // 종치기 실패시 다른플레이어에게 카드를 한장씩 돌린다.
-									//tmpRoomClass.FailBell();
 									System.out.println("In->BELL20");
 									for(int k=0;k<4;k++)
 									{
 										System.out.println("In->BELL21");
-										if(!(roomVc.get(myRoomIndex).dead[k]))
+										if(!(roomVc.get(myRoomIndex).dead[k]))		//나머지에게 종버튼 활성화
 										{
 											System.out.println("In->BELL22");
-											/*messageRoom(Function.BELLFAIL+"|"+
-													id
-													+"|"+roomVc.get(myRoomIndex).ClientCardCount[k], myRoomIndex);*/
 											tmpRoomClass.inRoomVc.get(k).messageTo(Function.BELLFAIL+"|"+id);
 										}
 									}
 									System.out.println("In->BELL23");
-									tmpRoomClass.isBell = false;
-			                        /*messageRoom(Function.ROOMCHAT+"|"+id+
-			                        		"님이 종치기에 실패했습니다.", myRoomIndex);*/
-			                        for (int i = 0; i < 4; i++) 
+									tmpRoomClass.isBell = false;	//벨 누르지 않은 상태로 바꿈~
+			                        
+									
+									for (int i = 0; i < 4; i++) 
 			                        {
+			                        	
+			                        	
 			                        	System.out.println("In->BELL24");
-			                           if (!(id.equals(tmpRoomClass.Player[i]))
-			                        		   && !(tmpRoomClass.dead[i])) 
-			                           {
+			                           if (!(id.equals(tmpRoomClass.Player[i]))			//내가 아닌 상대방이 죽지 않았다면,
+			                        		   && !(tmpRoomClass.dead[i])){
 			                        	   System.out.println("In->BELL27");
 			                        	   int a=0;
-			                        	   int tmp=tmpRoomClass.preNum;
+			                        	   int tmp=tmpRoomClass.preNum;		//현재사용자
 				                            for(a=0;a<tmp;a++)
 				                            {
 				                            	System.out.println("In->BELL26");
-				                            	if(id.equals(tmpRoomClass.inRoomVc.get(a).id))
+				                            	if(id.equals(tmpRoomClass.inRoomVc.get(a).id))	//나의 번호를 a에 저장
 				                            		break;
 				                            }
 			                              tmpRoomClass.ClientCard[i][tmpRoomClass.ClientCardCount[i]++] 
@@ -766,9 +762,7 @@ public class NewServer implements Runnable{
 			                              {
 			                            	  System.out.println("In->BELL25");
 			                            	  tmpRoomClass.dead[a] = true;
-			                                 //bMan.sendToAll("[UPDATEDEAD]" + userName);
 			                                 messageRoom(Function.UPDATEDEAD+"|"+id,myRoomIndex);
-			                                 //writer.println("[DEAD]" + userName);
 			                                 messageTo(Function.DEAD+"|"+id);
 			                                 if (id.equals(tmpRoomClass.Player[tmpRoomClass.NowPlayer])) 
 			                                 {
@@ -778,20 +772,18 @@ public class NewServer implements Runnable{
 			                                 if (tmpRoomClass.isEndGame() != -1) 
 			                                 {
 			                                	 System.out.println("In->BELL29");
-			                                    //bMan.sendToAll(Player[isEndGame()] + "님이 이겼습니다.");
 			                                	 messageRoom(Function.GAMEEXIT+"|"
 			                                			 +tmpRoomClass.Player[tmpRoomClass.isEndGame()]+"|"+"님이 이겼습니다.",
 			                                			 myRoomIndex);
-			                                	 //bMan.sendToAll("[GAMEINIT]");
-			                                    //bMan.sendTo(isEndGame(), "[WIN]");
-			                                    //bMan.unReady();
 			                                 }
 			                                 break;
 			                              }
-			                           }
-			                           System.out.println("In->BELL30");
-			                        }
-			                        //tmpRoomClass.UpdateCardNum(myRoomIndex);
+			                           	}
+			                           	System.out.println("In->BELL30");
+			                        }//for문 끝 
+			                        
+									
+									
 			                        for(int k=0;k<4;k++)
 									{
 			                        	System.out.println("In->BELL31");
@@ -804,7 +796,8 @@ public class NewServer implements Runnable{
 										}
 									}
 			                     }
-							}
+								
+							}//여기안 까지가 종제대로 쳤을 때-----
 							System.out.println("In->BELL33");
 						}
 						break;

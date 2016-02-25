@@ -29,7 +29,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 		
 		public ClientMainForm(){
 			
-			super("Halli Galli Online by c-3"); // 타이틀 제목	
+			super("Halli Galli"); // 타이틀 제목	
 			im=new ImageIcon("img/imicon.jpg"); // 타이틀바 왼쪽에 넣을 작은 이미지 아이콘 생성
 			this.setIconImage(im.getImage()); // 타이틀바에 이미지 넣기
 			setLayout(card);		//BorderLayout
@@ -81,8 +81,6 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				}
 			});
 
-		
-
 		}
 		
 		public void actionPerformed(ActionEvent e) {
@@ -124,7 +122,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 							+pass+"\n").getBytes());
 				}catch(Exception ex){}
 			}
-			else if(e.getSource()==wr.tf)			//3.waitroom에서 채팅입력할 때
+			else if(e.getSource()==wr.tf || e.getSource()==wr.b1)			//3.waitroom에서 채팅입력할 때
 			{			
 				String data=wr.tf.getText();								//입력한 값 가져오기
 				if(data.length()<1)
@@ -135,7 +133,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				}catch(Exception ex){}
 				wr.tf.setText("");
 			}
-			else if(e.getSource()==gw.tf)			//4.gameWindow에서 채팅입력할 때
+			else if(e.getSource()==gw.tf || e.getSource()==gw.b1)			//4.gameWindow에서 채팅입력할 때
 			{	
 				String data=gw.tf.getText();								//입력한 값 가져오기
 				if(data.length()<1)
@@ -401,7 +399,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 	    {
 	    	try
 	    	{
-	    		s=new Socket("211.238.142.77", 65535);		// s=>server
+	    		s=new Socket("localhost", 65535);		// s=>server
 	    		in=new BufferedReader(new InputStreamReader(s.getInputStream()));		//서버로 값을 읽어들임
 				out=s.getOutputStream();												//서버로 값을 보냄
 				/*out.write((Function.LOGIN+"|"+id+"|"
@@ -655,7 +653,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  break;
 					  case Function.DEAD:
 					  {
-						  gw.ta.append("당신은 죽었습니다");
+						  gw.ta.append("당신은 죽었습니다.\n");
 						  gw.bell.setEnabled(false);
 						  gw.cardOpen.setEnabled(false);
 					  }
@@ -663,7 +661,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  case Function.UPDATEDEAD:
 					  {
 						  String tmpName=st.nextToken();
-						  gw.ta.append(tmpName+" 님이 죽었습니다");
+						  gw.ta.append(tmpName+" 님이 죽었습니다.\n");
 						  gw.UpdateDead(tmpName);
 						  validate();
 					  }
@@ -676,19 +674,22 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  gw.CardInit();
 					  }
 					  break;
+					  
 					  case Function.BELLFAIL:
-					  {
-						  int tmpName=Integer.parseInt(st.nextToken());
-						  gw.ta.append(tmpName+"님이 종치기 실패하였습니다.");
-						  gw.bell.setEnabled(true);
-						  validate();
-					  }
-					  break;
+		                 {
+		                    String tmpName=st.nextToken();
+		                    gw.ta.append(tmpName+"님이 종치기 실패하였습니다.\n");
+		                    gw.bell.setEnabled(true);
+		                    validate();
+		                 }
+		              break;
+		               
 					  case Function.BELL:
 					  {
 						  gw.bell.setEnabled(false);
 					  }
 					  break;
+					  
 					  case Function.TURNINFO:
 					  {
 						  gw.userName[0]=st.nextToken();

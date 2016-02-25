@@ -43,9 +43,9 @@ public class GameWindow extends JPanel {   //큰틀
    public GameWindow(){
       back=Toolkit.getDefaultToolkit().getImage("img/test.png");  // 뒷배경      
       iiCardBack = new ImageIcon("cardimg/CardBack.jpg");    // 카드 뒷면
-      iiBell = new ImageIcon("img/Bell.png");             // 종
+      iiBell = new ImageIcon("img/Bell.png");             	// 종
       hand=new ImageIcon("img/hand.png");                    // 손모양 
-      send=new ImageIcon("img/send2.png");		
+      send=new ImageIcon("img/waitSend.png");		
       readyr=new ImageIcon("img/readyr.png"); 
       startr=new ImageIcon("img/startr.png"); 
       exitr=new ImageIcon("img/exitr.png"); 
@@ -73,6 +73,17 @@ public class GameWindow extends JPanel {   //큰틀
       laCardNum[1]=new JLabel("");
       laCardNum[2]=new JLabel("");
       laCardNum[3]=new JLabel("");
+      
+      laPlayer[0].setForeground(Color.WHITE);
+      laPlayer[1].setForeground(Color.WHITE);
+      laPlayer[2].setForeground(Color.WHITE);
+      laPlayer[3].setForeground(Color.WHITE);
+      laCardNum[0].setForeground(Color.WHITE);
+      laCardNum[1].setForeground(Color.WHITE);
+      laCardNum[2].setForeground(Color.WHITE);
+      laCardNum[3].setForeground(Color.WHITE);
+      
+      
       bell=new JButton(iiBell);            //종버튼
       cardOpen=new JButton(hand);            //카드뒤집기버튼
       String[] col={"ID"};				//접속자테이블

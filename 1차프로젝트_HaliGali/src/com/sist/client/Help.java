@@ -18,29 +18,33 @@ public class Help extends JFrame implements ActionListener{
       ImageIcon h5=new ImageIcon("img/how5.jpg");
       ImageIcon h6=new ImageIcon("img/how6.jpg");
       ImageIcon p=new ImageIcon("img/PRE.png");
-      ImageIcon n=new ImageIcon("img/NEXT.jpg");
+      ImageIcon n=new ImageIcon("img/NEXT.png");
+      
       public Help()
       {
-    	  setUndecorated(true);
-    	  setLayout(null);
-    	
-
+    	 setUndecorated(true);
+    	 setLayout(null);
     	 l1=new JLabel();
     	 
     	 l1.setBounds(30, 50, 440, 440);
     	 l1.setIcon(new ImageIcon(setImage("img/how1.jpg", l1.getWidth(), l1.getHeight())));
-    	 previous=new JButton("previous");	//previous
-  		 next =new JButton("next");	//next
-  		close = new JButton("close"); // 닫기
-  		close.setBorderPainted(false);
-		close.setContentAreaFilled(false); 
+    	 previous=new JButton(p);	//previous
+  		 next =new JButton(n);	//next
+  		 close = new JButton(backButton); // 닫기
+  		 close.setBorderPainted(false);
+  		 close.setContentAreaFilled(false); 
   		
   		JPanel p1=new JPanel(new GridLayout(1, 2));//이전,다음 버튼
-    	  JPanel p2=new JPanel();//이전,다음 버튼
-    	  previous.setEnabled(false);
-    	  p1.add(previous);
+    	JPanel p2=new JPanel();//이전,다음 버튼
+    	previous.setEnabled(false);
+    	
+    	previous.setBorderPainted(false);
+    	previous.setContentAreaFilled(false);
+    	next.setBorderPainted(false);
+    	next.setContentAreaFilled(false);
+		
+    	p1.add(previous);
   		p1.add(next);
-  		
   		p2.add(close);
   		add(l1);
       
@@ -48,31 +52,18 @@ public class Help extends JFrame implements ActionListener{
   		p2.setOpaque(false);
   		
   		setBounds(350,200,500,500);
-  		
-  		
-  		
+
   		p1.setBounds(140, 10, 190, 30);
-  		p2.setBounds(400, 3, 100, 60);
-  		
-  		
+  		p2.setBounds(400, 0, 100, 60);
   		
   		add(p1);
   		add(p2);
 
-  		
-  	
   		previous.addActionListener(this);
   		next.addActionListener(this);
   		close.addActionListener(this);
-  		
-
-        
       }      
-      
-      
 
-      
-    
       protected void paintComponent(Graphics g) {
          // TODO Auto-generated method stub
          g.drawImage(img[page], 0, 0, getWidth(), getHeight(), this);
