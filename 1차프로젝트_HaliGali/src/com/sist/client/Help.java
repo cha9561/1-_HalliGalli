@@ -17,6 +17,8 @@ public class Help extends JFrame implements ActionListener{
       ImageIcon h4=new ImageIcon("img/how4.jpg");
       ImageIcon h5=new ImageIcon("img/how5.jpg");
       ImageIcon h6=new ImageIcon("img/how6.jpg");
+      ImageIcon p=new ImageIcon("img/PRE.png");
+      ImageIcon n=new ImageIcon("img/NEXT.jpg");
       public Help()
       {
     	  setUndecorated(true);

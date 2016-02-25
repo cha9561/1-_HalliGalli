@@ -401,7 +401,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 	    {
 	    	try
 	    	{
-	    		s=new Socket("localhost", 65535);		// s=>server
+	    		s=new Socket("211.238.142.77", 65535);		// s=>server
 	    		in=new BufferedReader(new InputStreamReader(s.getInputStream()));		//서버로 값을 읽어들임
 				out=s.getOutputStream();												//서버로 값을 보냄
 				/*out.write((Function.LOGIN+"|"+id+"|"
