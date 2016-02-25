@@ -132,6 +132,7 @@ public class Server implements Runnable{
 
 	Vector<ClientThread> waitVc=new Vector<ClientThread>();		//사용자 배열
 	Vector<GameRoom> gameRoom=new Vector<GameRoom>();			//게임룸 배열
+	Vector<ClientThread> gameUser=new Vector<ClientThread>();
 	
 	ServerSocket ss=null;// 서버에서 접속시 처리 (교환 소켓)
 	
@@ -319,11 +320,14 @@ public class Server implements Runnable{
 						//roomCount++;
 						
 						System.out.println("clientroomNumber: "+clientroomNumber);
-						gameRoom.addElement(gr);		//게임룸 리스트에 새로 만든 게임룸 추가
+						
 						gr.humanNum=1;			//현재인원수=1 dafault값 주기
 						gr.cliT[0]=this;		//client에 만든이 추가==방장
+						gameRoom.addElement(gr);		//게임룸 리스트에 새로 만든 게임룸 추가
 						System.out.println("방 번호:"+gr.roomNum+",만든사람 id:"+gr.cliT[0].id+",최대인원수:"+gr.capaNum
 								+"현재인원수:"+gr.humanNum+",공개여부:"+gr.Type);
+						 
+						messageAll(Function.ROOMUSER+"|"+id); //나의id 새로들어온 유저에게 뿌리기
 						
 						messageTo(Function.MAKEROOM+"|"+id+"|"+roomName+"|"+gr.humanNum+"|"+gr.capaNum);//1.game창으로 전환
 						messageAll(Function.ROOMINFORM+"|"+roomType+"|"+roomName+"|"+gr.humanNum+"|"+gr.capaNum+"|"+gr.pos);//2.방목록에 띄움
@@ -362,7 +366,9 @@ public class Server implements Runnable{
 							System.out.println("cliT[1].id->"+gameRoom.get(clientroomNumber).cliT[1].id);
 							System.out.println("최대인원수:"+roomCapa+"현재인원수:"+humNum);
 							//	
-					
+							
+							//gameUser.addElement(this);
+							messageAll(Function.ROOMUSER+"|"+id);
 							messageTo(Function.JOINROOM+"|"+decision+"|"+gameRoom.get(clientroomNumber).cliT[0].id+"|"+gameRoom.get(clientroomNumber).name);		//증가된 사람에게 true넘겨줌
 							//messageTo(Function.JOINROOM+"|"+decision);		//증가된 사람에게 true넘겨줌
 							messageRoom(Function.ROOMCHAT+"|"+id+"님이 입장하였습니다",clientroomNumber);	//모두에게 사람 입장 알리기,방번호 
