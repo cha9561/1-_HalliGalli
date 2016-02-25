@@ -664,6 +664,14 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  }
 					  }
 					  break;
+					  case Function.GAMEEXIT:
+					  {
+						  System.out.println("게임종료!!!!");
+						  gw.b4.setEnabled(true);
+						  gw.b6.setEnabled(true);
+						  gw.CardInit();
+					  }
+					  break;
 					}
 				}catch(Exception ex){validate();}
 				validate();

@@ -140,7 +140,7 @@ public class GameWindow extends JPanel {   //큰틀
 
       for (int i = 0; i < 5; i++) // 1개짜리 카드 이미지설정
       {
-         iiCard[14 * 0 + i] = new ImageIcon("cardimg/banana1.jpg");
+         iiCard[14 * 0 + i] = new ImageIcon("cardimg/banana_1.jpg");
          iiCard[14 * 1 + i] = new ImageIcon("cardimg/lemon_1.jpg");
          iiCard[14 * 2 + i] = new ImageIcon("cardimg/peach_1.jpg");
          iiCard[14 * 3 + i] = new ImageIcon("cardimg/straw_1.jpg");
