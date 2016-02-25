@@ -95,8 +95,8 @@ public class WaitRoom extends JPanel{ //
 			column.setCellRenderer(rnd);
 		}
 		
-		String[] col2={"ID","상태","승률"};				//접속자테이블
-		String[][] row2=new String[0][3];
+		String[] col2={"ID","상태"};				//접속자테이블
+		String[][] row2=new String[0][2];
 		model2=new DefaultTableModel(row2, col2)
 		{//더블클릭시 편집방지
 			public boolean isCellEditable(int r,int c)
@@ -180,11 +180,11 @@ public class WaitRoom extends JPanel{ //
 		b5.setBounds(10, 335, 500, 30);	//chattingroom타이틀
 		b6.setBounds(515, 15, 270, 30);		//friends타이틀
 		js1.setBounds(10, 50, 500, 280);	//방목록
-		js2.setBounds(515, 50, 270, 280);	//접속자	
+		js2.setBounds(515, 50, 270, 425);	//접속자	
 		//js3.setBounds(10, 370, 500, 150);	//채팅///////
 		//tf.setBounds(10, 525, 450, 30);		//채팅입력창/////
 		//b1.setBounds(465, 525, 45, 30);		//채팅전송버튼/////
-		profile.setBounds(515, 335, 270, 140);	//사용자 정보
+		//profile.setBounds(515, 335, 270, 140);	//사용자 정보
 		p.setBounds(515, 480, 270, 75);		//버튼묶음
 		
 		JPanel p1=new JPanel();			//채팅창+채팅입력창 묶음

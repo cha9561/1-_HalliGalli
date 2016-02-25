@@ -35,10 +35,10 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			setLayout(card);		//BorderLayout
 			add("LOAD",ld);
 			new Thread(ld).start(); //로딩쓰레드 실행
-			add("LOG",login);		//2.login창11
+			add("LOG",login);		//2.login창
 			add("WR",wr);			//3.WaitRoom창
-			add("GW",gw);			//4.GAME W11indow창
-			setSize(800,600);		//window창 크기 설정1111
+			add("GW",gw);			//4.GAME Window창
+			setSize(800,600);		//window창 크기 설정
 			setLocation(270, 170);	//window창 위치 설정
 			setVisible(true);		//보여지게 함11
 			setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -448,8 +448,8 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  {
 						  String[] data={
 							st.nextToken(),	 
-							st.nextToken(),
 							st.nextToken()
+							
 						  };
 						  wr.model2.addRow(data);	
 					  }
