@@ -88,7 +88,6 @@ class Room
 
 	   public void NextPlayer() 
 	   {
-		  System.out.println("NextPlayer-id: "+this.inRoomVc.get(0).id);
 	      this.NowPlayer++;
 	      if (this.NowPlayer == 4) {
 	         this.NowPlayer = 0;
@@ -102,6 +101,7 @@ class Room
 	            this.NowPlayer = 0;
 	         }
 	      }
+	      System.out.println("NextPlayer-id: "+this.inRoomVc.get(this.NowPlayer).id);
 	   }
 
 	   /*public void SuccessBell() {
@@ -586,8 +586,9 @@ public class NewServer implements Runnable{
 								System.out.println("In->BELL2");
 								tmpRoomClass.isBell=true;
 								messageRoom(Function.ROOMCHAT+"|"+id
-										+"님이 종을 쳤습니다.", myRoomIndex);
-								messageRoom(Function.BELL+"|",myRoomIndex);
+										+"님이 종을 쳤습니다.", myRoomIndex);			//종을 쳤습니다!!!!
+								messageRoom(Function.BELL+"|",myRoomIndex);	//일단은 벨이 꺼지게 함 (눌렀으니까)
+								
 								System.out.println("In->BELL2_1");
 								Thread.sleep(500);
 								System.out.println("In->BELL2_2");
@@ -643,49 +644,48 @@ public class NewServer implements Runnable{
 			                              }
 			                           }
 			                        }
+			                        
+			                        
 			                        System.out.println("In->BELL7");
-			                        if (tmpCardSum == 5) 
-			                        { // 종치기성공시 깔린 카드를 다 가져간다.
+			                        if (tmpCardSum == 5) 							// 종치기성공시 깔린 카드를 다 가져간다.
+			                        { 
 			                        	System.out.println("In->BELL8");
-			                        	//tmpRoomClass.SuccessBell();
 			                        	for(int k=0;k<4;k++)
 										{
 			                        		System.out.println("In->BELL9");
 											if(!(roomVc.get(myRoomIndex).dead[k]))
 											{
-												/*messageTo(Function.BELLSUCCESS+"|"+
-														roomVc.get(myRoomIndex).Player[k]
-														+"|"+roomVc.get(myRoomIndex).ClientCardCount[k]);*/
 												roomVc.get(myRoomIndex).inRoomVc.get(k)
-												.messageTo(Function.BELLSUCCESS+"|"+id);
+												.messageTo(Function.BELLSUCCESS+"|"+id);		//////채팅에 종치기성공을알림!!
 											}
 										}
 			                        	System.out.println("In->BELL10");
 			                        	tmpRoomClass.isBell = false;
-			                            //bMan.sendToAll(userName + "님이 종치기에 성공했습니다.");
-			                        	/*//messageRoom(Function.ROOMCHAT+"|"+id
-												+"님이 종치기 성공하였습니다.", myRoomIndex);*/
-			                        	//int a = bMan.getNum(userName);
-			                            int tmp=tmpRoomClass.preNum;
+			                            int tmp=tmpRoomClass.preNum;		//현재방인원수
 			                            System.out.println("In->BELL11");
-			                            int a=0;
-			                            for(a=0;a<tmp;a++)
+			                            
+			                            int a=0;			
+			                            for(a=0;a<tmp;a++)								//a=bell성공한사람 번호
 			                            {
 			                            	System.out.println("In->BELL12");
 			                            	if(id.equals(tmpRoomClass.inRoomVc.get(a).id))
 			                            		break;
-			                            	a++;
 			                            }
+			                            
 			                        	for (i = 0; i < 4; i++) 
 			                            {
 			                        		System.out.println("In->BELL13");
-			                               for (int j = 0; j < tmpRoomClass.TurnCardCount[i]; j++) 
-			                               {
-			                            	   System.out.println("In->BELL14");
-			                            	   tmpRoomClass.ClientCard[a][tmpRoomClass.ClientCardCount[a]++] = tmpRoomClass.TurnCard[i][j];
-			                               }
-			                               tmpRoomClass.TurnCardCount[i] = 0;
+			                        		if(!(roomVc.get(myRoomIndex).dead[i])){						//죽지않은 사용자라면(추가)
+			                        			for (int j = 0; j < tmpRoomClass.TurnCardCount[i]; j++) 	//사용자마다 뒤집힌 카드수만큼
+			                        			{
+			                        				System.out.println("In->BELL14");
+			                        				//뒤집힌 카드 번호들을 성공한사람의 현재카드에 추가!!
+			                        				tmpRoomClass.ClientCard[a][tmpRoomClass.ClientCardCount[a]++] = tmpRoomClass.TurnCard[i][j];
+			                        			}
+			                        			tmpRoomClass.TurnCardCount[i] = 0;
+			                        		}
 			                            }
+			                        	
 			                        	System.out.println("In->BELL15");
 			                            for(int m = tmpRoomClass.ClientCardCount[a]; m > 0; m--) // 카드// 섞기    
 			                            {
@@ -696,15 +696,15 @@ public class NewServer implements Runnable{
 			                               tmpRoomClass.ClientCard[a][m] = tmpRoomClass.ClientCard[a][n];
 			                               tmpRoomClass.ClientCard[a][n] = temp;
 			                            }
-			                            tmpRoomClass.isSuccess = true;
-			                            //tmpRoomClass.UpdateCardNum(myRoomIndex);
+			                            
+			                            tmpRoomClass.isSuccess = true;					//성공을 알림!!
 			                            for(int k=0;k<4;k++)
 										{
 			                            	System.out.println("In->BELL17");
-											if(!(roomVc.get(myRoomIndex).dead[k]))
+											if(!(roomVc.get(myRoomIndex).dead[k]))		//죽지않은 사용자라면
 											{
 												System.out.println("In->BELL18");
-												messageRoom(Function.CARDNUM+"|"+
+												messageRoom(Function.CARDNUM+"|"+				//id,id의 카드수를 모두 뿌림
 														roomVc.get(myRoomIndex).Player[k]
 														+"|"+roomVc.get(myRoomIndex).ClientCardCount[k], myRoomIndex);
 											}

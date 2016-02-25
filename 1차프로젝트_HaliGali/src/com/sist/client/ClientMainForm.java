@@ -663,7 +663,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  case Function.BELLSUCCESS:
 					  {
 						  String tmpName=st.nextToken();
-						  gw.ta.append(tmpName+" 님이 종치기 성공했습니다.");
+						  gw.ta.append(tmpName+" 님이 종치기 성공했습니다.\n");
 						  gw.bell.setEnabled(true);
 						  gw.CardInit();
 					  }
