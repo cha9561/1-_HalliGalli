@@ -6,9 +6,13 @@ import java.io.BufferedReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-
 import javax.swing.*;
 import javax.swing.table.*;
+import java.applet.Applet;
+import java.applet.AudioClip;
+import java.io.File;
+import java.net.MalformedURLException;
+import javax.swing.event.*;
 
 
 public class GameWindow extends JPanel {   //큰틀
@@ -18,7 +22,7 @@ public class GameWindow extends JPanel {   //큰틀
    JButton b1,b4,b5,b6;
    JScrollBar bar;
    JButton bell,cardOpen;      //bell,카드뒤집기
-
+   AudioClip clip,clip1,clip2,clip3,clip4; 	//게임룸bgm,종치는 소리,나가는 소리,준비버튼 눌렀을때 소리,카드넘기는 소리 
    ImageIcon iiBell,hand,send,readyr,startr,exitr;      //종,카드뒤집기 버튼이미지   
 
    JTable table;
@@ -59,7 +63,8 @@ public class GameWindow extends JPanel {   //큰틀
       b1=new JButton(send);               //채팅전송버튼      
       b4=new JButton(readyr);               
       b5=new JButton(startr);               
-      b6=new JButton(exitr);   
+      b6=new JButton(exitr);  
+
       laPlayer[0]=new JLabel("");		//초기정보 안보이게
       laPlayer[1]=new JLabel("");
       laPlayer[2]=new JLabel("");
@@ -184,6 +189,48 @@ public class GameWindow extends JPanel {   //큰틀
       add(laCardNum[2]);
       add(laPlayer[3]);
       add(laCardNum[3]);
+      
+      try {
+          File file = new File("res/gameroom.wav"); 
+          clip = Applet.newAudioClip(file.toURL());  
+          clip.stop();
+         
+      } catch (MalformedURLException e){
+          e.printStackTrace();
+      }
+      try {
+          File file = new File("res/ring.wav"); 
+          clip1 = Applet.newAudioClip(file.toURL());  
+          clip1.stop();
+         
+      } catch (MalformedURLException e){
+          e.printStackTrace();
+      }
+            
+      try {
+          File file = new File("res/quit.wav"); 
+          clip2 = Applet.newAudioClip(file.toURL());  
+          clip2.stop();
+         
+      } catch (MalformedURLException e){
+          e.printStackTrace();
+      }
+      try {
+          File file = new File("res/ready.wav"); 
+          clip3 = Applet.newAudioClip(file.toURL());  
+          clip3.stop();
+         
+      } catch (MalformedURLException e){
+          e.printStackTrace();
+      }
+      try {
+          File file = new File("res/turncard.wav"); 
+          clip4 = Applet.newAudioClip(file.toURL());  
+          clip4.stop();
+         
+      } catch (MalformedURLException e){
+          e.printStackTrace();
+      }
    }
    public void UpdateDraw(String name, int CardNum) // 그리기
    {

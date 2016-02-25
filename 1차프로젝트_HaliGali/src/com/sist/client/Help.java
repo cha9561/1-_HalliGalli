@@ -29,7 +29,7 @@ public class Help extends JFrame implements ActionListener{
     	 l1.setIcon(new ImageIcon(setImage("img/how1.jpg", l1.getWidth(), l1.getHeight())));
     	 previous=new JButton("previous");	//previous
   		 next =new JButton("next");	//next
-  		close = new JButton(backButton); // ´Ý±â
+  		close = new JButton("close"); // ´Ý±â
   		close.setBorderPainted(false);
 		close.setContentAreaFilled(false); 
   		

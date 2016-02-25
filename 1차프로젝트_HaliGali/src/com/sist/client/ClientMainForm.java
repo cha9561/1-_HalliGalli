@@ -3,10 +3,8 @@ import java.awt.*; 		//Layout들어있음
 import javax.swing.*;	//window관련 버튼등등이 들어있음
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
 import com.sist.common.Function;
 import java.awt.event.*;
-
 //네트워크 관련
 import java.io.*;
 import java.net.*;
@@ -21,7 +19,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 		MakeID mID=new MakeID();					//회원가입창
 		MakeRoom mr=new MakeRoom();					//방만들기창
 		Help help=new Help();
-		
+		private ImageIcon im;						//게임 아이콘
 		
 		int rowNum=-1;
 		String id;
@@ -31,8 +29,12 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 		
 		public ClientMainForm(){
 			
+			super("Halli Galli Online by c-3"); // 타이틀 제목	
+			im=new ImageIcon("img/imicon.jpg"); // 타이틀바 왼쪽에 넣을 작은 이미지 아이콘 생성
+			this.setIconImage(im.getImage()); // 타이틀바에 이미지 넣기
 			setLayout(card);		//BorderLayout
-			
+			add("LOAD",ld);
+			new Thread(ld).start(); //로딩쓰레드 실행
 			add("LOG",login);		//2.login창11
 			add("WR",wr);			//3.WaitRoom창
 			add("GW",gw);			//4.GAME W11indow창
@@ -40,8 +42,10 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			setLocation(270, 170);	//window창 위치 설정
 			setVisible(true);		//보여지게 함11
 			setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-			setResizable(false);    //window창 고정(늘어나지 않음)					
+			setResizable(false);    //window창 고정(늘어나지 않음)	
+			setLocationRelativeTo(null); //게임 프레임을 화면 정중앙에 위치시킴
 			
+			ld.st.addActionListener(this);	    //로딩의 enter버튼
 			login.bt1.addActionListener(this);	//회원가입 버튼 누르면
 			login.bt2.addActionListener(this);	//로그인 버튼 누르면
 			wr.b1.addActionListener(this);		//로그인 버튼 누르면
@@ -50,6 +54,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			wr.b3.addActionListener(this);      //방들어가기 버튼 누르면
 			wr.b8.addActionListener(this);		//도움말 버튼 누르면
 			wr.b9.addActionListener(this);      //게임종료 버튼 누르면
+			
 			wr.tf.addActionListener(this);
 			mr.b1.addActionListener(this);      //방만들기창에서 확인버튼 누르면
 			gw.b1.addActionListener(this); 		//게임창에서 전송버튼 누르면
@@ -60,9 +65,9 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			gw.cardOpen.addActionListener(this);
 			gw.bell.addActionListener(this);
 			
-			mID.b1.addActionListener(this);
-			mID.b2.addActionListener(this);
-			mID.b3.addActionListener(this);
+			mID.b1.addActionListener(this);		//회원가입의 Join버튼
+			mID.b2.addActionListener(this);		//회원가입의 Back버튼
+			mID.b3.addActionListener(this);		//회원가입의 중복체크 버튼
 
 			wr.table1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {			
 				@Override
@@ -80,13 +85,20 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			if(e.getSource()==login.bt1)					//1.팝업창으로 회원가입창 띄우기
+			if(e.getSource()==ld.st)					//0.로딩화면에서 Enter버튼 클릭
+			{
+				System.out.println("할리갈리 온라인 안쪽으로 접근중...");
+				card.show(getContentPane(), "LOG");
+			}
+			else if(e.getSource()==login.bt1)					//1.팝업창으로 회원가입창 띄우기
 			{				    
 				mID.setBounds(470, 310,340,420);
 				mID.setVisible(true);				
 			}
 			else if(e.getSource()==login.bt2)				//2.로그인버튼 누르기
 			{
+				ld.clip.stop();
+				wr.clip.play();				
 				id=login.tf.getText().trim();		//ID입력안했을때
 				if(id.length()<1)
 				{
@@ -143,6 +155,8 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			}
 			else if(e.getSource()==wr.b3) 						//6.방들어가기 버튼처리 /////////////////////////////////
 			{
+				wr.clip.stop();
+				gw.clip.play();				
 				if(rowNum>=0)
 				{
 					try {
@@ -155,6 +169,9 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 
 			else if(e.getSource()==mr.b1)  						//6.방만들기창에서 확인 눌렀을때//////////////////////////////
 			{
+				wr.clip.stop();
+				gw.clip.play();
+				gw.clip.loop();
 				String subject=mr.tf.getText().trim();			//방이름 입력 안했을때
 		        if(subject.length()<1)
 		        {
@@ -307,6 +324,9 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				}catch(Exception ex){}
 			}
 			else if(e.getSource()==gw.b4){								//GameWindow에서 준비버튼 눌렀을 때
+				
+				gw.clip.stop();
+				gw.clip3.play();
 				try {
 					out.write((Function.ROOMREADY+"|"+"\n").getBytes());
 				} catch (IOException e1) {
@@ -325,6 +345,9 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 
 			else if(e.getSource()==gw.b6)			//GameWindow에서 나가기 눌렀을 때
 			{
+				gw.clip.stop();
+				gw.clip2.play();
+				wr.clip.play();
 				System.out.println("방나가기 버튼 Click");
 				wr.ta.setText(""); //수정
 				gw.b4.setEnabled(true);
@@ -334,6 +357,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			}
 			else if(e.getSource()==gw.cardOpen)					//카드뒤집기 눌렀을 때!!!
 			{
+				gw.clip4.play(); // 카드 넘기는 소리
 				gw.cardOpen.setBorderPainted(false);      
 				gw.cardOpen.setContentAreaFilled(false);
 				gw.cardOpen.setEnabled(false);
@@ -345,6 +369,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			}
 			else if(e.getSource()==gw.bell) //종치기 버튼
 			{
+				gw.clip1.play(); // 종치는소리
 				try {
 					out.write((Function.BELL+"|"+id+"\n").getBytes());
 				} catch (IOException e1) {
@@ -666,7 +691,6 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  break;
 					  case Function.GAMEEXIT:
 					  {
-						  System.out.println("게임종료!!!!");
 						  gw.b4.setEnabled(true);
 						  gw.b6.setEnabled(true);
 						  gw.CardInit();
