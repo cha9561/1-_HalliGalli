@@ -157,12 +157,14 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			else if(e.getSource()==wr.b3) 						//6.방들어가기 버튼처리 /////////////////////////////////
 			{
 				wr.clip.stop();
-				gw.clip.play();				
+				gw.clip.play();
+				System.out.println("방유저리스트수: "+gw.model1.getRowCount());
 				for(int i=0;i<gw.model1.getRowCount();i++)
-				  {
+				{
+					  System.out.println("방유저리스트삭제");
 					  gw.model1.removeRow(i); //추가
-				  }
-
+				}
+				//gw.model1.removeRow(0); //추가
 				if(rowNum>=0)
 				{
 					try {
@@ -201,10 +203,12 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 		        }	
 		        
 		        mr.dispose();
+		        /*System.out.println("방유저리스트수: "+gw.model1.getRowCount());
 		        for(int i=0;i<gw.model1.getRowCount();i++)
 				  {
+		        	  System.out.println("방유저리스트삭제");
 					  gw.model1.removeRow(i); //추가
-				  }
+				  }*/
 		        try{
 		        	String roomType="";					//1.공개or비공개 저장
 		        	if(mr.rb1.isSelected()){       		
@@ -355,10 +359,13 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				gw.clip2.play();
 				wr.clip.play();
 				System.out.println("방나가기 버튼 Click");
-				for(int i=0;i<gw.model1.getRowCount();i++)
-				  {
+				System.out.println("방유저리스트수: "+gw.model1.getRowCount());
+				//int tmp=gw.model1.getRowCount();
+				/*for(int i=0;i<gw.model1.getRowCount();i++)
+				{
 					  gw.model1.removeRow(i); //추가
-				  }
+				}*/
+				//gw.model1.
 				wr.ta.setText(""); //수정
 				gw.b4.setEnabled(true);
 				try{
@@ -467,6 +474,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  
 					  case Function.ROOMUSER:				//2.게임룸 유저테이블에 유저업데이트
 					  {
+						  System.out.println("In-ROOMUSER");
 						  String[] data={
 							st.nextToken()
 						  };
@@ -706,6 +714,10 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  break;
 					  case Function.GAMEEXIT:
 					  {
+						  System.out.println("zzzzz");
+						  String tmpId=st.nextToken();
+						  String tmpMsg=st.nextToken();
+						  gw.ta.append("게임종료=====>"+tmpId+tmpMsg);
 						  gw.b4.setEnabled(true);
 						  gw.b6.setEnabled(true);
 						  gw.CardInit();

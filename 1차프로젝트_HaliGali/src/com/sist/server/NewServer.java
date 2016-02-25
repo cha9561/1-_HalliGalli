@@ -319,7 +319,9 @@ public class NewServer implements Runnable{
 							System.out.println(id+"의 방번호는(0부터 시작):"+myRoomIndex);
 							room.preNum=1;
 							room.inRoomVc.addElement(this);
-							messageRoom(Function.ROOMUSER+"|"+id,myRoomIndex);
+							
+							messageTo(Function.ROOMUSER+"|"+id);
+							
 							//messageAll(Function.ROOMUSER+"|"+id);
 							messageTo(Function.MAKEROOM+"|"+id+"|"+roomName+"|"+room.preNum+"|"+room.capaNum);//1.game창으로 전환
 							messageAll(Function.ROOMINFORM+"|"+roomType+"|"+roomName+"|"+room.preNum+"|"+room.capaNum+"|"+room.pos);//2.방목록에 띄움
@@ -339,6 +341,7 @@ public class NewServer implements Runnable{
 						{
 							/*방들어가기*/
 							System.out.println("IN-JOINROOM");
+							
 							String tmpRoomIndex=st.nextToken();	//0번 부터 시작
 							int tmpIndex=(Integer.parseInt(tmpRoomIndex));
 							
@@ -350,7 +353,7 @@ public class NewServer implements Runnable{
 								(roomVc.get(tmpIndex).preNum)++;
 								tmpPreNum=roomVc.get(tmpIndex).preNum;
 								posUser="게임룸";
-								roomVc.get(tmpIndex).inRoomVc.addElement(this);
+								
 								decision="TRUE";
 								String tmpMakerId=roomVc.get(tmpIndex).inRoomVc.get(0).id;
 								String tmpRoomName=roomVc.get(tmpIndex).name;
@@ -358,14 +361,17 @@ public class NewServer implements Runnable{
 								
 								messageRoom(Function.ROOMCHAT+"|"+id+"님이 입장하였습니다",tmpIndex);
 								myRoomIndex=tmpIndex;
+								messageRoom(Function.ROOMUSER+"|"+id,myRoomIndex); //내아이디 방에있는 유저들에게 보내기
+								roomVc.get(tmpIndex).inRoomVc.addElement(this);
+								
 								messageAll(Function.CHGROOMUSER+"|"+myRoomIndex+"|"+tmpPreNum);
 								System.out.println("방인원:"+roomVc.get(tmpIndex).inRoomVc.size());
-								for(int i=0;i<roomVc.get(tmpIndex).inRoomVc.size()-1;i++)	//방에들어있던 사람 아이디 받기
+								
+								for(int i=0;i<roomVc.get(tmpIndex).preNum;i++)	//방에들어있던 사람 아이디 받기
 								{
 									System.out.println(roomVc.get(tmpIndex).inRoomVc.get(i).id);
 									messageTo(Function.ROOMUSER+"|"+roomVc.get(tmpIndex).inRoomVc.get(i).id);
 								}
-								messageRoom(Function.ROOMUSER+"|"+id,myRoomIndex); //내아이디 방에있는 유저들에게 보내기
 								messageAll(Function.CHGUSERPOS+"|"+myIndex+"|"+posUser);
 							}
 							else //정원초과
@@ -505,7 +511,7 @@ public class NewServer implements Runnable{
 									int tmpInUser=roomVc.get(i).preNum;
 									for(int j=0; j<tmpInUser; j++)
 									{
-										(roomVc.get(i).inRoomVc.get(j).myIndex)--;
+										(roomVc.get(i).inRoomVc.get(j).myRoomIndex)--;
 									}
 								}
 								System.out.println("roomVc 에서 해당 방 삭제");
@@ -537,13 +543,19 @@ public class NewServer implements Runnable{
 										+tmpRoomClass.Player[tmpRoomClass.NowPlayer], myRoomIndex);   //죽은사람 상태변경 및 채팅창알림
 
 								int result=tmpRoomClass.isEndGame();
-								if(result != -1){      //게임끝0,1,2,3<-승자
+								if(result != -1)
+								{      //게임끝0,1,2,3<-승자
 
 									System.out.println(tmpRoomClass.Player[result]+"승리");
-									messageRoom(Function.ROOMCHAT+"|"+tmpRoomClass.Player[tmpRoomClass.NowPlayer]   //채팅방에 승자알림      
+									messageRoom(Function.ROOMCHAT+"|"+tmpRoomClass.Player[result]   //채팅방에 승자알림      
 											+"님 승리!!", myRoomIndex);
 									/*게임 승자에 대한 추가 처리 예정*/
-								}else{                //게임끝아님,dead[]=-1 
+									messageRoom(Function.GAMEEXIT+"|"
+                               			 +tmpRoomClass.Player[result]+"|"+"님이 이겼습니다.",
+                               			 myRoomIndex);
+								}
+								else
+								{                //게임끝아님,dead[]=-1 
 									tmpRoomClass.NextPlayer();
 									messageRoom(Function.ROOMCHAT+"|"+tmpRoomClass.Player[tmpRoomClass.NowPlayer]      //다음차례알려줌
 											+"님 차례 입니다.", myRoomIndex);
@@ -713,7 +725,8 @@ public class NewServer implements Runnable{
 			                        }
 								}
 								System.out.println("In->BELL19");
-								if (!(tmpRoomClass.isSuccess)) { // 종치기 실패시 다른플레이어에게 카드를 한장씩 돌린다.
+								if (!(tmpRoomClass.isSuccess)) 
+								{ // 종치기 실패시 다른플레이어에게 카드를 한장씩 돌린다.
 									//tmpRoomClass.FailBell();
 									System.out.println("In->BELL20");
 									for(int k=0;k<4;k++)
@@ -732,32 +745,39 @@ public class NewServer implements Runnable{
 									tmpRoomClass.isBell = false;
 			                        /*messageRoom(Function.ROOMCHAT+"|"+id+
 			                        		"님이 종치기에 실패했습니다.", myRoomIndex);*/
-			                        for (int i = 0; i < 4; i++) {
+			                        for (int i = 0; i < 4; i++) 
+			                        {
 			                        	System.out.println("In->BELL24");
 			                           if (!(id.equals(tmpRoomClass.Player[i]))
-			                        		   && !(tmpRoomClass.dead[i])) {
+			                        		   && !(tmpRoomClass.dead[i])) 
+			                           {
+			                        	   System.out.println("In->BELL27");
 			                        	   int a=0;
 			                        	   int tmp=tmpRoomClass.preNum;
 				                            for(a=0;a<tmp;a++)
 				                            {
+				                            	System.out.println("In->BELL26");
 				                            	if(id.equals(tmpRoomClass.inRoomVc.get(a).id))
 				                            		break;
-				                            	a++;
 				                            }
-			                              
 			                              tmpRoomClass.ClientCard[i][tmpRoomClass.ClientCardCount[i]++] 
 			                            		  = tmpRoomClass.ClientCard[a][--tmpRoomClass.ClientCardCount[a]];
-			                              if (tmpRoomClass.ClientCardCount[a] == 0) {
+			                              if (tmpRoomClass.ClientCardCount[a] == 0) 
+			                              {
 			                            	  System.out.println("In->BELL25");
 			                            	  tmpRoomClass.dead[a] = true;
 			                                 //bMan.sendToAll("[UPDATEDEAD]" + userName);
 			                                 messageRoom(Function.UPDATEDEAD+"|"+id,myRoomIndex);
 			                                 //writer.println("[DEAD]" + userName);
 			                                 messageTo(Function.DEAD+"|"+id);
-			                                 if (id.equals(tmpRoomClass.Player[tmpRoomClass.NowPlayer])) {
+			                                 if (id.equals(tmpRoomClass.Player[tmpRoomClass.NowPlayer])) 
+			                                 {
+			                                	 System.out.println("In->BELL28");
 			                                	 tmpRoomClass.NextPlayer();
 			                                 }
-			                                 if (tmpRoomClass.isEndGame() != -1) {
+			                                 if (tmpRoomClass.isEndGame() != -1) 
+			                                 {
+			                                	 System.out.println("In->BELL29");
 			                                    //bMan.sendToAll(Player[isEndGame()] + "님이 이겼습니다.");
 			                                	 messageRoom(Function.GAMEEXIT+"|"
 			                                			 +tmpRoomClass.Player[tmpRoomClass.isEndGame()]+"|"+"님이 이겼습니다.",
@@ -769,15 +789,15 @@ public class NewServer implements Runnable{
 			                                 break;
 			                              }
 			                           }
-			                           System.out.println("In->BELL26");
+			                           System.out.println("In->BELL30");
 			                        }
 			                        //tmpRoomClass.UpdateCardNum(myRoomIndex);
 			                        for(int k=0;k<4;k++)
 									{
-			                        	System.out.println("In->BELL27");
+			                        	System.out.println("In->BELL31");
 										if(!(roomVc.get(myRoomIndex).dead[k]))
 										{
-											System.out.println("In->BELL28");
+											System.out.println("In->BELL32");
 											messageRoom(Function.CARDNUM+"|"+
 													roomVc.get(myRoomIndex).Player[k]
 													+"|"+roomVc.get(myRoomIndex).ClientCardCount[k], myRoomIndex);
@@ -785,7 +805,7 @@ public class NewServer implements Runnable{
 									}
 			                     }
 							}
-							System.out.println("In->BELL29");
+							System.out.println("In->BELL33");
 						}
 						break;
 					}
