@@ -679,6 +679,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  case Function.BELLFAIL:
 					  {
 						  int tmpName=Integer.parseInt(st.nextToken());
+						  gw.ta.append(tmpName+"님이 종치기 실패하였습니다.");
 						  gw.bell.setEnabled(true);
 						  validate();
 					  }
