@@ -54,6 +54,9 @@ public class Function {
 	public static final int GAMEEXIT=608;
 	public static final int REPAINT=609;
 	public static final int DEAD=610;
+	public static final int GAMESTART=611;
+	public static final int EXITFALSE=612;		//게임시작시 방나가기 비활성화
+	public static final int IDLABEL=613;		//게임시작시 id라벨 입력
 	// Client 종료 시
 	public static final int CLIENTEXIT=900;
 	public static final int DELROW=901;

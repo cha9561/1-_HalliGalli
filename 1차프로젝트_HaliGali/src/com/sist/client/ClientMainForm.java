@@ -24,7 +24,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 		
 		
 		int rowNum=-1;
-		
+		String id;
 	    Socket s;
 	    BufferedReader in;// 서버에서 값을 읽는다
 	    OutputStream out; // 서버로 요청값을 보낸다
@@ -58,8 +58,9 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			gw.b5.addActionListener(this); 		//게임창에서 시작버튼 누르면
 			gw.b6.addActionListener(this); 		//게임창에서 나가기 누르면
 			gw.tf.addActionListener(this);		//게임창에서 채팅하면
-
-
+			gw.cardOpen.addActionListener(this);
+			gw.bell.addActionListener(this);
+			
 			mID.b1.addActionListener(this);
 			mID.b2.addActionListener(this);
 			mID.b3.addActionListener(this);
@@ -87,7 +88,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			}
 			else if(e.getSource()==login.bt2)				//2.로그인버튼 누르기
 			{
-				String id=login.tf.getText().trim();		//ID입력안했을때
+				id=login.tf.getText().trim();		//ID입력안했을때
 				if(id.length()<1)
 				{
 					JOptionPane.showMessageDialog(this,
@@ -326,9 +327,29 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			{
 				System.out.println("방나가기 버튼 Click");
 				wr.ta.setText(""); //수정
+				gw.b4.setEnabled(true);
 				try{
 					out.write((Function.EXITROOM+"|"+"\n").getBytes());
 				}catch(Exception ex){}
+			}
+			else if(e.getSource()==gw.cardOpen)					//카드뒤집기 눌렀을 때!!!
+			{
+				gw.cardOpen.setBorderPainted(false);      
+				gw.cardOpen.setContentAreaFilled(false);
+				gw.cardOpen.setEnabled(false);
+				try {
+					out.write((Function.CARDOPEN+"|"+id+"\n").getBytes());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+			else if(e.getSource()==gw.bell) //종치기 버튼
+			{
+				try {
+					out.write((Function.BELL+"|"+id+"\n").getBytes());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			}
 			
 		}
@@ -338,7 +359,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 	    {
 	    	try
 	    	{
-	    		s=new Socket("localhost", 65535);		// s=>server
+	    		s=new Socket("211.238.142.77", 65535);		// s=>server
 	    		in=new BufferedReader(new InputStreamReader(s.getInputStream()));		//서버로 값을 읽어들임
 				out=s.getOutputStream();												//서버로 값을 보냄
 				/*out.write((Function.LOGIN+"|"+id+"|"
@@ -369,10 +390,11 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					int protocol=Integer.parseInt(st.nextToken());
 					switch(protocol)
 					{
-					case Function.YOURTURN:
+					case Function.YOURTURN:				//0.자기차례일 때 카드뒤집기 버튼활성화
 					{
-						gw.cardOpen.setBorderPainted(true);      
-						gw.cardOpen.setContentAreaFilled(true);
+						gw.cardOpen.setBorderPainted(false);     	
+						gw.cardOpen.setContentAreaFilled(false);
+						gw.cardOpen.setEnabled(true);
 					}
 					break;
 					case Function.DELROW: 		//1.게임종료한 client 정보 접속자 List 에서 삭제
@@ -427,6 +449,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  {
 						  gw.ta.append(st.nextToken()+"\n");
 						  gw.bar.setValue(gw.bar.getMaximum());
+						  validate();
 					  }
 					  break;
 					  
@@ -487,6 +510,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 							  card.show(getContentPane(), "GW");
 							  //준비버튼 활성화
 							  gw.b4.setEnabled(true); 
+							  validate();
 						  }
 						  else
 						  {
@@ -509,7 +533,15 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  
 					  }
 					  break;
-					  
+//					  case Function.GAMESTART:			//7.모두준비했을 때 방장만 시작 활성화
+//					  {
+//						  System.out.println("방장의 권한으로 시작버튼 활성화");
+//						  gw.cardOpen.setBorderPainted(false);      
+//							gw.cardOpen.setContentAreaFilled(false);
+//							gw.cardOpen.setEnabled(false);
+//						  
+//					  }
+//					  break;
 					  /*[방인원변경 ] ->*/
 					  case Function.CHGROOMUSER:
 					  {
@@ -553,8 +585,85 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  wr.repaint();
 					  }
 					  break;
+					  case Function.REPAINT:
+					  {
+						  String tmpName=st.nextToken();
+						  int b=Integer.parseInt(st.nextToken());
+						  System.out.println("InREPAIT-ID:"+tmpName+"Number:"+b);
+						  gw.UpdateDraw(tmpName, b);						  
+					  }
+					  break;
+					  case Function.CARDNUM:
+					  {
+						  String tmpName=st.nextToken();			//id
+						  int b=Integer.parseInt(st.nextToken());	//카드수
+						  System.out.println("InCARDNUM-ID:"+tmpName+"Number:"+b);
+						  gw.UpdateCardNum(tmpName, b);
+					  }
+					  break;
+					  case Function.DEAD:
+					  {
+						  gw.ta.append("당신은 죽었습니다");
+						  gw.bell.setEnabled(false);
+						  gw.cardOpen.setEnabled(false);
+					  }
+					  break;
+					  case Function.UPDATEDEAD:
+					  {
+						  String tmpName=st.nextToken();
+						  gw.ta.append(tmpName+" 님이 죽었습니다");
+						  gw.UpdateDead(tmpName);
+						  validate();
+					  }
+					  break;
+					  case Function.BELLSUCCESS:
+					  {
+						  String tmpName=st.nextToken();
+						  gw.ta.append(tmpName+" 님이 종치기 성공했습니다.");
+						  gw.bell.setEnabled(true);
+						  gw.CardInit();
+					  }
+					  break;
+					  case Function.BELLFAIL:
+					  {
+						  String tmpName=st.nextToken();
+						  gw.ta.append(tmpName+" 님이 종치기 실패했습니다.");
+						  gw.bell.setEnabled(true);
+						  validate();
+					  }
+					  break;
+					  case Function.BELL:
+					  {
+						  gw.bell.setEnabled(false);
+					  }
+					  break;
+					  case Function.TURNINFO:
+					  {
+						  gw.userName[0]=st.nextToken();
+						  gw.userName[1]=st.nextToken();
+						  gw.userName[2]=st.nextToken();
+						  gw.userName[3]=st.nextToken();
+					  }
+					  break;
+					  case Function.EXITFALSE:			//게임시작시 나가기비활성화
+					  {
+						  gw.b6.setEnabled(false);
+					  }
+					  break;
+					  
+					  case Function.IDLABEL:			//게임시작시 id라벨 입력
+					  {
+						  String ID=st.nextToken();	//id
+						  for(int i=0; i<4; i++){
+							  if(ID.equals(gw.userName[i])){
+								  gw.laPlayer[i].setText("Player"+(i+1)+": "+ID);
+							  }
+						  }
+					  }
+					  break;
 					}
-				}catch(Exception ex){}
+				}catch(Exception ex){validate();}
+				validate();
 			}
 		}
 }

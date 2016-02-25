@@ -16,7 +16,6 @@ public class GameWindow extends JPanel {   //큰틀
    JTextArea ta;
    JTextField tf;
    JButton b1,b4,b5,b6;
-   JTextArea profile1,profile2,profile3,profile4;
    JScrollBar bar;
    JButton bell,cardOpen;      //bell,카드뒤집기
    ImageIcon iiBell,hand;      //종,카드뒤집기 버튼이미지   
@@ -42,9 +41,9 @@ public class GameWindow extends JPanel {   //큰틀
       
       iiPlayerCard = new ImageIcon[4]; //  사용자 내기직전모양? 카드뒷면
       iiCard = new ImageIcon[56];     // 총카드 이미지
-      laPlayer = new JLabel[2];   //사용자 라벨
-      laCardNum = new JLabel[2];  // 카드 라벨
-      userName = new String[2];  // 사용자이름
+      laPlayer = new JLabel[4];   //사용자 라벨
+      laCardNum = new JLabel[4];  // 카드 라벨
+      userName = new String[4];  // 사용자이름
       
       ta=new JTextArea();   
       JScrollPane js4=new JScrollPane(ta);   //스크롤되는 채팅창
@@ -54,11 +53,15 @@ public class GameWindow extends JPanel {   //큰틀
       b1=new JButton("전송");               //채팅전송버튼      
       b4=new JButton("준비");               
       b5=new JButton("시작");               
-      b6=new JButton("나가기");            
-      profile1=new JTextArea();            //사용자 정보창
-      profile2=new JTextArea();
-      profile3=new JTextArea();
-      profile4=new JTextArea();
+      b6=new JButton("나가기");   
+      laPlayer[0]=new JLabel("");		//초기정보 안보이게
+      laPlayer[1]=new JLabel("");
+      laPlayer[2]=new JLabel("");
+      laPlayer[3]=new JLabel("");
+      laCardNum[0]=new JLabel("");
+      laCardNum[1]=new JLabel("");
+      laCardNum[2]=new JLabel("");
+      laCardNum[3]=new JLabel("");
       bell=new JButton(iiBell);            //종버튼
       cardOpen=new JButton(hand);            //카드뒤집기버튼
       String[] col={"ID"};				//접속자테이블
@@ -85,13 +88,16 @@ public class GameWindow extends JPanel {   //큰틀
    
       setLayout(null);      
 
-      profile1.setBounds(0, 0, 120, 80);   
-      profile2.setBounds(655, 0, 120, 80);
-      profile3.setBounds(0, 320, 120, 80);
-      profile4.setBounds(655, 320, 120, 80);   
-                  
+      laPlayer[0].setBounds(20, 20, 100, 30);   
+      laPlayer[1].setBounds(675, 20, 100, 30);
+      laPlayer[2].setBounds(20, 330, 100, 30);
+      laPlayer[3].setBounds(675, 330, 100, 30); 
+      laCardNum[0].setBounds(20, 50, 100, 30);
+      laCardNum[1].setBounds(675, 50, 100, 30);
+      laCardNum[2].setBounds(20, 360, 100, 30);
+      laCardNum[3].setBounds(675, 360, 100, 30);         
       bell.setBounds(330,150,110,100);
-      cardOpen.setBounds(380,220,60,50);   
+      cardOpen.setBounds(360,265,60,50);   
       b4.setBounds(700,410,80,40);
       b5.setBounds(700,460,80,40);
       b6.setBounds(700,510,80,40);
@@ -100,6 +106,7 @@ public class GameWindow extends JPanel {   //큰틀
       bell.setContentAreaFilled(false);
       cardOpen.setBorderPainted(false);      
       cardOpen.setContentAreaFilled(false);
+      cardOpen.setEnabled(false);	//방들어가자마자 비활성화////////////////////
       
       JPanel p1=new JPanel();            //채팅창+채팅입력창 묶음
       p1.setBounds(10, 410, 500, 160);
@@ -113,7 +120,6 @@ public class GameWindow extends JPanel {   //큰틀
       p1.add(js4); p1.add(tf); p1.add(b1);         
       add(js);
       add(b4);add(b5);add(b6);//add(p);
-      add(profile1);add(profile2);add(profile3);add(profile4);
       add(bell);add(cardOpen);
       add(p1);
 
@@ -153,8 +159,53 @@ public class GameWindow extends JPanel {   //큰틀
       for (int i = 0; i < 4; i++) {
          iiPlayerCard[i] = iiCardBack;      //사용자 각 카드->카드뒷면으로 지정
       }
+      /*게임관련*/
+      
+      add(laPlayer[0]);
+      add(laCardNum[0]);
+      add(laPlayer[1]);
+      add(laCardNum[1]);
+      add(laPlayer[2]);
+      add(laCardNum[2]);
+      add(laPlayer[3]);
+      add(laCardNum[3]);
    }
-   
+   public void UpdateDraw(String name, int CardNum) // 그리기
+   {
+      for (int i = 0; i < 4; i++) {
+         if (name.equals(userName[i])) {
+            iiPlayerCard[i] = iiCard[CardNum];
+            repaint();
+         }
+      }
+   }
+
+   public void UpdateCardNum(String name, int Count) // 카드를 냈을경우 업데이트
+   {
+      for (int i = 0; i < 4; i++) {
+         if (name.equals(userName[i])) {
+            laCardNum[i].setText("현재 카드: "+Count + "장");
+         }
+      }
+   }
+
+   public void UpdateDead(String name) // 죽은 플레이어정보 업데이트
+   {
+      for (int i = 0; i < 4; i++) {
+         if (name.equals(userName[i])) {
+            iiPlayerCard[i] = iiCardBack;
+            laCardNum[i].setText("GameOver");
+            repaint();
+         }
+      }
+   }
+   public void CardInit() // 카드를 초기화
+   {
+      for (int i = 0; i < 4; i++) {
+         iiPlayerCard[i] = iiCardBack;
+      }
+      repaint();
+   }
    protected void paintComponent(Graphics g) {         
       g.drawImage(back, 0, 0, getWidth(), getHeight(), this);   //this->JPanel에 배경이미지 뿌림         
       iiPlayerCard[0].paintIcon(this, g, 140, 20);   //왼쪽카드(이곳에, ,시작x좌표,시작y좌표)
