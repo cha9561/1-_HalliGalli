@@ -233,6 +233,8 @@ public class NewServer implements Runnable{
 							messageAll(Function.CLIENTEXIT+"|"+id+exitMsg);		//채팅창에 00님이 나가셨습니다 뿌리기 
 							messageAll(Function.DELROW+"|"+myIndex);
 							
+							
+							
 							/*몇명 접속중인지 파악*/
 							int i=preTotalUserCount(); //현재 접속중 user 1명->1
 							/*나간 클라이언트 뒤쪽 클라이언트들의 myIndex를 감소시켜준다*/
@@ -304,6 +306,8 @@ public class NewServer implements Runnable{
 							System.out.println(id+"의 방번호는(0부터 시작):"+myRoomIndex);
 							room.preNum=1;
 							room.inRoomVc.addElement(this);
+							messageRoom(Function.ROOMUSER+"|"+id,myRoomIndex);
+							//messageAll(Function.ROOMUSER+"|"+id);
 							messageTo(Function.MAKEROOM+"|"+id+"|"+roomName+"|"+room.preNum+"|"+room.capaNum);//1.game창으로 전환
 							messageAll(Function.ROOMINFORM+"|"+roomType+"|"+roomName+"|"+room.preNum+"|"+room.capaNum+"|"+room.pos);//2.방목록에 띄움
 							
@@ -342,7 +346,13 @@ public class NewServer implements Runnable{
 								messageRoom(Function.ROOMCHAT+"|"+id+"님이 입장하였습니다",tmpIndex);
 								myRoomIndex=tmpIndex;
 								messageAll(Function.CHGROOMUSER+"|"+myRoomIndex+"|"+tmpPreNum);
-								
+								System.out.println("방인원:"+roomVc.get(tmpIndex).inRoomVc.size());
+								for(int i=0;i<roomVc.get(tmpIndex).inRoomVc.size()-1;i++)	//방에들어있던 사람 아이디 받기
+								{
+									System.out.println(roomVc.get(tmpIndex).inRoomVc.get(i).id);
+									messageTo(Function.ROOMUSER+"|"+roomVc.get(tmpIndex).inRoomVc.get(i).id);
+								}
+								messageRoom(Function.ROOMUSER+"|"+id,myRoomIndex); //내아이디 방에있는 유저들에게 보내기
 								messageAll(Function.CHGUSERPOS+"|"+myIndex+"|"+posUser);
 							}
 							else //정원초과
@@ -450,7 +460,14 @@ public class NewServer implements Runnable{
 							//대기실로 바꿔줌
 							messageTo(Function.MYLOG+"|"+id+"|"+posUser); 	
 							messageAll(Function.CHGROOMUSER+"|"+myRoomIndex+"|"+tmpUserCount);
-							
+							int Row=0;
+							for(Room room:roomVc)
+							{
+								if((roomVc.get(myRoomIndex).inRoomVc.get(Row).id).equals(id))
+									break;
+								Row++;
+							}
+							messageRoom(Function.OUTUSER+"|"+Row,myRoomIndex);
 							int myRow=0;
 							for(ClientThread client:waitVc)
 							{
