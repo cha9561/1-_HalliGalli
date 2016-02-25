@@ -683,7 +683,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 		                    validate();
 		                 }
 		              break;
-		               
+		             
 					  case Function.BELL:
 					  {
 						  gw.bell.setEnabled(false);

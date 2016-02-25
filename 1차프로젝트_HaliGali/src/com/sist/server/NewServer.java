@@ -650,7 +650,7 @@ public class NewServer implements Runnable{
 			                              {
 			                            	  tmpCardSum += 4;
 			                              } 
-			                              else if (tmpRoomClass.CardNum[j] == 13) 
+			                              else if (tmpRoomClass.CardNum[j] >= 13) 
 			                              {
 			                            	  tmpCardSum += 5;
 			                              }
@@ -769,6 +769,7 @@ public class NewServer implements Runnable{
 			                                	 System.out.println("In->BELL28");
 			                                	 tmpRoomClass.NextPlayer();
 			                                 }
+			                                 tmpRoomClass.inRoomVc.get(tmpRoomClass.NowPlayer).messageTo(Function.YOURTURN+"|");   //다음차례
 			                                 if (tmpRoomClass.isEndGame() != -1) 
 			                                 {
 			                                	 System.out.println("In->BELL29");
@@ -776,25 +777,24 @@ public class NewServer implements Runnable{
 			                                			 +tmpRoomClass.Player[tmpRoomClass.isEndGame()]+"|"+"님이 이겼습니다.",
 			                                			 myRoomIndex);
 			                                 }
-			                                 break;
 			                              }
-			                           	}
-			                           	System.out.println("In->BELL30");
-			                        }//for문 끝 
-			                        
-									
-									
-			                        for(int k=0;k<4;k++)
-									{
-			                        	System.out.println("In->BELL31");
-										if(!(roomVc.get(myRoomIndex).dead[k]))
+
+			                           }
+			                           System.out.println("In->BELL30");
+			                           for(int k=0;k<4;k++)
 										{
-											System.out.println("In->BELL32");
-											messageRoom(Function.CARDNUM+"|"+
-													roomVc.get(myRoomIndex).Player[k]
-													+"|"+roomVc.get(myRoomIndex).ClientCardCount[k], myRoomIndex);
+				                        	System.out.println("In->BELL31");
+											if(!(roomVc.get(myRoomIndex).dead[k]))
+											{
+												System.out.println("In->BELL32");
+												messageRoom(Function.CARDNUM+"|"+
+														roomVc.get(myRoomIndex).Player[k]
+														+"|"+roomVc.get(myRoomIndex).ClientCardCount[k], myRoomIndex);
+											}
 										}
-									}
+			                        }
+			                        //tmpRoomClass.UpdateCardNum(myRoomIndex);
+
 			                     }
 								
 							}//여기안 까지가 종제대로 쳤을 때-----
