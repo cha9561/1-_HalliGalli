@@ -1,9 +1,14 @@
 package com.sist.client;
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.applet.Applet;
+import java.applet.AudioClip;
+import java.io.File;
+import java.net.MalformedURLException;
 import javax.swing.*;
+import javax.swing.event.*;
 import javax.swing.table.*;
 
 
@@ -24,6 +29,7 @@ public class WaitRoom extends JPanel{ //
 	
 	JTextArea profile;	//사용자정보
 	JScrollBar bar;
+	AudioClip clip;
 	
 	@SuppressWarnings("deprecation")
 	public WaitRoom(){
@@ -194,6 +200,15 @@ public class WaitRoom extends JPanel{ //
 		add(p1);
 		add(profile);add(p);
 		add(b5);add(b4);add(b6);;
+		
+		try {
+            File file = new File("res/waitroom.wav"); 
+            clip = Applet.newAudioClip(file.toURL());
+            clip.stop();           
+           
+        } catch (MalformedURLException e){
+            e.printStackTrace();
+        }
 
 	}
 	
