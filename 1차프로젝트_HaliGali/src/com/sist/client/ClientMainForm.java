@@ -655,7 +655,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  break;
 					  case Function.DEAD:
 					  {
-						  gw.ta.append("당신은 죽었습니다");
+						  gw.ta.append("당신은 죽었습니다.\n");
 						  gw.bell.setEnabled(false);
 						  gw.cardOpen.setEnabled(false);
 					  }
@@ -663,7 +663,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  case Function.UPDATEDEAD:
 					  {
 						  String tmpName=st.nextToken();
-						  gw.ta.append(tmpName+" 님이 죽었습니다");
+						  gw.ta.append(tmpName+" 님이 죽었습니다.\n");
 						  gw.UpdateDead(tmpName);
 						  validate();
 					  }
@@ -678,8 +678,8 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  break;
 					  case Function.BELLFAIL:
 					  {
-						  int tmpName=Integer.parseInt(st.nextToken());
-						  gw.ta.append(tmpName+"님이 종치기 실패하였습니다.");
+						  String tmpName=st.nextToken();
+						  gw.ta.append(tmpName+"님이 종치기 실패하였습니다.\n");
 						  gw.bell.setEnabled(true);
 						  validate();
 					  }
