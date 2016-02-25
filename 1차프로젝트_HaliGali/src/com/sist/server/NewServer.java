@@ -319,7 +319,9 @@ public class NewServer implements Runnable{
 							System.out.println(id+"의 방번호는(0부터 시작):"+myRoomIndex);
 							room.preNum=1;
 							room.inRoomVc.addElement(this);
-							messageRoom(Function.ROOMUSER+"|"+id,myRoomIndex);
+							
+							messageTo(Function.ROOMUSER+"|"+id);
+							
 							//messageAll(Function.ROOMUSER+"|"+id);
 							messageTo(Function.MAKEROOM+"|"+id+"|"+roomName+"|"+room.preNum+"|"+room.capaNum);//1.game창으로 전환
 							messageAll(Function.ROOMINFORM+"|"+roomType+"|"+roomName+"|"+room.preNum+"|"+room.capaNum+"|"+room.pos);//2.방목록에 띄움
@@ -339,6 +341,7 @@ public class NewServer implements Runnable{
 						{
 							/*방들어가기*/
 							System.out.println("IN-JOINROOM");
+							
 							String tmpRoomIndex=st.nextToken();	//0번 부터 시작
 							int tmpIndex=(Integer.parseInt(tmpRoomIndex));
 							
@@ -350,7 +353,7 @@ public class NewServer implements Runnable{
 								(roomVc.get(tmpIndex).preNum)++;
 								tmpPreNum=roomVc.get(tmpIndex).preNum;
 								posUser="게임룸";
-								roomVc.get(tmpIndex).inRoomVc.addElement(this);
+								
 								decision="TRUE";
 								String tmpMakerId=roomVc.get(tmpIndex).inRoomVc.get(0).id;
 								String tmpRoomName=roomVc.get(tmpIndex).name;
@@ -358,14 +361,17 @@ public class NewServer implements Runnable{
 								
 								messageRoom(Function.ROOMCHAT+"|"+id+"님이 입장하였습니다",tmpIndex);
 								myRoomIndex=tmpIndex;
+								messageRoom(Function.ROOMUSER+"|"+id,myRoomIndex); //내아이디 방에있는 유저들에게 보내기
+								roomVc.get(tmpIndex).inRoomVc.addElement(this);
+								
 								messageAll(Function.CHGROOMUSER+"|"+myRoomIndex+"|"+tmpPreNum);
 								System.out.println("방인원:"+roomVc.get(tmpIndex).inRoomVc.size());
-								for(int i=0;i<roomVc.get(tmpIndex).inRoomVc.size()-1;i++)	//방에들어있던 사람 아이디 받기
+								
+								for(int i=0;i<roomVc.get(tmpIndex).preNum;i++)	//방에들어있던 사람 아이디 받기
 								{
 									System.out.println(roomVc.get(tmpIndex).inRoomVc.get(i).id);
 									messageTo(Function.ROOMUSER+"|"+roomVc.get(tmpIndex).inRoomVc.get(i).id);
 								}
-								messageRoom(Function.ROOMUSER+"|"+id,myRoomIndex); //내아이디 방에있는 유저들에게 보내기
 								messageAll(Function.CHGUSERPOS+"|"+myIndex+"|"+posUser);
 							}
 							else //정원초과
@@ -505,7 +511,7 @@ public class NewServer implements Runnable{
 									int tmpInUser=roomVc.get(i).preNum;
 									for(int j=0; j<tmpInUser; j++)
 									{
-										(roomVc.get(i).inRoomVc.get(j).myIndex)--;
+										(roomVc.get(i).inRoomVc.get(j).myRoomIndex)--;
 									}
 								}
 								System.out.println("roomVc 에서 해당 방 삭제");
@@ -537,13 +543,19 @@ public class NewServer implements Runnable{
 										+tmpRoomClass.Player[tmpRoomClass.NowPlayer], myRoomIndex);   //죽은사람 상태변경 및 채팅창알림
 
 								int result=tmpRoomClass.isEndGame();
-								if(result != -1){      //게임끝0,1,2,3<-승자
+								if(result != -1)
+								{      //게임끝0,1,2,3<-승자
 
 									System.out.println(tmpRoomClass.Player[result]+"승리");
-									messageRoom(Function.ROOMCHAT+"|"+tmpRoomClass.Player[tmpRoomClass.NowPlayer]   //채팅방에 승자알림      
+									messageRoom(Function.ROOMCHAT+"|"+tmpRoomClass.Player[result]   //채팅방에 승자알림      
 											+"님 승리!!", myRoomIndex);
 									/*게임 승자에 대한 추가 처리 예정*/
-								}else{                //게임끝아님,dead[]=-1 
+									messageRoom(Function.GAMEEXIT+"|"
+                               			 +tmpRoomClass.Player[result]+"|"+"님이 이겼습니다.",
+                               			 myRoomIndex);
+								}
+								else
+								{                //게임끝아님,dead[]=-1 
 									tmpRoomClass.NextPlayer();
 									messageRoom(Function.ROOMCHAT+"|"+tmpRoomClass.Player[tmpRoomClass.NowPlayer]      //다음차례알려줌
 											+"님 차례 입니다.", myRoomIndex);
@@ -674,7 +686,6 @@ public class NewServer implements Runnable{
 			                            	System.out.println("In->BELL12");
 			                            	if(id.equals(tmpRoomClass.inRoomVc.get(a).id))
 			                            		break;
-			                            	a++;
 			                            }
 			                        	for (i = 0; i < 4; i++) 
 			                            {
