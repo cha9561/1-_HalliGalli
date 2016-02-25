@@ -548,7 +548,7 @@ public class NewServer implements Runnable{
 										+"´ÔÀÌ Á¾À» ÃÆ½À´Ï´Ù.", myRoomIndex);
 								messageRoom(Function.BELL+"|",myRoomIndex);
 								System.out.println("In->BELL2_1");
-								Thread.sleep(500);
+								//Thread.sleep(500);
 								System.out.println("In->BELL2_2");
 								tmpRoomClass.isSuccess=false;
 								System.out.println("In->BELL2_3");

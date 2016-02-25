@@ -574,6 +574,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  {
 						  String tmpName=st.nextToken();
 						  int b=Integer.parseInt(st.nextToken());
+						  System.out.println("InREPAIT-ID:"+tmpName+"Number:"+b);
 						  gw.UpdateDraw(tmpName, b);						  
 					  }
 					  break;
@@ -581,6 +582,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  {
 						  String tmpName=st.nextToken();			//id
 						  int b=Integer.parseInt(st.nextToken());	//Ä«µå¼ö
+						  System.out.println("InCARDNUM-ID:"+tmpName+"Number:"+b);
 						  gw.UpdateCardNum(tmpName, b);
 					  }
 					  break;
