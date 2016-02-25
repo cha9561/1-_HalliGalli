@@ -435,6 +435,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  {
 						  gw.ta.append(st.nextToken()+"\n");
 						  gw.bar.setValue(gw.bar.getMaximum());
+						  validate();
 					  }
 					  break;
 					  
@@ -494,6 +495,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 							  card.show(getContentPane(), "GW");
 							  //준비버튼 활성화
 							  gw.b4.setEnabled(true); 
+							  validate();
 						  }
 						  else
 						  {
@@ -594,6 +596,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  String tmpName=st.nextToken();
 						  gw.ta.append(tmpName+" 님이 죽었습니다");
 						  gw.UpdateDead(tmpName);
+						  validate();
 					  }
 					  break;
 					  case Function.BELLSUCCESS:
@@ -609,6 +612,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  String tmpName=st.nextToken();
 						  gw.ta.append(tmpName+" 님이 종치기 실패했습니다.");
 						  gw.bell.setEnabled(true);
+						  validate();
 					  }
 					  break;
 					  case Function.BELL:
@@ -641,7 +645,8 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  }
 					  break;
 					}
-				}catch(Exception ex){}
+				}catch(Exception ex){validate();}
+				validate();
 			}
 		}
 }
