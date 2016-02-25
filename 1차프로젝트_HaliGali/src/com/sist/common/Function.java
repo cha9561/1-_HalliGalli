@@ -38,6 +38,7 @@ public class Function {
 	public static final int CHGROOMSTATE=408;	//방상태 변경
 	
 	public static final int ROOMUSER=410;	//게임방 유저리스트 업데이트
+	public static final int OUTUSER=411;    //게임방 유저리스트 삭제
 	
 	//채팅관련
 	public static final int WAITCHAT1=500;

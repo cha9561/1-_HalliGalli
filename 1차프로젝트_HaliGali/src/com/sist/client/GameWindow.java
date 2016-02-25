@@ -129,11 +129,11 @@ public class GameWindow extends JPanel {   //큰틀
       cardOpen.setEnabled(false);	//방들어가자마자 비활성화////////////////////
       
       JPanel p1=new JPanel();            //채팅창+채팅입력창 묶음
-      p1.setBounds(10, 410, 500, 160);
+      p1.setBounds(10, 410, 500, 170);
       p1.setLayout(null);    
-      js4.setBounds(0, 0, 500, 110);   //채팅
-      tf.setBounds(0, 115, 425, 30);   //채팅입력창
-      b1.setBounds(430, 115, 70, 30);   //채팅전송버튼
+      js4.setBounds(0, 0, 500, 120);   //채팅
+      tf.setBounds(0, 125, 425, 30);   //채팅입력창
+      b1.setBounds(430, 125, 70, 30);   //채팅전송버튼
       js.setBounds(520, 410, 170, 150); //유저 리스트 테이블
       p1.setOpaque(false);   
       

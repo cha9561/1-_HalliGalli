@@ -54,8 +54,8 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			wr.b3.addActionListener(this);      //방들어가기 버튼 누르면
 			wr.b8.addActionListener(this);		//도움말 버튼 누르면
 			wr.b9.addActionListener(this);      //게임종료 버튼 누르면
-			
 			wr.tf.addActionListener(this);
+			
 			mr.b1.addActionListener(this);      //방만들기창에서 확인버튼 누르면
 			gw.b1.addActionListener(this); 		//게임창에서 전송버튼 누르면
 			gw.b4.addActionListener(this); 		//게임창에서 준비버튼 누르면
@@ -64,10 +64,11 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			gw.tf.addActionListener(this);		//게임창에서 채팅하면
 			gw.cardOpen.addActionListener(this);
 			gw.bell.addActionListener(this);
-			
-			mID.b1.addActionListener(this);		//회원가입의 Join버튼
-			mID.b2.addActionListener(this);		//회원가입의 Back버튼
-			mID.b3.addActionListener(this);		//회원가입의 중복체크 버튼
+	
+			mID.b1.addActionListener(this);
+			mID.b2.addActionListener(this);
+			mID.b3.addActionListener(this);
+
 
 			wr.table1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {			
 				@Override
@@ -157,10 +158,15 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			{
 				wr.clip.stop();
 				gw.clip.play();				
+				for(int i=0;i<gw.model1.getRowCount();i++)
+				  {
+					  gw.model1.removeRow(i); //추가
+				  }
+
 				if(rowNum>=0)
 				{
 					try {
-						
+						gw.ta.setText("");
 						out.write((Function.JOINROOM+"|"+rowNum+"\n").getBytes());
 					} catch (Exception e2) {			
 					}
@@ -172,6 +178,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				wr.clip.stop();
 				gw.clip.play();
 				gw.clip.loop();
+
 				String subject=mr.tf.getText().trim();			//방이름 입력 안했을때
 		        if(subject.length()<1)
 		        {
@@ -194,12 +201,11 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 		        }	
 		        
 		        mr.dispose();
-		        
+		        for(int i=0;i<gw.model1.getRowCount();i++)
+				  {
+					  gw.model1.removeRow(i); //추가
+				  }
 		        try{
-		        	for(int i=0;i<gw.model1.getRowCount();i++)
-					  {
-						  gw.model1.removeRow(i); //추가
-					  }
 		        	String roomType="";					//1.공개or비공개 저장
 		        	if(mr.rb1.isSelected()){       		
 		        		roomType=mr.rb1.getText(); } 	//공개
@@ -349,6 +355,10 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				gw.clip2.play();
 				wr.clip.play();
 				System.out.println("방나가기 버튼 Click");
+				for(int i=0;i<gw.model1.getRowCount();i++)
+				  {
+					  gw.model1.removeRow(i); //추가
+				  }
 				wr.ta.setText(""); //수정
 				gw.b4.setEnabled(true);
 				try{
@@ -458,11 +468,17 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  case Function.ROOMUSER:				//2.게임룸 유저테이블에 유저업데이트
 					  {
 						  String[] data={
-							st.nextToken(),	 
+							st.nextToken()
 						  };
 						  gw.model1.addRow(data);	
 					  }
 					  break;
+					  case Function.OUTUSER:
+					  {
+						  int rowIndex=(Integer.parseInt(st.nextToken()));		//rowIndex=delIndex
+						  System.out.println("삭제 줄: "+rowIndex);
+						  gw.model1.removeRow(rowIndex);
+					  }
 					  
 					  case Function.WAITCHAT1:			//3.채팅할 때(waitroom)
 					  {
@@ -504,8 +520,9 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  String capaNum=st.nextToken();		//최대인원수	//아직 안쓰임
 						  setTitle("방장_"+roomId+"    "+"방제_"+roomName);	
 						  gw.b5.setEnabled(false); 	//시작버튼 비활성화
-						  
+						  gw.ta.setText("");
 						  card.show(getContentPane(), "GW"); 		//게임창으로 전환
+						  
 					  }
 					  break;
 
@@ -616,7 +633,6 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  String tmpName=st.nextToken();
 						  int b=Integer.parseInt(st.nextToken());
 						  System.out.println("InREPAIT-ID:"+tmpName+"Number:"+b);
-
 						  gw.UpdateDraw(tmpName, b);						  
 
 					  }
