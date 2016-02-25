@@ -170,22 +170,31 @@ public class WaitRoom extends JPanel{ //
 		
 		
 		
-		b4.setBounds(10, 15, 500, 30);
-	    b5.setBounds(10, 335, 500, 30);      //////채팅타이틀
-	    b6.setBounds(515, 15, 270, 30);
-	    js1.setBounds(10, 50, 500, 280);   //방목록
-	    js2.setBounds(515, 50, 270, 280);   //접속자   
-	    js3.setBounds(10, 370, 500, 150);   //채팅///////
-	    tf.setBounds(10, 525, 430, 30);      //채팅입력창/////
-	    b1.setBounds(445, 525, 65, 30);      //채팅전송버튼/////
-	    profile.setBounds(515, 335, 270, 140);   //사용자 정보
-	    p.setBounds(515, 480, 270, 75);      //버튼묶음
-	      
-	      
-	    add(js1);add(js2);add(js3);
-	    add(tf);add(b1);add(profile);
-	    add(p);add(b4);add(b5);add(b6);;
 
+		b4.setBounds(10, 15, 500, 30);		//roomlist타이틀
+		b5.setBounds(10, 335, 500, 30);	//chattingroom타이틀
+		b6.setBounds(515, 15, 270, 30);		//friends타이틀
+		js1.setBounds(10, 50, 500, 280);	//방목록
+		js2.setBounds(515, 50, 270, 280);	//접속자	
+		//js3.setBounds(10, 370, 500, 150);	//채팅///////
+		//tf.setBounds(10, 525, 450, 30);		//채팅입력창/////
+		//b1.setBounds(465, 525, 45, 30);		//채팅전송버튼/////
+		profile.setBounds(515, 335, 270, 140);	//사용자 정보
+		p.setBounds(515, 480, 270, 75);		//버튼묶음
+		
+		JPanel p1=new JPanel();			//채팅창+채팅입력창 묶음
+		p1.setBounds(10, 370, 500, 200);
+		p1.setLayout(null); 
+		js3.setBounds(0, 0, 500, 150);
+		tf.setBounds(0, 155, 430, 30);
+		b1.setBounds(435, 155, 65, 30);
+		p1.setOpaque(false);
+		
+		add(js1);add(js2);
+		p1.add(js3);p1.add(tf);p1.add(b1);
+		add(p1);
+		add(profile);add(p);
+		add(b5);add(b4);add(b6);;
 
 	}
 	

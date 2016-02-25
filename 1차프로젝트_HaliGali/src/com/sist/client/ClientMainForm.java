@@ -50,7 +50,8 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			wr.b3.addActionListener(this);      //방들어가기 버튼 누르면
 			wr.b8.addActionListener(this);		//도움말 버튼 누르면
 			wr.b9.addActionListener(this);      //게임종료 버튼 누르면
-
+			wr.tf.addActionListener(this);
+			
 			mr.b1.addActionListener(this);      //방만들기창에서 확인버튼 누르면
 			gw.b1.addActionListener(this); 		//게임창에서 전송버튼 누르면
 			gw.b4.addActionListener(this); 		//게임창에서 준비버튼 누르면
@@ -111,7 +112,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 							+pass+"\n").getBytes());
 				}catch(Exception ex){}
 			}
-			else if(e.getSource()==wr.tf || e.getSource()==wr.b1)			//3.waitroom에서 채팅입력할 때
+			else if(e.getSource()==wr.tf)			//3.waitroom에서 채팅입력할 때
 			{			
 				String data=wr.tf.getText();								//입력한 값 가져오기
 				if(data.length()<1)
@@ -122,7 +123,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				}catch(Exception ex){}
 				wr.tf.setText("");
 			}
-			else if(e.getSource()==gw.tf || e.getSource()==gw.b1)			//4.gameWindow에서 채팅입력할 때
+			else if(e.getSource()==gw.tf)			//4.gameWindow에서 채팅입력할 때
 			{	
 				String data=gw.tf.getText();								//입력한 값 가져오기
 				if(data.length()<1)
@@ -146,7 +147,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 				if(rowNum>=0)
 				{
 					try {
-						gw.tf.setText("");
+						
 						out.write((Function.JOINROOM+"|"+rowNum+"\n").getBytes());
 					} catch (Exception e2) {			
 					}
@@ -179,6 +180,10 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 		        mr.dispose();
 		        
 		        try{
+		        	for(int i=0;i<gw.model1.getRowCount();i++)
+					  {
+						  gw.model1.removeRow(i); //추가
+					  }
 		        	String roomType="";					//1.공개or비공개 저장
 		        	if(mr.rb1.isSelected()){       		
 		        		roomType=mr.rb1.getText(); } 	//공개
@@ -322,7 +327,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			else if(e.getSource()==gw.b6)			//GameWindow에서 나가기 눌렀을 때
 			{
 				System.out.println("방나가기 버튼 Click");
-				gw.ta.setText("");
+				wr.ta.setText(""); //수정
 				gw.b4.setEnabled(true);
 				try{
 					out.write((Function.EXITROOM+"|"+"\n").getBytes());
@@ -425,6 +430,15 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  }
 					  break;
 					  
+					  case Function.ROOMUSER:				//2.게임룸 유저테이블에 유저업데이트
+					  {
+						  String[] data={
+							st.nextToken(),	 
+						  };
+						  gw.model1.addRow(data);	
+					  }
+					  break;
+					  
 					  case Function.WAITCHAT1:			//3.채팅할 때(waitroom)
 					  {
 						  wr.ta.append(st.nextToken()+"\n");
@@ -465,6 +479,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 						  String capaNum=st.nextToken();		//최대인원수	//아직 안쓰임
 						  setTitle("방장_"+roomId+"    "+"방제_"+roomName);	
 						  gw.b5.setEnabled(false); 	//시작버튼 비활성화
+						  
 						  card.show(getContentPane(), "GW"); 		//게임창으로 전환
 					  }
 					  break;
@@ -575,6 +590,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  {
 						  String tmpName=st.nextToken();
 						  int b=Integer.parseInt(st.nextToken());
+						  System.out.println("InREPAIT-ID:"+tmpName+"Number:"+b);
 						  gw.UpdateDraw(tmpName, b);						  
 					  }
 					  break;
@@ -582,6 +598,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 					  {
 						  String tmpName=st.nextToken();			//id
 						  int b=Integer.parseInt(st.nextToken());	//카드수
+						  System.out.println("InCARDNUM-ID:"+tmpName+"Number:"+b);
 						  gw.UpdateCardNum(tmpName, b);
 					  }
 					  break;

@@ -18,7 +18,13 @@ public class GameWindow extends JPanel {   //큰틀
    JButton b1,b4,b5,b6;
    JScrollBar bar;
    JButton bell,cardOpen;      //bell,카드뒤집기
+
    ImageIcon iiBell,hand,send,readyr,startr,exitr;      //종,카드뒤집기 버튼이미지   
+
+   JTable table;
+   TableColumn column;
+   DefaultTableModel model1;
+
    
   PrintWriter writer;
    ImageIcon iiCard[];        // 총카드56개 
@@ -64,6 +70,27 @@ public class GameWindow extends JPanel {   //큰틀
       laCardNum[3]=new JLabel("");
       bell=new JButton(iiBell);            //종버튼
       cardOpen=new JButton(hand);            //카드뒤집기버튼
+      String[] col={"ID"};				//접속자테이블
+		String[][] row=new String[0][1];
+		model1=new DefaultTableModel(row, col)
+		{//더블클릭시 편집방지
+			public boolean isCellEditable(int r,int c)
+			{
+				return false;
+			}
+		};
+		table=new JTable(model1);
+		table.getTableHeader().setResizingAllowed(false); //컬럼사이즈 고정
+		JScrollPane js=new JScrollPane(table);
+		for(int i=0;i<col.length;i++)
+		{
+			DefaultTableCellRenderer rnd
+			= new DefaultTableCellRenderer();
+			rnd.setHorizontalAlignment(JLabel.CENTER);
+			column=table.getColumnModel().getColumn(0);
+			rnd.setHorizontalAlignment(JLabel.LEFT);
+			column.setCellRenderer(rnd);
+		}
    
       	b1.setBorderPainted(false);
 		b1.setContentAreaFilled(false);
@@ -87,8 +114,8 @@ public class GameWindow extends JPanel {   //큰틀
       bell.setBounds(330,150,110,100);
       cardOpen.setBounds(360,265,60,50);   
       b4.setBounds(700,410,80,40);
-      b5.setBounds(700,465,80,40);
-      b6.setBounds(700,515,80,40);
+      b5.setBounds(700,460,80,40);
+      b6.setBounds(700,510,80,40);
       
       bell.setBorderPainted(false);      
       bell.setContentAreaFilled(false);
@@ -97,14 +124,16 @@ public class GameWindow extends JPanel {   //큰틀
       cardOpen.setEnabled(false);	//방들어가자마자 비활성화////////////////////
       
       JPanel p1=new JPanel();            //채팅창+채팅입력창 묶음
-      p1.setBounds(10, 410, 350, 200);
+      p1.setBounds(10, 410, 500, 160);
       p1.setLayout(null);    
-      js4.setBounds(0, 0, 350, 125);   //채팅
-      tf.setBounds(0, 125, 300, 30);   //채팅입력창
-      b1.setBounds(300, 125, 50, 30);   //채팅전송버튼
+      js4.setBounds(0, 0, 500, 110);   //채팅
+      tf.setBounds(0, 115, 425, 30);   //채팅입력창
+      b1.setBounds(430, 115, 70, 30);   //채팅전송버튼
+      js.setBounds(520, 410, 170, 150); //유저 리스트 테이블
       p1.setOpaque(false);   
-      p1.add(js4); p1.add(tf); p1.add(b1);         
       
+      p1.add(js4); p1.add(tf); p1.add(b1);         
+      add(js);
       add(b4);add(b5);add(b6);//add(p);
       add(bell);add(cardOpen);
       add(p1);
