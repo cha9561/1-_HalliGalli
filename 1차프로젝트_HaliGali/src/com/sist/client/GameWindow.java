@@ -18,10 +18,13 @@ public class GameWindow extends JPanel {   //큰틀
    JButton b1,b4,b5,b6;
    JScrollBar bar;
    JButton bell,cardOpen;      //bell,카드뒤집기
-   ImageIcon iiBell,hand;      //종,카드뒤집기 버튼이미지   
+
+   ImageIcon iiBell,hand,send,readyr,startr,exitr;      //종,카드뒤집기 버튼이미지   
+
    JTable table;
    TableColumn column;
    DefaultTableModel model1;
+
    
   PrintWriter writer;
    ImageIcon iiCard[];        // 총카드56개 
@@ -38,7 +41,10 @@ public class GameWindow extends JPanel {   //큰틀
       iiCardBack = new ImageIcon("cardimg/CardBack.jpg");    // 카드 뒷면
       iiBell = new ImageIcon("img/Bell.png");             // 종
       hand=new ImageIcon("img/hand.png");                    // 손모양 
-      
+      send=new ImageIcon("img/send2.png");		
+      readyr=new ImageIcon("img/readyr.png"); 
+      startr=new ImageIcon("img/startr.png"); 
+      exitr=new ImageIcon("img/exitr.png"); 
       iiPlayerCard = new ImageIcon[4]; //  사용자 내기직전모양? 카드뒷면
       iiCard = new ImageIcon[56];     // 총카드 이미지
       laPlayer = new JLabel[4];   //사용자 라벨
@@ -50,10 +56,10 @@ public class GameWindow extends JPanel {   //큰틀
       bar=js4.getVerticalScrollBar();
          
       tf=new JTextField();               //채팅입력창
-      b1=new JButton("전송");               //채팅전송버튼      
-      b4=new JButton("준비");               
-      b5=new JButton("시작");               
-      b6=new JButton("나가기");   
+      b1=new JButton(send);               //채팅전송버튼      
+      b4=new JButton(readyr);               
+      b5=new JButton(startr);               
+      b6=new JButton(exitr);   
       laPlayer[0]=new JLabel("");		//초기정보 안보이게
       laPlayer[1]=new JLabel("");
       laPlayer[2]=new JLabel("");
@@ -86,6 +92,15 @@ public class GameWindow extends JPanel {   //큰틀
 			column.setCellRenderer(rnd);
 		}
    
+      	b1.setBorderPainted(false);
+		b1.setContentAreaFilled(false);
+      	b4.setBorderPainted(false);
+		b4.setContentAreaFilled(false);
+		b5.setBorderPainted(false);
+		b5.setContentAreaFilled(false);
+		b6.setBorderPainted(false);
+		b6.setContentAreaFilled(false);
+		
       setLayout(null);      
 
       laPlayer[0].setBounds(20, 20, 100, 30);   

@@ -317,6 +317,7 @@ public class ClientMainForm extends JFrame implements ActionListener, Runnable{
 			else if(e.getSource()==gw.b5){								//GameWindow에서 시작버튼 눌렀을 때
 				try {
 					out.write((Function.ROOMSTART+"|"+"\n").getBytes());
+					gw.b5.setEnabled(false);
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
