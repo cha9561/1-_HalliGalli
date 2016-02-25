@@ -504,34 +504,34 @@ public class NewServer implements Runnable{
 						/*게임 관련*/
 						case Function.CARDOPEN: //클라이언트에서 카드 뒤집기
 						{
-							Room tmpRoomClass=roomVc.get(myRoomIndex);	//방번호
+
+							Room tmpRoomClass=roomVc.get(myRoomIndex);   //방번호
 							//0번자리에 오픈안된 13번 클라이언트 카드번호를 줘라
 							tmpRoomClass.TurnCard[tmpRoomClass.NowPlayer][tmpRoomClass.TurnCardCount[tmpRoomClass.NowPlayer]++] = 
 									tmpRoomClass.ClientCard[tmpRoomClass.NowPlayer][--tmpRoomClass.ClientCardCount[tmpRoomClass.NowPlayer]];
-//							System.out.println("오픈된 전달받은 카드번호: "+
-//									tmpRoomClass.TurnCard[tmpRoomClass.NowPlayer][--tmpRoomClass.TurnCardCount[tmpRoomClass.NowPlayer]]);
+							//			                     
 							if(tmpRoomClass.ClientCardCount[tmpRoomClass.NowPlayer]==0)
+								//현재 플레이어의 카드가 뒤집은 이후 하나도 남지 않으면....
 							{
-								//현재 플레이어의 카드가 뒤집은 이후 하나도 남지 않으면
-								tmpRoomClass.dead[tmpRoomClass.NowPlayer]=true;
+								System.out.println("aby1");
+								tmpRoomClass.dead[tmpRoomClass.NowPlayer]=true;   //죽음상태로 바꿈
+
 								messageRoom(Function.UPDATEDEAD+"|"
-										+tmpRoomClass.Player[tmpRoomClass.NowPlayer], myRoomIndex);
-								System.out.println("한명 죽었음 !!!!!!isEndGame: "
-										+tmpRoomClass.isEndGame());
-								
-								if(tmpRoomClass.isEndGame()!=0)
-								{
-									System.out.println("한명 죽었음 1!!!!!!");
-									messageRoom(Function.GAMEEXIT+"|"+
-											tmpRoomClass.Player[tmpRoomClass.isEndGame()]+
-											"님이 이겼습니다.",myRoomIndex);
+										+tmpRoomClass.Player[tmpRoomClass.NowPlayer], myRoomIndex);   //죽은사람 상태변경 및 채팅창알림
+
+								int result=tmpRoomClass.isEndGame();
+								if(result != -1){      //게임끝0,1,2,3<-승자
+
+									System.out.println(tmpRoomClass.Player[result]+"승리");
+									messageRoom(Function.ROOMCHAT+"|"+tmpRoomClass.Player[tmpRoomClass.NowPlayer]   //채팅방에 승자알림      
+											+"님 승리!!", myRoomIndex);
 									/*게임 승자에 대한 추가 처리 예정*/
+								}else{                //게임끝아님,dead[]=-1 
+									tmpRoomClass.NextPlayer();
+									messageRoom(Function.ROOMCHAT+"|"+tmpRoomClass.Player[tmpRoomClass.NowPlayer]      //다음차례알려줌
+											+"님 차례 입니다.", myRoomIndex);
+									tmpRoomClass.inRoomVc.get(tmpRoomClass.NowPlayer).messageTo(Function.YOURTURN+"|");   //다음차례
 								}
-								System.out.println("한명 죽었음2 !!!!!!");
-								tmpRoomClass.NextPlayer();
-								messageRoom(Function.ROOMCHAT+"|"+tmpRoomClass.Player[tmpRoomClass.NowPlayer]		//다음차례알려줌
-										+"님 차례 입니다.", myRoomIndex);
-								tmpRoomClass.inRoomVc.get(tmpRoomClass.NowPlayer).messageTo(Function.YOURTURN+"|");
 							}
 							else //더 뒤집을 카드가 남아있을 때
 							{
