@@ -36,6 +36,9 @@ public class Function {
 	public static final int EXITROOM=406;		//[방나가기] 게임룸에 있던 유저가 게임룸을 나갈때
 	public static final int DELROOM=407;		//[방나가기] 방에 있는 사람이 없을때 방 삭제위해
 	public static final int CHGROOMSTATE=408;	//방상태 변경
+	
+	public static final int ROOMUSER=410;	//게임방 유저리스트 업데이트
+	
 	//채팅관련
 	public static final int WAITCHAT1=500;
 	public static final int WAITCHAT2=501;	
